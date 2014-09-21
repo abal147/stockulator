@@ -1,3 +1,5 @@
+# Example useage: python dataScraper.py WOW.AX ^AORD
+
 #http stuff
 import urllib
 import urllib2
@@ -17,6 +19,10 @@ def quoteList(words, quote):
 		retList.append(quote + word + quote)
 	return retList
 
+def printDict(d):
+	for key, value in d.items():
+		print key, ":", value
+	print
 
 # Hardcoded values for the API url
 url = 'https://query.yahooapis.com/v1/public/yql'
@@ -26,10 +32,13 @@ suffix = '&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&call
 codes = quoteList(sys.argv[1:], "'")
 processedCodes = commaString(codes, ', ')
 
-print 'processedCodes = "' + processedCodes + '"'
+#print 'processedCodes = "' + processedCodes + '"'
+
+selectedColumns = ['*']
+# selectedColumns = ['symbol', 'Name', 'Change', 'Ask', 'PercentChange']
 
 # Build the proper url
-query = "select * from yahoo.finance.quotes where symbol in (" + processedCodes + ")"
+query = "select " + commaString(selectedColumns, ', ') + " from yahoo.finance.quotes where symbol in (" + processedCodes + ")"
 url = url + '?q=' + urllib.quote_plus(query) + suffix
 
 #print url
@@ -55,10 +64,8 @@ if count == 1:
 else:
 	quotes = results
 
-print results
-
 for quote in quotes:
-	print quote
+	printDict(quote)
 
 # Possible metrics
 
