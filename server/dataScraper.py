@@ -1,23 +1,11 @@
-# Example useage: python dataScraper.py WOW.AX ^AORD
+# Example usage: python dataScraper.py WOW.AX ^AORD
 
 #http stuff
-import urllib
-import urllib2
+import urllib, urllib2
 import json
 import sys
 
-# Create a string delimited by delim out of the list words
-def commaString(words, delim):
-	retString = ''
-	for word in words:
-		retString += word + delim
-	return retString[:-len(delim)]
-
-def quoteList(words, quote):
-	retList = []
-	for word in words:
-		retList.append(quote + word + quote)
-	return retList
+import scraperUtility
 
 def printDict(d):
 	for key, value in d.items():
@@ -29,8 +17,8 @@ url = 'https://query.yahooapis.com/v1/public/yql'
 suffix = '&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback='
 
 # Process the command line args
-codes = quoteList(sys.argv[1:], "'")
-processedCodes = commaString(codes, ', ')
+codes = scraperUtility.quoteList(sys.argv[1:], "'")
+processedCodes = scraperUtility.commaString(codes, ', ')
 
 #print 'processedCodes = "' + processedCodes + '"'
 
@@ -38,7 +26,7 @@ selectedColumns = ['*']
 # selectedColumns = ['symbol', 'Name', 'Change', 'Ask', 'PercentChange']
 
 # Build the proper url
-query = "select " + commaString(selectedColumns, ', ') + " from yahoo.finance.quotes where symbol in (" + processedCodes + ")"
+query = "select " + scraperUtility.commaString(selectedColumns, ', ') + " from yahoo.finance.quotes where symbol in (" + processedCodes + ")"
 url = url + '?q=' + urllib.quote_plus(query) + suffix
 
 #print url
@@ -55,17 +43,10 @@ count = wholeObject['query']['count']
 
 results = wholeObject['query']['results']['quote']
 
-
-# For simplicity, create a list of the results
-# (its a list of dicts)
-quotes = []
-if count == 1:
-	quotes.append(results)
-else:
-	quotes = results
-
-for quote in quotes:
-	printDict(quote)
+# Just output the JSON object and let the UI parse it
+# Prints an array for multiple elements, single object for one
+# Not entirely familiar with JSON but might need to do some checking around that
+print results
 
 # Possible metrics
 
