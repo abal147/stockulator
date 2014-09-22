@@ -1,47 +1,50 @@
 # Example usage: python dataScraper.py WOW.AX ^AORD
 
-#http stuff
 import urllib, urllib2
 import json
 import sys
 
+# Utility functions for server code
 import scraperUtility
 
-def printDict(d):
-	for key, value in d.items():
-		print key, ":", value
-	print
+def grabCurrentData(codes):
+   # Hardcoded values for the API url
+   url = 'https://query.yahooapis.com/v1/public/yql'
+   # Data tables link needed for access to the table
+   suffix = '&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback='
 
-# Hardcoded values for the API url
-url = 'https://query.yahooapis.com/v1/public/yql'
-suffix = '&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback='
+   # Process the command line args
+   codes = scraperUtility.quoteList(codes, "'")
+   processedCodes = scraperUtility.commaString(codes, ', ')
 
-# Process the command line args
-codes = scraperUtility.quoteList(sys.argv[1:], "'")
-processedCodes = scraperUtility.commaString(codes, ', ')
+   selectedColumns = ['*']
+   selectedColumns = ['symbol', 'Name', 'PreviousClose', 'PEGRatio'
+      , 'EarningsShare', 'PERatio', 'MarketCapitalization'
+      , 'AskRealtime', 'ErrorIndicationreturnedforsymbolchangedinvalid']
 
-#print 'processedCodes = "' + processedCodes + '"'
-
-selectedColumns = ['*']
-# selectedColumns = ['symbol', 'Name', 'Change', 'Ask', 'PercentChange']
-
-# Build the proper url
-query = "select " + scraperUtility.commaString(selectedColumns, ', ') + " from yahoo.finance.quotes where symbol in (" + processedCodes + ")"
-url = url + '?q=' + urllib.quote_plus(query) + suffix
-
-#print url
-
-# Grab the page
-page = urllib2.urlopen(url).read()
+   # Build the proper url
+   query = "select " + scraperUtility.commaString(selectedColumns, ', ') 
+   query += " from yahoo.finance.quotes where symbol in (" + processedCodes + ")"
+   url = url + '?q=' + urllib.quote_plus(query) + suffix
 
 
-# Parse the JSON object
-wholeObject = json.loads(page)
-count = wholeObject['query']['count']
+   page = urllib2.urlopen(url).read()
 
-#print count, 'Results returned'
+   # Parse the JSON object
+   wholeObject = json.loads(page)
+   count = wholeObject['query']['count']
 
-results = wholeObject['query']['results']['quote']
+   results = wholeObject['query']['results']['quote']
+
+   return results
+
+##########################
+### START OF MAIN CODE ###
+##########################
+
+codes = sys.argv[1:]
+
+results = grabCurrentData(codes)
 
 # Just output the JSON object and let the UI parse it
 # Prints an array for multiple elements, single object for one
