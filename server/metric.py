@@ -37,6 +37,7 @@ def metricData(code, numDays, filterlength, alpha) :
 
 	return (list(sma), list(ema))
 
-str = metricData("WOW.AX", 9, 3, 0.3)
-print str
+if __name__ == "__main__":
+   str = metricData("WOW.AX", 9, 3, 0.3)
+   print str
 
