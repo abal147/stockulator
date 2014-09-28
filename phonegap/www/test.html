@@ -1,0 +1,145 @@
+<!DOCTYPE html5>
+<!--
+    Copyright (c) 2012-2014 Adobe Systems Incorporated. All rights reserved.
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+     KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+-->
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="format-detection" content="telephone=no" />
+        <meta name="msapplication-tap-highlight" content="no" />
+        <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+        <link rel="stylesheet" type="text/css" href="css/index.css" />
+        <title>Hello World</title>
+        <link rel="stylesheet" href="css/themes/StockulatorTheme.css" />
+  			<link rel="stylesheet" href="css/themes/jquery.mobile.icons.min.css" />
+  			<!--<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.3/jquery.mobile.structure-1.4.3.min.css" /> -->
+  			<link rel="stylesheet" href="css/jquery.mobile.structure-1.4.4.min.css"></script>
+  			<!--<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script> -->
+  			<script src="js/jquery-1.11.1.min.js"></script>
+  			<script src="js/jquery.mobile-1.4.4.min.js"></script> <!-- Use a local js text structure--!>
+				<script src="js/highstock.js" ></script>
+				<script src="js/highcharts-all.js"></script> <!-- There is some kind of problem here ... not affecting however -->
+				<script src="js/exporting.js"></script>
+    </head>
+    <body>
+    		<div data-role="page">
+
+	<div id="header" data-role="header" data-theme="a">
+		<h1>Stockulator</h1>
+	</div><!-- /header -->
+
+	<div id="content" data-role="content" data-theme="a">	
+		<p>Content goes here.</p>	
+		<input type="search" name="searchBar" id="search-3" value="Enter ASX Code" data-theme="b" onkeyup="handle(event)" />	
+		
+		<div id="container" style="height: 300px; min-width: 310px"></div>
+		
+		<script>
+	 	function handle(e){
+ 			if(e.keyCode === 13){
+ 			// TODO - change this to focus etc...
+ 			// Also, change to be more of the jquery style etc...
+ 				code = $("#search-3").val();
+				console.log("Code is:" + code)
+				plotData(code,300); // lets plot data from the last 300 days for the code...
+ 			}
+ 			return false;
+ 		}
+
+		function plotData(code,numDays) {
+			vars={};
+			vars['code']=code+".ax";
+			vars['numDays']=numDays;
+			console.log(vars);
+			$.getJSON('http://localhost/~lindsayfolkard/stockulator/stockulator/server/historical_server.py',vars, function (data) {
+        console.log("Process the data!");
+        //console.log(data);
+        $('#container').highcharts('StockChart', {
+            rangeSelector : {
+                selected : 1,
+                inputEnabled: $('#container').width() > 480
+            },
+
+            title : {
+                text :  code + ' - Stock Price'
+            },
+
+            series : [{
+                name : code,
+                data : data,
+                tooltip: {
+                    valueDecimals: 2
+                }
+            }]
+        });
+    	});
+    	console.log("Done!");
+		}
+		</script>
+		
+		 <script>
+ $(function () {
+
+    $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=aapl-c.json&callback=?', function (data) {
+        // Create the chart
+        console.log(data);
+        $('#container').highcharts('StockChart', {
+            rangeSelector : {
+                selected : 1,
+                inputEnabled: $('#container').width() > 480
+            },
+
+            title : {
+                text : 'AAPL Stock Price'
+            },
+
+            series : [{
+                name : 'AAPL',
+                data : data,
+                tooltip: {
+                    valueDecimals: 2
+                }
+            }]
+        });
+    });
+
+});</script>
+
+		
+	</div><!-- /content -->
+
+</div><!-- /page -->
+        <!-- 
+<div class="app">
+            <h1>PhoneGap</h1>
+            <div id="deviceready" class="blink">
+                <p class="event listening">Connecting to Device</p>
+                <p class="event received">Device is Ready</p>
+            </div>
+        </div>
+ -->
+        <script type="text/javascript" src="cordova.js"></script>
+        <script type="text/javascript" src="js/index.js"></script>
+        <script type="text/javascript">
+            app.initialize();
+        </script>
+    </body>
+</html>
