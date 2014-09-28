@@ -58,13 +58,13 @@ def grabHistoricalData(code, numDays):
 ##########################
 ### START OF MAIN CODE ###
 ##########################
+if __name__ == "__main__":
+   code = sys.argv[1]
 
-#code = sys.argv[1]
+   # Perform the date calculations
+   numDays = int(sys.argv[2])
 
-# Perform the date calculations
-#numDays = int(sys.argv[2])
-
-#print grabHistoricalData(code, numDays)
+   print grabHistoricalData(code, numDays)
 
 
 
