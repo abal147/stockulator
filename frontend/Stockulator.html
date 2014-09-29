@@ -1,8 +1,27 @@
+<!-- To see this working, copy/pull the whole frontend directory. 
+     Open stockulator.html (or index.html) in your browser,
+     type an ASX code into the search bar such as WOW.AX
+     and hit enter. After about a second, the words:
+     "Data dump here" should be changed to a string of the
+     returned JSON file. If nothing happens, then Thomas has
+     probably turned off the webserver, in which case you will
+     need to ask him how that shit works (create an instance
+     of the latest AMI, navigate to /home/ubuntu/stockulator
+     and run webserver.py - then refresh stockulator.html in
+     your browser and try search an ASX code again and it
+     should give you the stock data).
+
+     As for Aaron, there may be a problem with your stock
+     scraper - the returned data stops at:
+     ErrorIndicationreturnedforsymbolchangedinvalid: null
+     even though there is more stock data after that as seen
+     in Chrome's Dev Tools log.                     -->
+
 <!DOCTYPE html>
 <html>
 <head>
 
-  <title>NIGGAPLSSS</title>		<!-- NOT SURE WHY THE HEADER IS OVERRIDING THE TITLE -->
+  <title>Stockulator</title>		<!-- NOT SURE WHY THE HEADER IS OVERRIDING THE TITLE -->
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="css/themes/StockulatorTheme.css" />
@@ -44,19 +63,41 @@
 
 
 	  <div id="content" data-role="content" data-theme="a">	
-		  <p>Content goes here.</p>	
-		  <input type="search" name="searchBar" id="search-3" value="Enter ASX Code" data-theme="b" onkeyup="handle(event)" />	
+
+		  <input type="search" name="searchBar" id="searchbar" value="Enter ASX Code" data-theme="b" onkeyup="handle(event)" />	
+		  <p>Information of searched stock goes here.</p>	
+
+      <p id="datadump">Data dump here.</p>
 
 		  <script>
-		  function handle(e){
-			  if(e.keyCode === 13){
-				  //alert("Enter was pressed");
-				  window.location.href='https://www.youtube.com/watch?v=dQw4w9WgXcQ';
-			  }
-			  return false;
-		  }
+
+        function handle(e) {
+
+          var httpRequest;
+          
+          if(e.keyCode == 13) {
+
+            code = $("#searchbar").val();
+            console.log("ASX Code is " + code);
+            makeRequest();
+          }
+		    }
+
+        function makeRequest(){
+
+		      //So...javascript is weird and somehow "code" is still a defined variable here
+          $.getJSON("http://ec2-54-66-134-148.ap-southeast-2.compute.amazonaws.com:8080/data/" + code, function(data) {
+            console.log("hi");
+            console.log(data);
+		        document.getElementById("datadump").innerHTML = JSON.stringify(data);
+          });
+
+        }        
+		    
 		  </script>
-		  
+
+
+		  <!-- Need to get rid of rel="external" when we move from local to actual servers...I think -->
       <nav class="pagination">
         <ul>
         <li><a rel="prev" href="">&larr;</a></li>
