@@ -42,14 +42,13 @@ def grabCurrentData(codes):
 ### START OF MAIN CODE ###
 ##########################
 
-codes = sys.argv[1:]
-
-results = grabCurrentData(codes)
-
-# Just output the JSON object and let the UI parse it
-# Prints an array for multiple elements, single object for one
-# Not entirely familiar with JSON but might need to do some checking around that
-print results
+if __name__ == "__main__":
+   codes = sys.argv[1:]
+   results = grabCurrentData(codes)
+   # Just output the JSON object and let the UI parse it
+   # Prints an array for multiple elements, single object for one
+   # Not entirely familiar with JSON but might need to do some checking around that
+   print results
 
 # Possible metrics
 
