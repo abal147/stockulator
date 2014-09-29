@@ -9,13 +9,7 @@
      of the latest AMI, navigate to /home/ubuntu/stockulator
      and run webserver.py - then refresh stockulator.html in
      your browser and try search an ASX code again and it
-     should give you the stock data).
-
-     As for Aaron, there may be a problem with your stock
-     scraper - the returned data stops at:
-     ErrorIndicationreturnedforsymbolchangedinvalid: null
-     even though there is more stock data after that as seen
-     in Chrome's Dev Tools log.                     -->
+     should give you the stock data).              -->
 
 <!DOCTYPE html>
 <html>
@@ -32,24 +26,7 @@
   <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script> 
   <script src="http://code.jquery.com/mobile/1.4.3/jquery.mobile-1.4.3.min.js"></script> 
 
-  <style>
-    body {
-      margin:300px 0 0 0;
-      background-color:#EFEFEF;
-      text-align:center;
-      position: relative;
-    }
-
-    nav {
-      position: fixed;
-      bottom: 20px;
-      width: 100%;
-      text-align: center;      
-    }
-  </style>
-
 </head>
-
 
 
 
@@ -67,7 +44,9 @@
 		  <input type="search" name="searchBar" id="searchbar" value="Enter ASX Code" data-theme="b" onkeyup="handle(event)" />	
 		  <p>Information of searched stock goes here.</p>	
 
-      <p id="datadump">Data dump here.</p>
+      <!-- Placeholder table, elements inserted via javascript -->
+      <table id="myTable">
+      </table>
 
 		  <script>
 
@@ -86,10 +65,41 @@
         function makeRequest(){
 
 		      //So...javascript is weird and somehow "code" is still a defined variable here
-          $.getJSON("http://ec2-54-66-134-148.ap-southeast-2.compute.amazonaws.com:8080/data/" + code, function(data) {
+          $.getJSON("http://ec2-54-66-130-91.ap-southeast-2.compute.amazonaws.com:8080/data/" + code, function(data) {
             console.log("hi");
-            console.log(data);
-		        document.getElementById("datadump").innerHTML = JSON.stringify(data);
+            console.log(data);        
+
+            var table = document.getElementById("myTable");
+
+            //Clean out the rows from a previous search if any
+            var rowCount = table.rows.length;
+            for(var i = 0; i < rowCount; ++i) {
+              table.deleteRow();
+            }
+            
+            //String formatting
+            var string = JSON.stringify(data);
+            
+            string = string.replace(/{/g, "");
+            string = string.replace(/}/g, "");
+            string = string.replace(/"/g, "");
+            string = string.replace(/:/g, "  :  ");
+
+            //Insert rows into table
+            var rows = string.split(",");
+                  
+            for(var i = 0; i < rows.length; ++i) {
+              var currRow = table.insertRow();
+
+              console.log("row is: " + rows[i]);
+              var data = document.createElement("TD");
+              var text = document.createTextNode(rows[i]);
+              data.appendChild(text);
+              currRow.appendChild(data);           
+              
+            }
+
+            
           });
 
         }        
