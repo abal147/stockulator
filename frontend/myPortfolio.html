@@ -2,7 +2,7 @@
 <html>
 <head>
 
-  <title>NIGGAPLSSS</title>		<!-- NOT SURE WHY THE HEADER IS OVERRIDING THE TITLE -->
+  <title>Stockulator</title>		<!-- NOT SURE WHY THE HEADER IS OVERRIDING THE TITLE -->
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="css/themes/StockulatorTheme.css" />
@@ -44,19 +44,22 @@
 
 
 	  <div id="content" data-role="content" data-theme="a">	
-		  <p>This page is your portfolio.</p>	
+		  
 		  <input type="search" name="searchBar" id="search-3" value="Enter ASX Code" data-theme="b" onkeyup="handle(event)" />	
+      <p>This page is your portfolio.</p>	
 
 		  <script>
 		  function handle(e){
 			  if(e.keyCode === 13){
 				  //alert("Enter was pressed");
-				  window.location.href='https://www.youtube.com/watch?v=dQw4w9WgXcQ';
+				  window.location.href='stockulator.html';
+				  //window.location.href='https://www.youtube.com/watch?v=dQw4w9WgXcQ';
 			  }
 			  return false;
 		  }
 		  </script>
-		  
+
+		  <!-- Need to get rid of rel="external" when we move from local to actual servers -->
       <nav class="pagination">
         <ul>
         <li><a rel="prev" href="">&larr;</a></li>
