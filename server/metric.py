@@ -1,20 +1,21 @@
+import json
 from rpy2.robjects import r
 from historical import grabHistoricalData
 
 def metricData(code, numDays, filterlength, alpha) :
-	file = open("newfile.csv", "w")
-	file.write(grabHistoricalData(code, numDays))
-	file.close()
 
-	r('data.df <- read.csv(file="newfile.csv", head=TRUE, sep=",")')
-
-	r('data.df <- data.df[order(as.Date(data.df$Date, format="%d/%m/%Y")),]')
+	historical = grabHistoricalData(code, numDays)
 	
-	r('days <- nrow(data.df)')
+	r.assign("historical", historical)
+	r('data.df <- read.csv(text=historical, head=TRUE, sep=",")')
+	r('data.df <- data.df[order(as.Date(data.df$Date)),]')
+	#r('days <- nrow(data.df)')
+	#days = r['days']
 	
-	days = r['days']
-	print days
+	r('dates <- as.integer(as.POSIXct(as.Date(data.df$Date)))')
+	dates = r['dates']
 	
+	#create time series object
 	r('data.ts <- ts(data.df$Close)')
 	
 	#simple moving average
@@ -34,8 +35,9 @@ def metricData(code, numDays, filterlength, alpha) :
 	#trend
 
 	r('data.trend <- data.ts/max(data.ts)')
+	trend = r['data.trend']
 
-	return (list(sma), list(ema))
+	return json.dumps((list(dates), list(sma), list(ema), list(trend)))
 
 if __name__ == "__main__":
    str = metricData("WOW.AX", 9, 3, 0.3)
