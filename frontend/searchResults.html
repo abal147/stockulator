@@ -30,7 +30,7 @@
 
 
 
-<body> 
+<body onload=parseURL()> 
 
   <div data-role="page">
 
@@ -50,22 +50,62 @@
 
 		  <script>
 
+        //Parser written by some dude on stack overflow
+		    function parseURL() {
+		      var url = document.URL;
+          var queryStart = url.indexOf("?") + 1,
+          queryEnd   = url.indexOf("#") + 1 || url.length + 1,
+          query = url.slice(queryStart, queryEnd - 1),
+          pairs = query.replace(/\+/g, " ").split("&"),
+          parms = {}, i, n, v, nv;
+
+          if (query === url || query === "") {
+              return;
+          }
+
+          for (i = 0; i < pairs.length; i++) {
+              nv = pairs[i].split("=");
+              n = decodeURIComponent(nv[0]);
+              v = decodeURIComponent(nv[1]);
+
+              if (!parms.hasOwnProperty(n)) {
+                  parms[n] = [];
+              }
+
+              parms[n].push(nv.length === 2 ? v : null);
+          }
+          
+          //Only parse the first parameter which is the searched ASX code
+          makeRequest(parms.code[0]);
+		    }
+
         function handle(e) {
 
-          var httpRequest;
           
           if(e.keyCode == 13) {
 
-            code = $("#searchbar").val();
+            var code = $("#searchbar").val();
             console.log("ASX Code is " + code);
-            makeRequest();
+
+            //Need to choose here: easy way is to reload page with new search
+            //query (no problems with back button but page needs to refresh).
+            location.href = ("searchResults.html?code=" + code);
+            
+            //Hard way is to push new query into address bar without
+            //actually reloading the page (but shit happens with the back
+            //button and I cbs looking into it atm)
+            //history.pushState({}, "uselessArg", "searchResults.html?code=" + code);
+            //makeRequest(code);
+            
           }
+          
 		    }
 
-        function makeRequest(){
+        function makeRequest(code){
 
-		      //So...javascript is weird and somehow "code" is still a defined variable here
-          $.getJSON("http://ec2-54-66-130-91.ap-southeast-2.compute.amazonaws.com:8080/data/" + code, function(data) {
+          console.log("code is: " + code);
+
+          $.getJSON("http://ec2-54-79-50-63.ap-southeast-2.compute.amazonaws.com:8080/data/" + code, function(data) {
             console.log("hi");
             console.log(data);        
 
@@ -73,12 +113,23 @@
 
             //Clean out the rows from a previous search if any
             var rowCount = table.rows.length;
-            for(var i = 0; i < rowCount; ++i) {
+            while(rowCount > 0) {
               table.deleteRow();
+              rowCount--;
             }
             
             //String formatting
             var string = JSON.stringify(data);
+
+            //Check for invalid search query
+            if(string.indexOf("No such ticker symbol") > -1) {
+              var currRow = table.insertRow();
+              var data = document.createElement("TD");
+              var text = document.createTextNode("Invalid ASX Code: " + code);
+              data.appendChild(text);
+              currRow.appendChild(data);
+              return;
+            }
             
             string = string.replace(/{/g, "");
             string = string.replace(/}/g, "");
@@ -111,11 +162,11 @@
       <nav class="pagination">
         <ul>
         <li><a rel="prev" href="">&larr;</a></li>
-        <li><a rel="first" class="current" href="">1</a></li>
+        <li><a rel="external" rel="first" href="frontPage.html">1</a></li>
         <li><a rel="external" href="myPortfolio.html">2</a></li>
-        <li><a href="">3</a></li>
-        <li><a href="">4</a></li>
-        <li><a rel="last" href="">5</a></li>
+        <li><a rel="external" class="current" href="">3</a></li>
+        <li><a rel="external" href="">4</a></li>
+        <li><a rel="external" rel="last" href="">5</a></li>
         <li><a rel="next" href="">&rarr;</a></li>
         </ul>
       </nav>

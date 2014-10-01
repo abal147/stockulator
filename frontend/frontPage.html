@@ -13,24 +13,7 @@
   <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script> 
   <script src="http://code.jquery.com/mobile/1.4.3/jquery.mobile-1.4.3.min.js"></script> 
 
-  <style>
-    body {
-      margin:300px 0 0 0;
-      background-color:#EFEFEF;
-      text-align:center;
-      position: relative;
-    }
-
-    nav {
-      position: fixed;
-      bottom: 20px;
-      width: 100%;
-      text-align: center;    
-    }
-  </style>
-
 </head>
-
 
 
 
@@ -44,29 +27,35 @@
 
 
 	  <div id="content" data-role="content" data-theme="a">	
-		  
+
 		  <input type="search" name="searchBar" id="searchbar" value="Enter ASX Code" data-theme="b" onkeyup="handle(event)" />	
-      <p>This page is your portfolio.</p>	
+		  <p>This is where your newsfeed and stuff goes.</p>	
+
+      <!-- Placeholder table, elements inserted via javascript -->
+      <table id="myTable">
+      </table>
 
 		  <script>
-		    function handle(e) {
+
+        function handle(e) {
           
           if(e.keyCode == 13) {
 
             code = $("#searchbar").val();
             console.log("ASX Code is " + code);
             location.href = ("searchResults.html?code=" + code);
-            
+
           }
 		    }
-		  </script>
+      </script>
 
-		  <!-- Need to get rid of rel="external" when we move from local to actual servers -->
+
+		  <!-- Need to get rid of rel="external" when we move from local to actual servers...I think -->
       <nav class="pagination">
         <ul>
         <li><a rel="prev" href="">&larr;</a></li>
-        <li><a rel="external" rel="first" href="frontPage.html">1</a></li>
-        <li><a rel="external" class="current" href="">2</a></li>
+        <li><a rel="first" class="current" href="">1</a></li>
+        <li><a rel="external" href="myPortfolio.html">2</a></li>
         <li><a rel="external" href="searchResults.html">3</a></li>
         <li><a rel="external" href="">4</a></li>
         <li><a rel="external" rel="last" href="">5</a></li>
