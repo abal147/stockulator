@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+  <title>Stockulator</title>		<!-- NOT SURE WHY THE HEADER IS OVERRIDING THE TITLE -->
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, height=device-height, 
+    initial-scale=1.0, maximum-scale=1.0, target-densityDpi=device-dpi" />
+  <link rel="stylesheet" href="css/themes/StockulatorTheme.css" />
+  <link rel="stylesheet" href="css/themes/jquery.mobile.icons.min.css" />
+  <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.3/jquery.mobile.structure-1.4.3.min.css" /> 
+  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Quattrocento" />
+  <link rel="stylesheet" href="css/themes/html5-pagination.css" />
+  <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script> 
+  <script src="http://code.jquery.com/mobile/1.4.3/jquery.mobile-1.4.3.min.js"></script> 
+
+</head>
+
+
+
+<body> 
+
+  <div data-role="page">
+
+	  <div id="header" data-role="header" data-theme="a">
+		  <h1>Stockulator</h1>
+	  </div><!-- /header -->
+
+
+	  <div id="content" data-role="content" data-theme="a">	
+
+		  <input type="search" name="searchBar" id="searchbar" value="Enter ASX Code" data-theme="b" onkeyup="handle(event)" />	
+		  <p>This is where your newsfeed and stuff goes.</p>	
+
+      <!-- Placeholder table, elements inserted via javascript -->
+      <table id="myTable">
+      </table>
+
+		  <script>
+
+        function handle(e) {
+          
+          if(e.keyCode == 13) {
+
+            code = $("#searchbar").val();
+            console.log("ASX Code is " + code);
+            location.href = ("searchResults.html?code=" + code);
+
+          }
+		    }
+      </script>
+
+
+		  <!-- Need to get rid of rel="external" when we move from local to actual servers...I think -->
+      <nav class="pagination">
+        <ul>
+        <li><a rel="prev" href="">&larr;</a></li>
+        <li><a rel="first" class="current" href="">1</a></li>
+        <li><a rel="external" href="myPortfolio.html">2</a></li>
+        <li><a rel="external" href="searchResults.html">3</a></li>
+        <li><a rel="external" href="">4</a></li>
+        <li><a rel="external" rel="last" href="">5</a></li>
+        <li><a rel="next" href="">&rarr;</a></li>
+        </ul>
+      </nav>
+		
+	  </div><!-- /content -->
+
+  </div><!-- /page -->
+
+</body>
+</html>
