@@ -2,6 +2,7 @@
 
 import urllib, urllib2
 import datetime
+import re
 
 def grabAllCodes():
 
@@ -17,14 +18,58 @@ def grabAllCodes():
 	if (today.year == lastScraped.year 
 		and today.month == lastScraped.month 
 		and today.day == lastScraped.day):
-		return
+		return False
 
 	url = 'http://www.asx.com.au/asx/research/ASXListedCompanies.csv'
 	page = urllib2.urlopen(url).read()
 
+	# page.replace('"') was only removing one quote
+	# couldnt find a good solution so using this for now
+	page = ''.join(page.split('"'))
+	page = page.upper()
+	
 	file = open('ASXCodes.csv', 'w')
 	file.write(page)
 	file.close()
 
+	return True
 
-grabAllCodes()
+
+def getCodes(regex, industry = ''):
+	retrieved = grabAllCodes()
+#	if (retrieved):
+#		print('retrieved new data')
+
+	regex = regex.upper()
+	industry = industry.upper()
+#	print 'Searching for', regex, industry
+	
+	file = open('ASXCodes.csv', 'r')
+	file.readline()
+	file.readline()
+	file.readline()
+
+	page = file.read()
+	lines = page.split('\r\n')
+	results = []
+
+
+	for line in lines:
+		splitLine = line.split(',')
+		if (len(splitLine) != 3):
+			continue
+		codeMatch = re.search(regex, line)
+		if (codeMatch):
+			results.append(line)
+		elif (industry != ''):
+			industryMatch = re.search(industry, splitLine[2])
+			if (industryMatch):
+				results.append(line)
+	
+	return results
+
+if __name__ == "__main__":
+	print getCodes('Wool', '')
+
+
+
