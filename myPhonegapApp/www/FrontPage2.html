@@ -1,0 +1,213 @@
+<!DOCTYPE html5>
+<!-- This is the one and only HTML document for stockulator
+ 		 This uses the Jquery mobile multi-page template wherein
+ 		 Several pages are embedded within the one html document as different div's
+ 		 
+ 		 Whilst this may lead to this document being a bit cluttered, it offers
+ 		 significant performance advantages as opposed to a multipage model
+--!>
+<html>
+<head>
+    <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
+    <meta charset="utf-8" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="msapplication-tap-highlight" content="no" />
+    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+        
+    <!-- CSS Stylesheets - local files are used to reduce load time /network --> 
+    <link rel="stylesheet" type="text/css" href="css/index.css" />
+    <link rel="stylesheet" href="css/themes/StockulatorTheme.css" />
+  	<link rel="stylesheet" href="css/themes/html5-pagination.css" />
+  	<link rel="stylesheet" href="css/themes/jquery.mobile.icons.min.css" />
+  	<link rel="stylesheet" href="css/jquery.mobile.structure-1.4.4.min.css"></script>
+  			
+  	<!-- Scripts we want executed before the page loads 
+  		 Other scripts that we don't care about are loaded after the page --!>
+  
+  	<!-- JS External scripts -->
+  	<script src="js/jquery-1.11.1.min.js"></script>
+  	<script src="js/jquery.mobile-1.4.4.min.js"></script> <!-- Use a local js text structure--!>
+	<script src="js/highstock.js" ></script>
+	<script src="js/highcharts-all.js"></script> <!-- There is some kind of problem here ... not affecting however -->
+	<script src="js/exporting.js"></script>
+				
+	<!-- JS - our own written scripts...-->
+	<script src="js/DataManager.js"></script>
+	<script src="js/DataPlotter.js"></script>
+  	<script src="js/ActionManager.js"></script>
+				
+<title>Hello World</title>
+</head>
+    
+<body>
+
+<!----------------------------------------
+         Start of the Home Page 
+ ----------------------------------------!>	
+<div data-role="page" id="home">
+	
+	<!-- Header of the Document -->
+	<div data-role="header" data-theme="a" data-position="fixed" data-id="vs_header">
+		<h1>Home</h1>
+		<a href="#home" data-icon="home" data-iconpos="notext">Home</a>
+		<a href="#info" data-icon="info" data-iconpos="notext" data-rel="dialog" >Info</a>
+	</div><!-- header -->
+	
+	<!-- Content Part of Document-->
+	<div data-theme="a" data-role="content" id="postlist">	
+	<!-- Place in here the shit that you need to put in your page .. --!>
+	<!-- TODO -fill me out ... --!> 
+	</div><!-- content -->
+	
+	<!-- Page Footer -->
+	<div data-role="footer" data-position="fixed" data-theme="a" data-id="vs_footer">
+		<div data-role="navbar">
+			<ul>
+				<li><a href="#" data-role="button" data-icon="home" >Home</a></li>
+				<li><a href="#portfolio" data-role="button" data-icon="plus" >Portfolio</a></li>
+				<li><a href="#stockInfo" data-role="button" data-icon="shop" >StockInfo</a></li>
+				<li><a href="#search" data-role="button" data-icon="search">search</a></li>
+				<li><a href="#games" data-role="button" data-icon="user">games</a></li>
+			</ul>
+		</div><!-- navbar -->
+	</div><!-- footer -->
+</div> <!-- End of HomePage -->
+
+
+<!----------------------------------------
+         Start of the portfolio Page 
+ ----------------------------------------!>			
+<div data-role="page" id="portfolio">
+	
+	<!-- Header of the Document -->
+	<div data-role="header" data-theme="a" data-position="fixed" data-id="vs_header">
+		<h1>Portfolio</h1>
+		<a href="#home" data-icon="home" data-iconpos="notext">Home</a>
+		<a href="#info" data-icon="info" data-iconpos="notext" data-rel="dialog" >Info</a>
+	</div><!-- header -->
+	
+	<!-- Content Part of Document-->
+	<div data-theme="a" data-role="content" id="postlist">	
+	<!-- Place in here the shit that you need to put in your page .. --!>
+	<!-- TODO -fill me out ... --!> 
+	</div><!-- content -->
+	
+	<!-- Page Footer -->
+	<div data-role="footer" data-position="fixed" data-theme="a" data-id="vs_footer">
+		<div data-role="navbar">
+			<ul>
+				<li><a href="#home" data-role="button" data-icon="home" >Home</a></li>
+				<li><a href="#" data-role="button" data-icon="plus" >Portfolio</a></li>
+				<li><a href="#stockInfo" data-role="button" data-icon="shop" >StockInfo</a></li>
+				<li><a href="#search" data-role="button" data-icon="search">search</a></li>
+				<li><a href="#games" data-role="button" data-icon="user">games</a></li>
+			</ul>
+		</div><!-- navbar -->
+	</div><!-- footer -->
+</div> <!-- End of portfolioPage -->
+
+
+<!----------------------------------------
+         Stock info Page 
+ ----------------------------------------!>			
+<div data-role="page" id="stockInfo">
+
+	<!-- Header of the Document -->
+	<div data-role="header" data-theme="a" data-position="fixed" data-id="vs_header">
+		<h1>Stock Info</h1>
+		<a href="#home" data-icon="home" data-iconpos="notext">Home</a>
+		<a href="#info" data-icon="info" data-iconpos="notext" data-rel="dialog" >Info</a>
+	</div><!-- header -->
+	
+	<!-- Content Part of Document-->
+	<div data-theme="a" data-role="content" id="postlist">	
+		<input type="search" name="searchBar" id="search-3" value="Enter ASX Code" data-theme="b" onkeyup="handle(event)" />	
+		<div id="stockChart" style="height: 300px; min-width: 310px"></div>
+	</div><!-- content -->
+	
+	<!-- Page Footer -->
+	<div data-role="footer" data-position="fixed" data-theme="a" data-id="vs_footer">
+		<div data-role="navbar">
+			<ul>
+				<li><a href="#home" data-role="button" data-icon="home" >Home</a></li>
+				<li><a href="#portfolio" data-role="button" data-icon="plus" >Portfolio</a></li>
+				<li><a href="#" data-role="button" data-icon="shop" >StockInfo</a></li>
+				<li><a href="#search" data-role="button" data-icon="search">search</a></li>
+				<li><a href="#games" data-role="button" data-icon="user">games</a></li>
+			</ul>
+		</div><!-- navbar -->
+	</div><!-- footer -->	
+</div> <!-- End of stockInfoPage -->
+
+
+<!----------------------------------------
+         Start of the search Page 
+ ----------------------------------------!>		
+<div data-role="page" id="search">
+	
+	<!-- Header of the Document -->
+	<div data-role="header" data-theme="a" data-position="fixed" data-id="vs_header">
+		<h1>Search</h1>
+		<a href="#home" data-icon="home" data-iconpos="notext">Home</a>
+		<a href="#info" data-icon="info" data-iconpos="notext" data-rel="dialog" >Info</a>
+	</div><!-- header -->
+	
+	<!-- Content Part of Document-->
+	<div data-theme="a" data-role="content" id="postlist">	
+	<!-- Place in here the shit that you need to put in your page .. --!>
+	<!-- TODO -fill me out ... --!> 
+	</div><!-- content -->
+	
+	<!-- Page Footer -->
+	<div data-role="footer" data-position="fixed" data-theme="a" data-id="vs_footer">
+		<div data-role="navbar">
+			<ul>
+				<li><a href="#home" data-role="button" data-icon="home" >Home</a></li>
+				<li><a href="#portfolio" data-role="button" data-icon="plus" >Portfolio</a></li>
+				<li><a href="#stockInfo" data-role="button" data-icon="shop" >StockInfo</a></li>
+				<li><a href="#" data-role="button" data-icon="search">search</a></li>
+				<li><a href="#games" data-role="button" data-icon="user">games</a></li>
+			</ul>
+		</div><!-- navbar -->
+	</div><!-- footer -->	
+</div> <!-- End of search Page -->
+
+
+<!----------------------------------------
+         Start of the games Page 
+ ----------------------------------------!>		
+<div data-role="page" id="game">
+
+	<!-- Header of the Document -->
+	<div data-role="header" data-theme="a" data-position="fixed" data-id="vs_header">
+		<h1>Games</h1>
+		<a href="#home" data-icon="home" data-iconpos="notext">Home</a>
+		<a href="#info" data-icon="info" data-iconpos="notext" data-rel="dialog" >Info</a>
+	</div><!-- header -->
+	
+	<!-- Content Part of Document-->
+	<div data-theme="a" data-role="content" id="postlist">	
+	<!-- Place in here the shit that you need to put in your page .. --!>
+	<!-- TODO -fill me out ... --!> 
+	</div><!-- content -->
+	
+	<!-- Page Footer -->
+	<div data-role="footer" data-position="fixed" data-theme="a" data-id="vs_footer">
+		<div data-role="navbar">
+			<ul>
+				<li><a href="#home" data-role="button" data-icon="home" >Home</a></li>
+				<li><a href="#portfolio" data-role="button" data-icon="plus" >Portfolio</a></li>
+				<li><a href="#stockInfo" data-role="button" data-icon="shop" >StockInfo</a></li>
+				<li><a href="#search" data-role="button" data-icon="search">search</a></li>
+				<li><a href="#" data-role="button" data-icon="user">games</a></li>
+			</ul>
+		</div><!-- navbar -->
+	</div><!-- footer -->	
+</div> <!-- End of gamesPage -->
+
+	<!-- Scripts that are okay to be executed after the respective pages have loaded -->
+    <script type="text/javascript" src="cordova.js"></script>
+    <script type="text/javascript" src="js/index.js"></script>       
+</body>
+<!-- End of the body of the document -->
+</html>
