@@ -27,9 +27,23 @@ def grabAllCodes():
 	# couldnt find a good solution so using this for now
 	page = ''.join(page.split('"'))
 	page = page.upper()
+
+	cleanedRecords = []
+
+	lines = page.split('\n')
+
+	cleanedRecords.append(lines[0])
+
+	for line in lines[3:]:
+		record = line.split(',')
+		if len(record) == 3:
+			record[1] += '.AX'
+			cleanedRecords.append(','.join(record))
+			
+	allCodes = '\n'.join(cleanedRecords)
 	
 	file = open('ASXCodes.csv', 'w')
-	file.write(page)
+	file.write(allCodes)
 	file.close()
 
 	return True
@@ -45,8 +59,6 @@ def getCodes(regex, industry = ''):
 #	print 'Searching for', regex, industry
 	
 	file = open('ASXCodes.csv', 'r')
-	file.readline()
-	file.readline()
 	file.readline()
 
 	page = file.read()
