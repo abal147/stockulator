@@ -33,6 +33,15 @@ def get_data(code=""):
 def get_data_historical(code="", numDays=30, filter=3, alpha=0.3):
    result = metric.metricData(code, numDays, filter, alpha)
    response.content_type = 'application/json'
-   return dumps(result);
+   return dumps(result)
+
+@app.post('/updateUser')
+@enable_cors
+def updateUser():
+	# Example server side function ... should get a user object in json..
+	# TODO - implement some form of password authentication ...
+	print "Recieved user object data. User Object is :" + request.json
+	
 
 run(app, host='localhost', port=8080, debug=True)
+

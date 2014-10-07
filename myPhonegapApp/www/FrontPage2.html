@@ -30,16 +30,57 @@
 	<script src="js/highstock.js" ></script>
 	<script src="js/highcharts-all.js"></script> <!-- There is some kind of problem here ... not affecting however -->
 	<script src="js/exporting.js"></script>
+	<script src="js/store+json2.min.js"></script> <!-- include our store js script here ... -->
 				
 	<!-- JS - our own written scripts...-->
 	<script src="js/DataManager.js"></script>
-	<script src="js/DataPlotter.js"></script>
+	<script src="js/PlotManager.js"></script>
   	<script src="js/ActionManager.js"></script>
 				
 <title>Hello World</title>
 </head>
     
 <body>
+
+<!----------------------------------------
+         Start of the signup/login Page 
+ ----------------------------------------!>	
+<div data-role="page" id="signup">
+	
+	<!-- Header of the Document -->
+	<div data-role="header" data-theme="a" data-position="fixed" data-id="vs_header">
+		<br>
+		<h1>Stockulator</h1>
+		<a href="#home" data-icon="home" data-iconpos="notext">Home</a>
+		<a href="#info" data-icon="info" data-iconpos="notext" data-rel="dialog" >Info</a>
+	</div><!-- header -->
+	
+	<!-- Content Part of Document-->
+	<div data-theme="a" data-role="content" id="postlist">	
+		<h4>Signup</h4>
+		<div data-role="fieldcontain">
+    		<label for="name">Username:</label>
+   	 		<input type="text" name="name" id="username" value=""  />
+		</div>	
+		<div data-role="fieldcontain">
+	         <label for="password">Password:</label>
+	         <input type="password" name="password" id="password" value="" />
+		</div>
+		<div data-role="fieldcontain">
+    		<label for="name">First Name:</label>
+   	 		<input type="text" name="name" id="firstname" value=""  />
+		</div>
+		<div data-role="fieldcontain">
+    		<label for="name">Last Name:</label>
+   	 		<input type="text" name="name" id="lastname" value=""  />
+		</div>
+		<div data-role="fieldcontain">
+	         <label for="email">Email:</label>
+	         <input type="email" name="email" id="email" value="" />
+		</div>
+		<button type="submit" data-theme="a" id = "signupSubmit">Sign Up</button>
+	</div><!-- content -->
+</div> <!-- End of LoginPage -->
 
 <!----------------------------------------
          Start of the Home Page 
@@ -50,7 +91,7 @@
 	<div data-role="header" data-theme="a" data-position="fixed" data-id="vs_header">
 		<h1>Home</h1>
 		<a href="#home" data-icon="home" data-iconpos="notext">Home</a>
-		<a href="#info" data-icon="info" data-iconpos="notext" data-rel="dialog" >Info</a>
+		<a href="#signup" data-icon="info" data-iconpos="notext" data-rel="dialog" >Info</a>
 	</div><!-- header -->
 	
 	<!-- Content Part of Document-->
@@ -88,8 +129,12 @@
 	
 	<!-- Content Part of Document-->
 	<div data-theme="a" data-role="content" id="postlist">	
-	<!-- Place in here the shit that you need to put in your page .. --!>
-	<!-- TODO -fill me out ... --!> 
+		<!-- Place in here the shit that you need to put in your page .. --!>
+		<!-- example .. stuff -->
+		<div id="pieChart" style="min-width: 310px; height: 250px; margin: 0 auto"></div>
+		<ul data-role="listview" data-filter="true" data-filter-placeholder="Filter my stocks..." data-inset="true">
+		</ul>
+		<!-- TODO -fill me out ... --!> 
 	</div><!-- content -->
 	
 	<!-- Page Footer -->
@@ -121,8 +166,49 @@
 	
 	<!-- Content Part of Document-->
 	<div data-theme="a" data-role="content" id="postlist">	
-		<input type="search" name="searchBar" id="search-3" value="Enter ASX Code" data-theme="b" onkeyup="handle(event)" />	
+		<input type="search" name="searchBar" id="search-3" class="search" value="Enter ASX Code" data-theme="b" onkeyup="handle(event)" />	
 		<div id="stockChart" style="height: 300px; min-width: 310px"></div>
+		<div class="ui-body ui-body-b">
+			<fieldset class="ui-grid-a">
+				<a href="#buyDialog" data-rel="popup" data-position-to="window" data-transition="pop" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b">Buy</a>
+				<a href="#watchDialog" data-rel="popup" data-position-to="window" data-transition="pop" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b">Watch</a>
+			</fieldset>
+		</div>
+		
+		<div data-role="popup" id="buyDialog" data-overlay-theme="b" data-theme="b" data-dismissible="false" style="max-width:400px;">
+   	 		<div data-role="header" data-theme="a">
+    		<h1>Buy Stock</h1>
+    		</div>
+    		<div role="main" class="ui-content">
+    			<p> Price : 100 </p>
+    			<p> StockID : WOW.ax </p>
+    			<p> stockName : Woolworths </p>
+        		<form>
+        			<div style="padding:10px 20px;">
+            			<div data-role="fieldcontain">
+							<label for="slider">Qty:</label>
+			 				<input type="range" name="slider" id="slider" value="50" min="0" max="1000" data-highlight="true"  />
+						</div>
+       				 </div>
+    			</form>
+    			<p> Cost : Qty x cost </p>
+        		<a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" data-rel="back">Cancel</a>
+        		<a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" id = "buyStock" data-rel="back" data-transition="flow">Buy</a>
+    		</div>
+		</div>
+		
+		<div data-role="popup" id="watchDialog" data-overlay-theme="b" data-theme="b" data-dismissible="false" style="max-width:400px;">
+   	 		<div data-role="header" data-theme="a">
+    		<h1>Watch Stock</h1>
+    		</div>
+    		<div role="main" class="ui-content">
+    			<p> Price : 100 </p>
+    			<p> StockID : WOW.ax </p>
+    			<p> stockName : Woolworths </p>
+        		<a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" data-rel="back">Cancel</a>
+        		<a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" id="watchStock" data-rel="back" data-transition="flow">Watch</a>
+    		</div>
+		</div>
 	</div><!-- content -->
 	
 	<!-- Page Footer -->
@@ -139,7 +225,6 @@
 	</div><!-- footer -->	
 </div> <!-- End of stockInfoPage -->
 
-
 <!----------------------------------------
          Start of the search Page 
  ----------------------------------------!>		
@@ -154,8 +239,9 @@
 	
 	<!-- Content Part of Document-->
 	<div data-theme="a" data-role="content" id="postlist">	
-	<!-- Place in here the shit that you need to put in your page .. --!>
-	<!-- TODO -fill me out ... --!> 
+		<!-- Place in here the shit that you need to put in your page .. --!>
+		<input type="search" name="searchBar" id="search-3" class="search-3" value="Enter ASX Code" data-theme="b" onkeyup="handle(event)" />
+		<!-- TODO -fill me out ... --!> 
 	</div><!-- content -->
 	
 	<!-- Page Footer -->
