@@ -201,14 +201,14 @@ function attachUserMethods(userObject) {
 	}
 	userObject.updateServer = function(){
 	// This function will update the server with the current state of this object...
-		var out = JSON.stringify(this);
-		$.ajax ({
-			url: 'http://ec2-54-79-50-63.ap-southeast-2.compute.amazonaws.com:8080/data_historical/' , // server address
-			type:'POST',
-			contentType : 'application/json',
-			data: { json: out},
-			dataType:'json'
-		});
+	// 	var out = JSON.stringify(this);
+// 		$.ajax ({
+// 			url: 'http://ec2-54-79-50-63.ap-southeast-2.compute.amazonaws.com:8080/data_historical/' , // server address
+// 			type:'POST',
+// 			contentType : 'application/json',
+// 			data: { json: out},
+// 			dataType:'json'
+// 		});
 	
 	}
 }
