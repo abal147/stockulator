@@ -28,12 +28,18 @@ function refreshStocks() {
 	}
 }
 
-function buyWatchStock(stockID,state){
-// Function is called when one wants to buy a stock that is currently selected
-	var stockName="woolworths";
+function buyWatchStock(stockID, state){
+  // Function is called when one wants to buy a stock that is currently selected
+  // state 0 is watching stock, state 1 is buying stock
+	var stockName = "woolworths"; // TODO - extract stock name?
 	var quantity = parseInt ($("#slider").val());
 	var price = 100; // TODO - fix this...
-	addStockToUser(stockID,stockName,quantity,price,state);
+  var targetPrice = 0;
+	if(state == 0) {
+	  targetPrice = $("#targetPrice").val();
+  }
+	console.log("TARGET PRICE IS: " + targetPrice);
+	addStockToUser(stockID, stockName, quantity, price, targetPrice, state);
 	
 	//refresh appropriate document elements which display owned stocks...
 	refreshStocks();
@@ -105,6 +111,7 @@ $(document).ready (function(){
 	console.log("here");
 	// 4. Load Dynamic Content
 	refreshStocks();
+	populateWatchlist();
 
 
 });

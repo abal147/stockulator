@@ -130,11 +130,11 @@ function createUserFromData(userName,firstName,secondName,email){
 	return 1;
 }
 
-function addStockToUser (stockID,stockName,quantity,price,state){
+function addStockToUser (stockID,stockName,quantity,price,targetPrice,state){
 // This function will add a given stock to our user object
 // State determines if the stock is bought = 1 , or watching = 0
 	// 1. Create the stock Object
-	var tempStock = new stockObj(stockID,stockName,quantity,price);
+	var tempStock = new stockObj(stockID,stockName,quantity,price,targetPrice);
 	
 	// 2. Append to the correct user dict
 	window.user.addStock(tempStock,state);
@@ -229,13 +229,15 @@ function userObj (userName,firstName,lastName,email) {
 }
 
 // 2. Stock Object
-function stockObj (stockID,stockName,quantity,price) {
+function stockObj (stockID,stockName,quantity,price,targetPrice) {
 	this.stockID=stockID;
 	this.stockName = stockName;
 	this.quantity=quantity;
 	this.purchaseDate = 0;
-	this.purchasePrice=price;
+	this.purchasePrice=price;       //Or price of stock if being added to watchlist
 	this.currentPrice=price;
+  this.targetPrice=targetPrice;   //Used for watchlist
+	
 	var historicalData=null; // private variable...
 	// historical data remains undefined until it is pulled for that stock
 	// at which point it remains until the application closes....

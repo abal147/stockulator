@@ -17,7 +17,6 @@
     <!-- CSS Stylesheets - local files are used to reduce load time /network --> 
     <link rel="stylesheet" type="text/css" href="css/index.css" />
     <link rel="stylesheet" href="css/themes/StockulatorTheme.css" />
-  	<link rel="stylesheet" href="css/themes/html5-pagination.css" />
   	<link rel="stylesheet" href="css/themes/jquery.mobile.icons.min.css" />
   	<link rel="stylesheet" href="css/jquery.mobile.structure-1.4.4.min.css"></script>
   			
@@ -34,9 +33,9 @@
 				
 	<!-- JS - our own written scripts...-->
 	<script src="js/DataManager.js"></script>
-	<script src="js/SearchManager.js"></script>
+	<script src="js/TableManager.js"></script>
 	<script src="js/PlotManager.js"></script>
-  	<script src="js/ActionManager.js"></script>
+  <script src="js/ActionManager.js"></script>
   			
 <title>Hello World</title>
 </head>
@@ -71,7 +70,7 @@
 				<li><a href="#" class="ui-btn-active ui-state-persist" data-icon="home" >Home</a></li>
 				<li><a href="#portfolio" data-role="button" data-icon="plus" >Portfolio</a></li>
 				<li><a href="#stockInfo" data-role="button" data-icon="shop" >StockInfo</a></li>
-				<li><a href="#watchlist" data-role="button" data-icon="search">Watchlist</a></li>
+				<li><a href="#watchlist" data-role="button" data-icon="search" onclick="populateWatchlist()">Watchlist</a></li>
 				<li><a href="#games" data-role="button" data-icon="user">games</a></li>
 			</ul>
 		</div><!-- navbar -->
@@ -109,7 +108,7 @@
 				<li><a href="#home" data-role="button" data-icon="home" >Home</a></li>
 				<li><a href="#" class="ui-btn-active ui-state-persist" data-role="button" data-icon="plus" >Portfolio</a></li>
 				<li><a href="#stockInfo" data-role="button" data-icon="shop" >StockInfo</a></li>
-				<li><a href="#watchlist" data-role="button" data-icon="search">Watchlist</a></li>
+				<li><a href="#watchlist" data-role="button" data-icon="search" onclick="populateWatchlist()">Watchlist</a></li>
 				<li><a href="#games" data-role="button" data-icon="user">games</a></li>
 			</ul>
 		</div><!-- navbar -->
@@ -143,38 +142,39 @@
 		</div>
 		
 		<div data-role="popup" id="buyDialog" data-overlay-theme="b" data-theme="b" data-dismissible="false" style="max-width:400px;">
-   	 		<div data-role="header" data-theme="a">
-    		<h1>Buy Stock</h1>
-    		</div>
-    		<div role="main" class="ui-content">
-    			<p> Price : 100 </p>
-    			<p> StockID : WOW.ax </p>
-    			<p> stockName : Woolworths </p>
-        		<form>
-        			<div style="padding:10px 20px;">
-            			<div data-role="fieldcontain">
-							<label for="slider">Qty:</label>
-			 				<input type="range" name="slider" id="slider" value="50" min="0" max="1000" data-highlight="true"  />
-						</div>
-       				 </div>
-    			</form>
-    			<p> Cost : Qty x cost </p>
-        		<a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" data-rel="back">Cancel</a>
-        		<a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" id = "buyStock" data-rel="back" data-transition="flow">Buy</a>
-    		</div>
+ 	 		<div data-role="header" data-theme="a">
+  		  <h1>Buy Stock</h1>
+  		</div>
+  		<div role="main" class="ui-content">
+  			<p> Price : 100 </p>
+  			<p> StockID : WOW.ax </p>
+  			<p> stockName : Woolworths </p>
+      		<form>
+      			<div style="padding:10px 20px;">
+        			<div data-role="fieldcontain">
+					      <label for="slider">Qty:</label>
+	 				      <input type="range" name="slider" id="slider" value="50" min="0" max="1000" data-highlight="true"  />
+				      </div>
+     		    </div>
+  			  </form>
+  			<p> Cost : Qty x cost </p>
+    		<a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" data-rel="back">Cancel</a>
+    		<a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" id="buyStock" data-rel="back" data-transition="flow">Buy</a>
+  		</div>
 		</div>
 		
 		<div data-role="popup" id="watchDialog" data-overlay-theme="b" data-theme="b" data-dismissible="false" style="max-width:400px;">
-   	 		<div data-role="header" data-theme="a">
+   	 	<div data-role="header" data-theme="a">
     		<h1>Watch Stock</h1>
-    		</div>
-    		<div role="main" class="ui-content">
-    			<p> Price : 100 </p>
-    			<p> StockID : WOW.ax </p>
-    			<p> stockName : Woolworths </p>
-        		<a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" data-rel="back">Cancel</a>
-        		<a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" id="watchStock" data-rel="back" data-transition="flow">Watch</a>
-    		</div>
+    	</div>
+    	<div role="main" class="ui-content">
+  			<p> Price : 100 </p>
+  			<p> StockID : WOW.ax </p>
+  			<p> stockName : Woolworths </p>
+  			<input type="number" id="targetPrice" value="200" />    <!-- default value should be changed to currentPrice + someAmount -->
+    		<a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" data-rel="back">Cancel</a>
+    		<a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" id="watchStock" data-rel="back" data-transition="flow">Watch</a>
+    	</div>
 		</div>
 	</div><!-- content -->
 	
@@ -185,7 +185,7 @@
 				<li><a href="#home" data-role="button" data-icon="home" >Home</a></li>
 				<li><a href="#portfolio" data-role="button" data-icon="plus" >Portfolio</a></li>
 				<li><a href="#" class="ui-btn-active ui-state-persist" data-role="button" data-icon="shop" >StockInfo</a></li>
-				<li><a href="#watchlist" data-role="button" data-icon="search">Watchlist</a></li>
+				<li><a href="#watchlist" data-role="button" data-icon="search" onclick="populateWatchlist()">Watchlist</a></li>
 				<li><a href="#games" data-role="button" data-icon="user">games</a></li>
 			</ul>
 		</div><!-- navbar -->
@@ -199,7 +199,7 @@
 	
 	<!-- Header of the Document -->
 	<div data-role="header" data-theme="a" data-position="fixed" data-id="vs_header">
-		<h1>Search</h1>
+		<h1>Watchlist</h1>
 		<a href="#home" data-icon="home" data-iconpos="notext">Home</a>
 		<a href="#info" data-icon="info" data-iconpos="notext" data-rel="dialog" >Info</a>
 	</div><!-- header -->
@@ -208,7 +208,7 @@
 	<div data-theme="a" data-role="content" id="postlist">	
 		<!-- Place in here the shit that you need to put in your page .. --!>
 		<input type="search" name="searchbar" id="search-3" class="search" placeholder="Enter ASX Code" data-theme="b" onkeyup="handle(event, value)" />
-		<table id="myTable">
+		<table id="myWatchlist">
     </table>
 		<!-- TODO -fill me out ... --!> 
 	</div><!-- content -->
@@ -220,7 +220,7 @@
 				<li><a href="#home" data-role="button" data-icon="home" >Home</a></li>
 				<li><a href="#portfolio" data-role="button" data-icon="plus" >Portfolio</a></li>
 				<li><a href="#stockInfo" data-role="button" data-icon="shop" >StockInfo</a></li>
-				<li><a href="#" class="ui-btn-active ui-state-persist" data-role="button" data-icon="search">Watchlist</a></li>
+				<li><a href="#" class="ui-btn-active ui-state-persist" data-role="button" data-icon="search" onclick="populateWatchlist()">Watchlist</a></li>
 				<li><a href="#games" data-role="button" data-icon="user">games</a></li>
 			</ul>
 		</div><!-- navbar -->
@@ -253,7 +253,7 @@
 				<li><a href="#home" data-role="button" data-icon="home" >Home</a></li>
 				<li><a href="#portfolio" data-role="button" data-icon="plus" >Portfolio</a></li>
 				<li><a href="#stockInfo" data-role="button" data-icon="shop" >StockInfo</a></li>
-				<li><a href="#watchlist" data-role="button" data-icon="search">Watchlist</a></li>
+				<li><a href="#watchlist" data-role="button" data-icon="search" onclick="populateWatchlist()">Watchlist</a></li>
 				<li><a href="#" class="ui-btn-active ui-state-persist" data-role="button" data-icon="user">games</a></li>
 			</ul>
 		</div><!-- navbar -->
