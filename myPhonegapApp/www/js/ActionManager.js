@@ -6,26 +6,15 @@ function handle(e, code){
  	if(e.keyCode === 13){
  	// TODO - change this to focus etc...
  	// Also, change to be more of the jquery style etc...
- 		//code = $("#search-3").val();
-    //code = document.getElementbyId("search-3").value;
+
 
 		console.log("Code is:" + code);
 		setCurrentStock(code);
 		window.location.href = "#stockInfo";    //redirects to stockInfo page
-    plotData(getCurrentStock(), 200);
+    plotData(code, 200);                    //TODO - need to clear plot for invalid search code
 		makeRequest(code);
  	}
 
-}
-
-$("#search-3").bind( "focus", function(event, ui) {
-  console.log("hi");
-});
-
-
-function clear() {
-  console.log("Search bar clicked");
-  document.getElementById(id).value = "";
 }
 
 function refreshStocks() {
