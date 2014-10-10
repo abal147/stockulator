@@ -2,17 +2,30 @@
 // This JS has the following responsibilities :
 // 1. Handle dynamic actions involved with boxes and elements of a page 
 // 2. Handle Initialisation of page loading w.r.t jquery and javascript
-function handle(e){
+function handle(e, code){
  	if(e.keyCode === 13){
  	// TODO - change this to focus etc...
  	// Also, change to be more of the jquery style etc...
- 		code = $("#search-3").val();
+ 		//code = $("#search-3").val();
+    //code = document.getElementbyId("search-3").value;
+
 		console.log("Code is:" + code);
-		setCurrentStock($("#search-3").val());
-		plotData(code,300); // lets plot data from the last 300 days for the code...
-		makeRequest(code); // call eddies script to make the request..
+		setCurrentStock(code);
+		window.location.href = "#stockInfo";    //redirects to stockInfo page
+    plotData(getCurrentStock(), 200);
+		makeRequest(code);
  	}
- 	return false;
+
+}
+
+$("#search-3").bind( "focus", function(event, ui) {
+  console.log("hi");
+});
+
+
+function clear() {
+  console.log("Search bar clicked");
+  document.getElementById(id).value = "";
 }
 
 function refreshStocks() {
@@ -42,6 +55,8 @@ function buyWatchStock(stockID,state){
 // Main Document Manipulation Script
 // This script will be run by all documents to perform manipulation of the page..
 $(document).ready (function(){
+
+	console.log("Document Manipulation Script has been run");
 	
 	// 1. initialise mobile loader
 	$( document ).bind( 'mobileinit', function(){
@@ -102,10 +117,6 @@ $(document).ready (function(){
 	// 4. Load Dynamic Content
 	refreshStocks();
 
+
 });
-
-
-//Clear Text Box : When text box is clicked...clear it
-// TODO
-
 
