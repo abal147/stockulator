@@ -98,7 +98,7 @@
 		<div id="pieChart" style="min-width: 310px; height: 250px; margin: 0 auto"></div>
 		<ul data-role="listview" data-filter="true" data-filter-placeholder="Filter my stocks..." data-inset="true">
 		</ul>
-		
+
     <ul id="myPortfolio" data-role="listview" data-inset="true">
     </ul>
 
@@ -176,7 +176,8 @@
   			<p> Price : 100 </p>
   			<p> StockID : WOW.ax </p>
   			<p> stockName : Woolworths </p>
-  			<input type="number" id="targetPrice" value="200" />    <!-- default value should be changed to currentPrice + someAmount -->
+  			<input type="number" id="targetPrice" placeholder="Target Price" />    <!-- default value should be changed to currentPrice + someAmount. 
+  			                                                                              Also need to check that value is valid -->
     		<a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" data-rel="back">Cancel</a>
     		<a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" id="watchStock" data-rel="back" data-transition="flow">Watch</a>
     	</div>
@@ -213,8 +214,10 @@
 	<div data-theme="a" data-role="content" id="postlist">	
 		<!-- Place in here the shit that you need to put in your page .. --!>
 		<input type="search" name="searchbar" id="search-3" class="search" placeholder="Enter ASX Code" data-theme="b" onkeyup="handle(event, value)" />
-		<table id="myWatchlist">
-    </table>
+
+    <ul id="myWatchlist" data-role="listview" data-inset="true">
+    </ul>
+		
 		<!-- TODO -fill me out ... --!> 
 	</div><!-- content -->
 	

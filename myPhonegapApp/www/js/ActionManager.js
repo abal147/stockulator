@@ -111,7 +111,7 @@ $(document).ready (function(){
 	console.log("here");
 	// 4. Load Dynamic Content
 	refreshStocks();
-	//populatePortfolio();
+	populatePortfolio();
 	populateWatchlist();
 	
  

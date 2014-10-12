@@ -1,3 +1,6 @@
+
+var FIRST = 1;
+
 //Can probably re-write this function without specifically parsing the stringified JSON
 function makeRequest(code){
 
@@ -50,6 +53,9 @@ function makeRequest(code){
 }  
 
 
+/*
+
+//Will nice-ify this soon :D
 function populateWatchlist() {
 
   console.log("Populating watchlist");
@@ -77,10 +83,64 @@ function populateWatchlist() {
     currRow.appendChild(data);    
   }
 } 
+*/
+
+function populateWatchlist() {
+
+  console.log("Populating portfolio");
+
+  //Removes everything of class "portfolioRow"
+  $(".watchlistRow").remove();
 
 
-//For some retarded reason, this function works the first time it's called, and then
-//never again as intended until you refresh the page
+  //Doesn't seem to be a length function for watchedStocks
+  var last = 0;
+  for(var key in window.user.watchedStocks) {
+    last++;
+  }
+
+  //Append to list for each stock in watchedStocks
+  var count = FIRST;
+  for(var key in window.user.watchedStocks) {
+  
+    var li = '<li class="watchlistRow ui-btn ui-btn-icon-right';
+    if(count == FIRST) {
+      li = li + ' ui-first-child';
+    }
+    if(count == last) {
+      li = li + ' ui-last-child';
+    }
+    li = li + '">';
+
+    var stock = window.user.watchedStocks[key];
+    var difference = stock.purchasePrice - stock.currentPrice;
+    var text = stock.stockID + " Diff: " + difference + " " + (difference / stock.purchasePrice) + "%"
+      + " Current Price: " + stock.currentPrice + " Target Price: " + stock.targetPrice;
+    var span = "";
+    var a = '<a href="#" class="ui-btn ui-btn-icon-right ';
+
+    
+    if(stock.currentPrice > stock.purchasePrice) {
+      a = a + 'ui-icon-arrow-u">';
+      span = '<span style="color:green">';
+    } else if(stock.currentPrice == stock.purchasePrice) {
+      a = a + 'ui-icon-minus">';
+      span = '<span style="color:black">';
+    } else {
+      a = a + 'ui-icon-arrow-d">';
+      span = '<span style="color:red">';
+    }
+
+    $("#myWatchlist").append(li + a + span + text + '</span></a></li>');
+    count++;
+    
+  }
+  
+}
+
+
+
+//TODO: left, center and right-align text in the same line
 function populatePortfolio() {
 
   console.log("Populating portfolio");
@@ -88,25 +148,46 @@ function populatePortfolio() {
   //Removes everything of class "portfolioRow"
   $(".portfolioRow").remove();
 
+
+  //Doesn't seem to be a length function for ownedStocks
+  var last = 0;
   for(var key in window.user.ownedStocks) {
+    last++;
+  }
+
+  //Append to list for each stock in ownedStocks
+  var count = FIRST;
+  for(var key in window.user.ownedStocks) {
+  
+    var li = '<li class="portfolioRow ui-btn ui-btn-icon-right';
+    if(count == FIRST) {
+      li = li + ' ui-first-child';
+    }
+    if(count == last) {
+      li = li + ' ui-last-child';
+    }
+    li = li + '">';
+
     var stock = window.user.ownedStocks[key];
-    var text = stock.stockID;
-    
-    var li = '<li class="portfolioRow ui-btn" ';
+    var difference = stock.purchasePrice - stock.currentPrice;
+    var text = stock.stockID + " Difference: " + difference + " " + (difference / stock.purchasePrice) + "%";
     var span = "";
+    var a = '<a href="#" class="ui-btn ui-btn-icon-right ';              //Can change href to a popup window for selling stocks
+
     
     if(stock.currentPrice > stock.purchasePrice) {
-      li = li + 'data-icon="arrow-u">';
+      a = a + 'ui-icon-arrow-u">';
       span = '<span style="color:green">';
     } else if(stock.currentPrice == stock.purchasePrice) {
-      li = li + 'data-icon="minus">';
+      a = a + 'ui-icon-minus">';
       span = '<span style="color:black">';
     } else {
-      li = li + 'data-icon="arrow-d">';
+      a = a + 'ui-icon-arrow-d">';
       span = '<span style="color:red">';
     }
-    
-    $("#myPortfolio").append(li + '<a href="#">' + span + text + '</span></a></li>');
+
+    $("#myPortfolio").append(li + a + span + text + '</span></a></li>');
+    count++;
     
   }
   
