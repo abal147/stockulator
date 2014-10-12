@@ -68,7 +68,7 @@
 		<div data-role="navbar">
 			<ul>
 				<li><a href="#" class="ui-btn-active ui-state-persist" data-icon="home" >Home</a></li>
-				<li><a href="#portfolio" data-role="button" data-icon="plus" >Portfolio</a></li>
+				<li><a href="#portfolio" data-role="button" data-icon="plus" onclick="populatePortfolio()">Portfolio</a></li>
 				<li><a href="#stockInfo" data-role="button" data-icon="shop" >StockInfo</a></li>
 				<li><a href="#watchlist" data-role="button" data-icon="search" onclick="populateWatchlist()">Watchlist</a></li>
 				<li><a href="#games" data-role="button" data-icon="user">games</a></li>
@@ -98,6 +98,11 @@
 		<div id="pieChart" style="min-width: 310px; height: 250px; margin: 0 auto"></div>
 		<ul data-role="listview" data-filter="true" data-filter-placeholder="Filter my stocks..." data-inset="true">
 		</ul>
+		
+    <ul id="myPortfolio" data-role="listview" data-inset="true">
+    </ul>
+
+		
 		<!-- TODO -fill me out ... --!> 
 	</div><!-- content -->
 	
@@ -106,7 +111,7 @@
 		<div data-role="navbar">
 			<ul>
 				<li><a href="#home" data-role="button" data-icon="home" >Home</a></li>
-				<li><a href="#" class="ui-btn-active ui-state-persist" data-role="button" data-icon="plus" >Portfolio</a></li>
+				<li><a href="#" class="ui-btn-active ui-state-persist" data-role="button" data-icon="plus" onclick="populatePortfolio()">Portfolio</a></li>
 				<li><a href="#stockInfo" data-role="button" data-icon="shop" >StockInfo</a></li>
 				<li><a href="#watchlist" data-role="button" data-icon="search" onclick="populateWatchlist()">Watchlist</a></li>
 				<li><a href="#games" data-role="button" data-icon="user">games</a></li>
@@ -183,7 +188,7 @@
 		<div data-role="navbar">
 			<ul>
 				<li><a href="#home" data-role="button" data-icon="home" >Home</a></li>
-				<li><a href="#portfolio" data-role="button" data-icon="plus" >Portfolio</a></li>
+				<li><a href="#portfolio" data-role="button" data-icon="plus" onclick="populatePortfolio()">Portfolio</a></li>
 				<li><a href="#" class="ui-btn-active ui-state-persist" data-role="button" data-icon="shop" >StockInfo</a></li>
 				<li><a href="#watchlist" data-role="button" data-icon="search" onclick="populateWatchlist()">Watchlist</a></li>
 				<li><a href="#games" data-role="button" data-icon="user">games</a></li>
@@ -218,7 +223,7 @@
 		<div data-role="navbar">
 			<ul>
 				<li><a href="#home" data-role="button" data-icon="home" >Home</a></li>
-				<li><a href="#portfolio" data-role="button" data-icon="plus" >Portfolio</a></li>
+				<li><a href="#portfolio" data-role="button" data-icon="plus" onclick="populatePortfolio()">Portfolio</a></li>
 				<li><a href="#stockInfo" data-role="button" data-icon="shop" >StockInfo</a></li>
 				<li><a href="#" class="ui-btn-active ui-state-persist" data-role="button" data-icon="search" onclick="populateWatchlist()">Watchlist</a></li>
 				<li><a href="#games" data-role="button" data-icon="user">games</a></li>
@@ -251,7 +256,7 @@
 		<div data-role="navbar">
 			<ul>
 				<li><a href="#home" data-role="button" data-icon="home" >Home</a></li>
-				<li><a href="#portfolio" data-role="button" data-icon="plus" >Portfolio</a></li>
+				<li><a href="#portfolio" data-role="button" data-icon="plus" onclick="populatePortfolio()">Portfolio</a></li>
 				<li><a href="#stockInfo" data-role="button" data-icon="shop" >StockInfo</a></li>
 				<li><a href="#watchlist" data-role="button" data-icon="search" onclick="populateWatchlist()">Watchlist</a></li>
 				<li><a href="#" class="ui-btn-active ui-state-persist" data-role="button" data-icon="user">games</a></li>

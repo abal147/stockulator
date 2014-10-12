@@ -76,7 +76,42 @@ function populateWatchlist() {
     data.appendChild(text);
     currRow.appendChild(data);    
   }
-}   
+} 
+
+
+//For some retarded reason, this function works the first time it's called, and then
+//never again as intended until you refresh the page
+function populatePortfolio() {
+
+  console.log("Populating portfolio");
+
+  //Removes everything of class "portfolioRow"
+  $(".portfolioRow").remove();
+
+  for(var key in window.user.ownedStocks) {
+    var stock = window.user.ownedStocks[key];
+    var text = stock.stockID;
+    
+    var li = '<li class="portfolioRow ui-btn" ';
+    var span = "";
+    
+    if(stock.currentPrice > stock.purchasePrice) {
+      li = li + 'data-icon="arrow-u">';
+      span = '<span style="color:green">';
+    } else if(stock.currentPrice == stock.purchasePrice) {
+      li = li + 'data-icon="minus">';
+      span = '<span style="color:black">';
+    } else {
+      li = li + 'data-icon="arrow-d">';
+      span = '<span style="color:red">';
+    }
+    
+    $("#myPortfolio").append(li + '<a href="#">' + span + text + '</span></a></li>');
+    
+  }
+  
+}
+
 
 
    
