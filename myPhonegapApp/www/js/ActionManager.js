@@ -7,12 +7,46 @@ function handle(e){
  	// TODO - change this to focus etc...
  	// Also, change to be more of the jquery style etc...
  		code = $("#search-3").val();
-		console.log("Code is:" + code);
+		console.log("Handler: Code is:" + code );
 		setCurrentStock($("#search-3").val());
 		plotData(code,300); // lets plot data from the last 300 days for the code...
 		makeRequest(code); // call eddies script to make the request..
  	}
  	return false;
+}
+
+function handleNameSearch(e){
+	console.log("handleNameSearch: keyCode: " + e.keyCode);
+	if (e.keyCode === 13) {
+		refreshASXCodes();
+	}
+	code = $('#nameSearch').val();
+	console.log("handleNameSearch: code:" + code);
+	return false;
+}
+
+function refreshASXCodes() {
+/*
+	$.getJSON("https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20html%20where%20url%3D%22http%3A%2F%2Fwww.asx.com.au%2Fasx%2Fresearch%2FASXListedCompanies.csv%22&format=json"
+		, function(data) {
+			var result = data.query.results.body.p;
+			var csvLines = result.split("\" ");
+			for(var i = 0; i < csvLines.length; ++i) {
+				console.log(csvLines[i]);
+			}
+		});
+*/
+	$.get("http://www.asx.com.au/asx/research/ASXListedCompanies.csv"
+		, function(data) {
+			localStorage.setItem("stockCSV",data);
+			console.log("Downloaded CSV")
+		}
+	);
+
+	var lines = localStorage.getItem("stockCSV");
+	for (var i = 0; i < 10; ++i) {
+		console.log(lines.split("\n")[i]);
+	}
 }
 
 function refreshStocks() {
