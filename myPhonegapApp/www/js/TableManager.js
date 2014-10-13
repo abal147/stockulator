@@ -1,6 +1,4 @@
 
-var FIRST = 1;
-
 //Can probably re-write this function without specifically parsing the stringified JSON
 function makeRequest(code){
 
@@ -52,66 +50,17 @@ function makeRequest(code){
   });
 }  
 
-
-/*
-
-//Will nice-ify this soon :D
 function populateWatchlist() {
 
   console.log("Populating watchlist");
- 
-  var table = document.getElementById("myWatchlist");
-
-  //Clean out the rows from earlier watchlists
-  var rowCount = table.rows.length;
-  while(rowCount > 0) {
-    table.deleteRow();
-    rowCount--;
-  }
-      
-  //Insert rows into table
-
-  for(var key in window.user.watchedStocks) {
-    var stock = window.user.watchedStocks[key];
-    //console.log(stock.stockID + "  " + stock.purchasePrice + "  " + stock.currentPrice);
-
-    var currRow = table.insertRow();
-    var data = document.createElement("TD");
-    var text = document.createTextNode(stock.stockID + "   Original Price: " + stock.purchasePrice 
-      + "   Current Price: " + stock.currentPrice + "   Target Price: " + stock.targetPrice);
-    data.appendChild(text);
-    currRow.appendChild(data);    
-  }
-} 
-*/
-
-function populateWatchlist() {
-
-  console.log("Populating portfolio");
 
   //Removes everything of class "portfolioRow"
   $(".watchlistRow").remove();
 
-
-  //Doesn't seem to be a length function for watchedStocks
-  var last = 0;
-  for(var key in window.user.watchedStocks) {
-    last++;
-  }
-
   //Append to list for each stock in watchedStocks
-  var count = FIRST;
   for(var key in window.user.watchedStocks) {
   
-    var li = '<li class="watchlistRow ui-btn ui-btn-icon-right';
-    if(count == FIRST) {
-      li = li + ' ui-first-child';
-    }
-    if(count == last) {
-      li = li + ' ui-last-child';
-    }
-    li = li + '">';
-
+    var li = '<li class="watchlistRow ui-btn ui-btn-icon-right">';
     var stock = window.user.watchedStocks[key];
     var difference = stock.purchasePrice - stock.currentPrice;
     var text = stock.stockID + " Diff: " + difference + " " + (difference / stock.purchasePrice) + "%"
@@ -132,9 +81,11 @@ function populateWatchlist() {
     }
 
     $("#myWatchlist").append(li + a + span + text + '</span></a></li>');
-    count++;
     
   }
+  
+  $("#myWatchlist .watchlistRow:first-child").addClass("ui-first-child");
+  $("#myWatchlist .watchlistRow:last-child").addClass("ui-last-child");
   
 }
 
@@ -148,26 +99,10 @@ function populatePortfolio() {
   //Removes everything of class "portfolioRow"
   $(".portfolioRow").remove();
 
-
-  //Doesn't seem to be a length function for ownedStocks
-  var last = 0;
-  for(var key in window.user.ownedStocks) {
-    last++;
-  }
-
   //Append to list for each stock in ownedStocks
-  var count = FIRST;
   for(var key in window.user.ownedStocks) {
   
-    var li = '<li class="portfolioRow ui-btn ui-btn-icon-right';
-    if(count == FIRST) {
-      li = li + ' ui-first-child';
-    }
-    if(count == last) {
-      li = li + ' ui-last-child';
-    }
-    li = li + '">';
-
+    var li = '<li class="portfolioRow ui-btn ui-btn-icon-right">';
     var stock = window.user.ownedStocks[key];
     var difference = stock.purchasePrice - stock.currentPrice;
     var text = stock.stockID + " Difference: " + difference + " " + (difference / stock.purchasePrice) + "%";
@@ -187,9 +122,11 @@ function populatePortfolio() {
     }
 
     $("#myPortfolio").append(li + a + span + text + '</span></a></li>');
-    count++;
     
   }
+  
+  $("#myPortfolio .portfolioRow:first-child").addClass("ui-first-child");
+  $("#myPortfolio .portfolioRow:last-child").addClass("ui-last-child");
   
 }
 
