@@ -11,13 +11,15 @@ function plotPieChart (title,stocks) {
 	// 1. Calculate number of stocks held
 	var totalStocks=0;
 	for (var stockID in stocks) {
-		totalStocks += stocks[stockID].quantity;
+		totalStocks += stocks[stockID].getQuantity();
 	}
 	
 	// 2. Create the required graph series ...
 	var seriesData = [];
 	for (var stockID in stocks) {
-		seriesData.push([stockID , (stocks[stockID].quantity/totalStocks) * 100.00 ] );
+		console.log("Stock : " + stockID + " quantity is: ");
+		console.log(stocks[stockID].getQuantity()); 
+		seriesData.push([stockID , (stocks[stockID].getQuantity()/totalStocks) * 100.00 ] );
 		// TODO - could implement it such that the most profitable stock is sliced..
 	}
 	

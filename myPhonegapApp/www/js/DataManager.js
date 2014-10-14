@@ -133,19 +133,46 @@ function createUserFromData(userName,firstName,secondName,email){
 function addStockToUser (stockID,stockName,quantity,price,targetPrice,state){
 // This function will add a given stock to our user object
 // State determines if the stock is bought = 1 , or watching = 0
-	// 1. Create the stock Object
-	var tempStock = new stockObj(stockID,stockName,quantity,price,targetPrice);
+	// 1. Check if stock already exists in user object
+
+		if (stockID in window.user.ownedStocks){
+			if (state == 1 ) {
+				console.log("Stock : " + stockID + " already exists");
+				window.user.ownedStocks[stockID].quantity.push(quantity);
+				window.user.ownedStocks[stockID].purchaseDate.push(new Date().getTime());
+				window.user.ownedStocks[stockID].purchasePrice.push(price);
+			}
+			else {
+				// We have a bought stock that someone wants to watch
+				// this does not make sense -- logic error - should not be allowed...
+				console.log("Stock is not added to watched list since it is already bought!");
+			}
+		}
+		else if (stockID in window.user.watchedStocks) {
+			
+			if (state == 1) {
+				// The stock is currently in the watched list ... remove from watched list and add to bought list
+				delete window.user.watchedStocks[stockID];
+				var tempStock = new stockObj(stockID,stockName,quantity,price,targetPrice);
+				window.user.addStock(tempStock,state);
+			}
+			else {
+				// stock is already watched but someone wants to watch it again --- logic error
+				console.log("Stock already watched");
+			}
+		}
+		else {	
+			var tempStock = new stockObj(stockID,stockName,quantity,price,targetPrice);
 	
-	// 2. Append to the correct user dict
-	window.user.addStock(tempStock,state);
-	
-	// 3. Save the window user again such that the stock is saved
+			// 2. Append to the correct user dict
+			window.user.addStock(tempStock,state);
+
+		}
 	window.user.save();
-	
 	console.log("User is:");
 	console.log(window.user);
-	
 }
+
 // ------------------------------------------------------------ 
 
 
@@ -213,44 +240,40 @@ function attachUserMethods(userObject) {
 	}
 }
 
-// 1. User Object
-function userObj (userName,firstName,lastName,email) {
-// used to store user data etc ... whilst the program is running
-	this.userName=userName;
-	this.firstName= firstName;
-	this.lastName= lastName;
-	this.email = email;
-	this.netProfit=0; // not sure if we need this..
-	this.lastUpdate=0; // update has not occured today
+function attachStockMethods(stockObject){
+	stockObject.getQuantity=function() {
+		// Return quantity of the stock
+		var out=0;
+		for (var quantity in stockObject.quantity ) {
+			out=stockObject.quantity[quantity] + out;
+		}
+		return out;
+	}
 	
-	this.ownedStocks = {}; // associative array of owned stock objects
-	this.watchedStocks = {}; // associative array of watching stocks
-	attachUserMethods(this); // attach the user methods to this object..
-}
-
-// 2. Stock Object
-function stockObj (stockID,stockName,quantity,price,targetPrice) {
-	this.stockID=stockID;
-	this.stockName = stockName;
-	this.quantity=quantity;
-	this.purchaseDate = 0;
-	this.purchasePrice=price;       //Or price of stock if being added to watchlist
-	this.currentPrice=price;
-  this.targetPrice=targetPrice;   //Used for watchlist
+	stockObject.getCurrentValue=function(){
+		// Returns the total value of a stock
+		return stockObject.getQuantity() * stockObject.currentPrice; 
+		// NB - assuming current price is correct....
+		// Check that current price is correct
+	}
 	
-	var historicalData=null; // private variable...
-	// historical data remains undefined until it is pulled for that stock
-	// at which point it remains until the application closes....
-	this.getHistoricalData= function () {
+	stockObject.getProfit=function(){
+		// var out=0;
+// 		for (var i=0;i<stockObject.quantity.length;i++) {
+// 			out+=stockObject.quantity[i] * stockObject.purchasePrice[i];
+// 		}
+	}
+	
+	stockObject.getHistoricalData= function () {
 		// 1. Check if stocks historical data is already stored in object
-		if (this.historicalData != null ) { // it is defined 
-			return this.historicalData;	// assume stock is already up to date		
+		if (stockObject.historicalData != null ) { // it is defined 
+			return stockObject.historicalData;	// assume stock is already up to date		
 		}
 		else {
 			// Check if defined in localMemory...
 			// some people claim it throws an error whilst others claim it is null
 			try {
-				var temp = stocks.get(this.stockID);
+				var temp = stocks.get(stockObject.stockID);
 				if (temp == null ) {
 					throw "Stock is not defined"
 				}
@@ -273,7 +296,43 @@ function stockObj (stockID,stockName,quantity,price,targetPrice) {
 	}
 }
 
+// 1. User Object
+function userObj (userName,firstName,lastName,email) {
+// used to store user data etc ... whilst the program is running
+	this.userName=userName;
+	this.firstName= firstName;
+	this.lastName= lastName;
+	this.email = email;
+	this.netProfit=0; // not sure if we need this..
+	this.lastUpdate=0; // update has not occured today
+	this.availableFunds=0; // These are funds that user has on their account which are able to be used to purchase stocks
+	
+	this.ownedStocks = {}; // associative array of owned stock objects
+	this.watchedStocks = {}; // associative array of watching stocks
+	attachUserMethods(this); // attach the user methods to this object..
+}
+
+// 2. Stock Object
+function stockObj (stockID,stockName,quantity,price,targetPrice) {
+	this.stockID=stockID;
+	this.stockName = stockName;
+	// Implementing quantity, purchaseDate and purchasePrice as corresponding 
+	// arrays - purchase is +quantity, sell is -quantity...
+	this.quantity=[quantity];
+	this.purchaseDate = [new Date().getTime()]; // epoch time in ms
+	this.purchasePrice=[price];  // list of purchase prices corresponding to dates
+	this.currentPrice=price;
+  	this.targetPrice=targetPrice;   //Used for watchlist.. i.e watch/alert when it reaches/ goes above or below target price
+  	this.targetDirection = true; // true for greater than target price, false for below target price...
+
+	var historicalData=null; // private variable...
+	// historical data remains undefined until it is pulled for that stock
+	// at which point it remains until the application closes....
+	attachStockMethods(this);
+}
+
 // 3. stockHistory Object - used to store the history of a particular stock...
+// TODO - implement this later on...
 function stockHistory (stockName,startDate,endDate) {
 	this.stockName=stockName;
 	this.startDate=startDate; // start date of stock history...
@@ -303,7 +362,16 @@ $(function() {
 	try {
 		// 2. Load Stored user data
 		window.user = store.get('user');
+		// a. Attach user methods to user Object
 		attachUserMethods(window.user);
+		
+		// b. Attach Stock Methods to the stock Objects ..
+		for (var index in window.user.ownedStocks) {
+			attachStockMethods(window.user.ownedStocks[index]); // attach the stock methods..
+		}
+		for (var index in window.user.watchedStocks) {
+			attachStockMethods(window.user.watchedStocks[index]); // attach the stock methods..
+		}
 		console.log("User object is :");
 		console.log(window.user);
 		
