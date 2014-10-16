@@ -324,7 +324,15 @@ function stockObj (stockID,stockName,quantity,price,targetPrice) {
 	this.currentPrice=price;
   	this.targetPrice=targetPrice;   //Used for watchlist.. i.e watch/alert when it reaches/ goes above or below target price
   	this.targetDirection = true; // true for greater than target price, false for below target price...
-
+	
+	// I have decided to put these metrics into the object
+	// perhaps saves a bit of redundancy...??
+	this.peRatio=0;
+	this.pegRatio=0;
+	this.marketCapitalisation = 0;
+	this.previousClose=0;
+	this.earningShare=0;
+	
 	var historicalData=null; // private variable...
 	// historical data remains undefined until it is pulled for that stock
 	// at which point it remains until the application closes....
