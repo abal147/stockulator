@@ -164,7 +164,7 @@
   			  </form>
   			<p> Cost : Qty x cost </p>
     		<a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" data-rel="back">Cancel</a>
-    		<a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" id="buyStock" data-rel="back" data-transition="flow">Buy</a>
+    		<a href="#" class="buyStock ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" data-rel="back" data-transition="flow">Buy</a>
   		</div>
 		</div>
 		
@@ -217,6 +217,39 @@
 
     <ul id="myWatchlist" data-role="listview" data-inset="true">
     </ul>
+
+
+    <div data-role="popup" id="watchlistDialog" data-overlay-theme="b" data-theme="b" data-dismissible="false" style="max-width:400px;">
+ 	 		<div data-role="header" data-theme="a">
+  		  <h1>Watched Stock</h1>
+  		</div>
+  		<div role="main" class="ui-content">
+  			<p> Price : 100 </p>
+  			<p> StockID : WOW.ax </p>
+  			<p> stockName : Woolworths </p>
+      		<form>
+      			<div style="padding:10px 20px;">
+        			<div data-role="fieldcontain">
+			          <label for="slider">Qty:</label>
+   				      <input type="range" name="slider" id="slider" value="50" min="0" max="1000" data-highlight="true"  />
+		          </div>
+     		    </div>
+  			  </form>
+  			<p> Cost : Qty x cost </p>
+    		<p>
+    		  <a href="#" class="buyStock ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" data-rel="back" data-transition="flow">Buy</a>
+        </p>
+        <p>
+          <input type="number" id="modifyTargetPrice" placeholder="Target Price" />
+    		  <a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" id="setTargetPrice" data-rel="back" data-transition="flow">Set Target Price</a>
+        </p>
+        <p>
+    		  <a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" id="unwatchStock" data-rel="back" data-transition="flow">Unwatch</a>
+    		  <a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" data-rel="back">Cancel</a>
+    		</p>
+  		</div>
+    </div>
+
 		
 		<!-- TODO -fill me out ... --!> 
 	</div><!-- content -->

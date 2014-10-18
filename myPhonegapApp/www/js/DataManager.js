@@ -90,6 +90,7 @@ function setUser(user) {
 	localStorage.setItem("userName",user);
 }
 
+//stockName or ID???
 function setCurrentStock (stockName) {
 // Sets the local variable for the current stock
 	localStorage.setItem("currStock",stockName);
@@ -146,6 +147,17 @@ function addStockToUser (stockID,stockName,quantity,price,targetPrice,state){
 	console.log(window.user);
 	
 }
+
+//Deletes stock from watchlist
+function deleteStock(stockID) {
+  for(key in window.user.watchedStocks) {
+    if(key == stockID) {
+      window.user.deleteStock(key);
+      break;
+    }
+  }
+}
+
 // ------------------------------------------------------------ 
 
 
@@ -211,6 +223,14 @@ function attachUserMethods(userObject) {
 // 		});
 	
 	}
+
+  userObject.deleteStock = function(key) {
+    console.log("Deleting key " + key + " from watched stocks");  
+    delete window.user.watchedStocks[key];
+    refreshStocks();
+    window.user.save();
+  }
+	
 }
 
 // 1. User Object

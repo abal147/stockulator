@@ -2,6 +2,14 @@
 // This JS has the following responsibilities :
 // 1. Handle dynamic actions involved with boxes and elements of a page 
 // 2. Handle Initialisation of page loading w.r.t jquery and javascript
+
+//Constants
+var WATCH_STOCK = 0;
+var BUY_STOCK = 1;
+var MODIFY_STOCK = 2;
+
+
+
 function handle(e, code){
  	if(e.keyCode === 13){
  	// TODO - change this to focus etc...
@@ -22,6 +30,12 @@ function refreshStocks() {
 	if (window.user) {
 		// Refresh the stock pie chart breakdown with bought data...
 		plotPieChart('Stock Breakdown',window.user.getStocks(1));
+
+    // Refresh watchlist
+    populateWatchlist();
+
+    // Refresh portfolio
+    populatePortfolio();
 	
 		// Update the Server about user
 		window.user.updateServer();
@@ -29,21 +43,28 @@ function refreshStocks() {
 }
 
 function buyWatchStock(stockID, state){
-  // Function is called when one wants to buy a stock that is currently selected
-  // state 0 is watching stock, state 1 is buying stock
+  // Function is called when one wants to buy, watch or modify a stock that is currently selected
 	var stockName = "woolworths"; // TODO - extract stock name?
 	var quantity = parseInt ($("#slider").val());
 	var price = 100; // TODO - fix this...
   var targetPrice = 0;
-	if(state == 0) {
+	if(state == WATCH_STOCK) {
 	  targetPrice = $("#targetPrice").val();
+  } else if(state == MODIFY_STOCK) {
+    targetPrice = $("#modifyTargetPrice").val();
   }
-	console.log("TARGET PRICE IS: " + targetPrice);
+	//console.log("TARGET PRICE IS: " + targetPrice);
 	addStockToUser(stockID, stockName, quantity, price, targetPrice, state);
 	
 	//refresh appropriate document elements which display owned stocks...
 	refreshStocks();
-	console.log("Stock " + stockID + " is bought or watched"); 
+	console.log("Stock " + stockID + " is bought or watched");
+	
+}
+
+function unwatchStock(stockID) {
+  console.log("Unwatching stock");
+  deleteStock(stockID);
 }
 
 
@@ -100,20 +121,66 @@ $(document).ready (function(){
 		}
 	});
 	
-	$("#buyStock").click(function() {
-		buyWatchStock(getCurrentStock(),1);
+
+	$(".buyStock").click(function() {
+		buyWatchStock(getCurrentStock(), BUY_STOCK);
 	});
 	
 	$("#watchStock").click(function() {
-		buyWatchStock(getCurrentStock(),0);
+		buyWatchStock(getCurrentStock(), WATCH_STOCK);
 	});
+
+  //Same as watchStock but called to modify an already watched stock
+  $("#setTargetPrice").click(function() {
+		buyWatchStock(getCurrentStock(), MODIFY_STOCK);
+	});
+
+  //Besides the handle function, when does currentStock get set?
+  $("#unwatchStock").click(function() {
+    unwatchStock(getCurrentStock());
+  });
+
+
+
+
+  //Can't seem to write a named function instead of using the same
+  //anonymous function without getting an error
+
+  //Called when something with the "a" tag and "watchedStock" class is clicked
+  $(document).on("click", "a.watchedStock" , function (event) {
+    //Traverse up tree until an element has an id
+    
+    //Necessary because for some reason this function is still called when the
+    //text part is clicked (which doesn't have the class "watchedStock")
+    var target = event.target || event.srcElement;
+    while (target && !target.id) {
+        target = target.parentNode;
+    }
+        
+    setCurrentStock(target.id);
+    console.log("Current stock is:" + getCurrentStock());
+    //console.log("Event id is: " + target.id);
+  });
+
+  //Called when something with the "a" tag and "boughtStock" class is clicked
+  $(document).on("click", "a.boughtStock" , function(event) {
+    //Traverse up tree until an element has an id
+    var target = event.target || event.srcElement;
+    while (target && !target.id) {
+        target = target.parentNode;
+    }
+    setCurrentStock(target.id);
+    console.log("Current stock is:" + getCurrentStock());
+    //console.log("Event id is: " + target.id);
+  });
+
+
+
+
 	
 	console.log("here");
 	// 4. Load Dynamic Content
 	refreshStocks();
-	populatePortfolio();
-	populateWatchlist();
-	
  
 
 });
