@@ -38,26 +38,35 @@ function refreshStocks() {
     populatePortfolio();
 	
 		// Update the Server about user
-		window.user.updateServer();
+		//window.user.updateServer();
 	}
 }
 
 function buyWatchStock(stockID, state){
   // Function is called when one wants to buy, watch or modify a stock that is currently selected
 	var stockName = "woolworths"; // TODO - extract stock name?
-	var quantity = parseInt ($("#slider").val());
+	var quantity = parseInt ($("#slider").val());   //TODO - add to current quantity if stock already owned, may cause a bug with updateServer
 	var price = 100; // TODO - fix this...
   var targetPrice = 0;
+  
 	if(state == WATCH_STOCK) {
 	  targetPrice = $("#targetPrice").val();
   } else if(state == MODIFY_STOCK) {
     targetPrice = $("#modifyTargetPrice").val();
   }
+  
 	//console.log("TARGET PRICE IS: " + targetPrice);
 	addStockToUser(stockID, stockName, quantity, price, targetPrice, state);
 	
 	//refresh appropriate document elements which display owned stocks...
 	refreshStocks();
+
+  //Update the server
+  if(state == BUY_STOCK) {
+    window.user.updateServer(stockID, quantity, price, state);
+  }
+  //TODO - update server for selling stocks as well
+	
 	console.log("Stock " + stockID + " is bought or watched");
 	
 }
