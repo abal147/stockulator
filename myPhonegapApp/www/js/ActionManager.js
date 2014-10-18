@@ -71,10 +71,6 @@ function buyWatchStock(stockID, state){
 	
 }
 
-function unwatchStock(stockID) {
-  console.log("Unwatching stock");
-  deleteStock(stockID);
-}
 
 
 // Main Document Manipulation Script
@@ -146,7 +142,8 @@ $(document).ready (function(){
 
   //Besides the handle function, when does currentStock get set?
   $("#unwatchStock").click(function() {
-    unwatchStock(getCurrentStock());
+    console.log("Unwatching stock: " + getCurrentStock());
+    deleteStock(getCurrentStock());
   });
 
 
@@ -179,13 +176,14 @@ $(document).ready (function(){
         target = target.parentNode;
     }
     setCurrentStock(target.id);
-    console.log("Current stock is:" + getCurrentStock());
+    //console.log("Current stock is:" + getCurrentStock());
     //console.log("Event id is: " + target.id);
   });
 
 
-
-
+  //Set a 10 second interval for refreshing current stock prices in user's portfolio
+  window.user.upDate();
+  setInterval(function() {window.user.upDate()}, 10000);
 	
 	console.log("here");
 	// 4. Load Dynamic Content

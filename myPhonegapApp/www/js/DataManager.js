@@ -103,7 +103,7 @@ function getCurrentStock () {
 	if (out == undefined) {
 		out = "Enter ASX Code";
 	}
-	console.log("Current Stock is" + out);
+	console.log("Current Stock is: " + out);
 	return out;
 }
 
@@ -150,12 +150,9 @@ function addStockToUser (stockID,stockName,quantity,price,targetPrice,state){
 
 //Deletes stock from watchlist
 function deleteStock(stockID) {
-  for(key in window.user.watchedStocks) {
-    if(key == stockID) {
-      window.user.deleteStock(key);
-      break;
-    }
-  }
+  delete window.user.watchedStocks[stockID];
+  refreshStocks();
+  window.user.save();
 }
 
 // ------------------------------------------------------------ 
@@ -177,6 +174,18 @@ function attachUserMethods(userObject) {
 		// Function used by user object to update ....
 		// Question : since prototype, should we perhaps define this after pulling object from store.js ...
 		// TODO : need to create some kind of backend call suitable for getting the data for a user...
+
+    var code = "";
+    for(var stock in this.ownedStocks) {
+      code = code + this.ownedStocks[stock].stockID + " ";
+    }
+		console.log("Code is: " + code);
+		//$.getJSON("http://ec2-54-79-50-63.ap-southeast-2.compute.amazonaws.com:8080/SOMETHINGELSEHERE/" + code, function(data) {
+  	//  console.log("Data is:\n" + data);
+        //TODO - update current price of all stocks in portfolio
+        
+  	//});
+    refreshStocks();
 	}
 	userObject.save = function(){ // function used to save this object to memory...
 		console.log('Save our user');
@@ -242,13 +251,6 @@ function attachUserMethods(userObject) {
     //TODO - same thing except for selling stocks
     
 	}
-
-  userObject.deleteStock = function(key) {
-    console.log("Deleting key " + key + " from watched stocks");  
-    delete window.user.watchedStocks[key];
-    refreshStocks();
-    window.user.save();
-  }
 	
 }
 
