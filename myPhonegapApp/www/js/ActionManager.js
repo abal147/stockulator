@@ -10,18 +10,20 @@ function handle(e){
 		console.log("Code is:" + code);
 		setCurrentStock($("#search-3").val());
 		plotData(code,300); // lets plot data from the last 300 days for the code...
+		makeRequest(code); // call eddies script to make the request..
  	}
  	return false;
 }
 
 function refreshStocks() {
 // Function will refresh the lists and dynamic elements in a page with stocks...
-
-	// Refresh the stock pie chart breakdown with bought data...
-	plotPieChart('Stock Breakdown',window.user.getStocks(1));
+	if (window.user) {
+		// Refresh the stock pie chart breakdown with bought data...
+		plotPieChart('Stock Breakdown',window.user.getStocks(1));
 	
-	// Update the Server about user
-	window.user.updateServer();
+		// Update the Server about user
+		window.user.updateServer();
+	}
 }
 
 function buyWatchStock(stockID,state){
@@ -56,10 +58,8 @@ $(document).ready (function(){
 	// TODO - implement some sort of selectivity...
 	if (currentStockDefined()) {
 		plotData(getCurrentStock(),200);
+		makeRequest(getCurrentStock());
 	}
-	
-	// 4. Load Dynamic Content
-	refreshStocks();
 	
 	// Change current stock in text Box
 	// Execute appropriate action for current page...
@@ -68,9 +68,8 @@ $(document).ready (function(){
 // 	});
 	
 	// JQuery asynchronous watching functions...
-	
 	$("#signupSubmit").click(function() {
-		
+		console.log("Signup submit clicked");
 		// Lets show a loading widget
 		$.mobile.loading( 'show', {
 			text: 'Loading Data',
@@ -98,6 +97,10 @@ $(document).ready (function(){
 	$("#watchStock").click(function() {
 		buyWatchStock(getCurrentStock(),0);
 	});
+	
+	console.log("here");
+	// 4. Load Dynamic Content
+	refreshStocks();
 
 });
 
