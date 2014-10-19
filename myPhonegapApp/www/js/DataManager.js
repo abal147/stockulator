@@ -184,7 +184,7 @@ function attachUserMethods(userObject) {
       code = code + this.ownedStocks[stock].stockID + " ";
     }
 		//console.log("Code is: " + code);
-		$.getJSON("http://ec2-54-66-183-165.ap-southeast-2.compute.amazonaws.com:8080/price/" + code, function(data) {
+		$.getJSON(DEVSERVER_URL + "/price/" + code, function(data) {
   	  console.log("Portfolio data is:\n" + JSON.stringify(data));
 
       if(data[0]) {  //There is more than one stock queried so it has been wrapped in a key-index array
@@ -209,7 +209,7 @@ function attachUserMethods(userObject) {
     }
 		//console.log("Code is: " + code);
 
-		$.getJSON("http://ec2-54-66-183-165.ap-southeast-2.compute.amazonaws.com:8080/price/" + code, function(data) {
+		$.getJSON(DEVSERVER_URL + "/price/" + code, function(data) {
   	  console.log("Watchlist data is:\n" + JSON.stringify(data));
 
       if(data[0]) { //There is more than one stock queried so it has been wrapped in a key-index array
@@ -277,7 +277,7 @@ function attachUserMethods(userObject) {
 
           
 	    $.ajax({
-        url: "http://ec2-54-79-50-63.ap-southeast-2.compute.amazonaws.com:8080/update",
+        url: DEVSERVER_URL + "/update",
         type: "POST",
         data: {transaction: transactionData},
         beforeSend: function(x) {

@@ -5,7 +5,7 @@ function makeRequest(code){
   console.log("Making request with code: " + code);
 
   
-  $.getJSON("http://ec2-54-79-50-63.ap-southeast-2.compute.amazonaws.com:8080/data/" + code, function(data) {
+  $.getJSON(DEVSERVER_URL + "/data/" + code, function(data) {
   	//console.log("Data is:\n" + JSON.stringify(data));        
 
   	var table = document.getElementById("myTable");
