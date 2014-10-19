@@ -90,6 +90,7 @@ function setUser(user) {
 	localStorage.setItem("userName",user);
 }
 
+//stockName or ID???
 function setCurrentStock (stockName) {
 // Sets the local variable for the current stock
 	localStorage.setItem("currStock",stockName);
@@ -102,7 +103,7 @@ function getCurrentStock () {
 	if (out == undefined) {
 		out = "Enter ASX Code";
 	}
-	console.log("Current Stock is" + out);
+	console.log("Current Stock is: " + out);
 	return out;
 }
 
@@ -130,11 +131,11 @@ function createUserFromData(userName,firstName,secondName,email){
 	return 1;
 }
 
-function addStockToUser (stockID,stockName,quantity,price,state){
+function addStockToUser (stockID,stockName,quantity,price,targetPrice,state){
 // This function will add a given stock to our user object
 // State determines if the stock is bought = 1 , or watching = 0
 	// 1. Create the stock Object
-	var tempStock = new stockObj(stockID,stockName,quantity,price);
+	var tempStock = new stockObj(stockID,stockName,quantity,price,targetPrice);
 	
 	// 2. Append to the correct user dict
 	window.user.addStock(tempStock,state);
@@ -146,6 +147,14 @@ function addStockToUser (stockID,stockName,quantity,price,state){
 	console.log(window.user);
 	
 }
+
+//Deletes stock from watchlist
+function deleteStock(stockID) {
+  delete window.user.watchedStocks[stockID];
+  refreshStocks();
+  window.user.save();
+}
+
 // ------------------------------------------------------------ 
 
 
@@ -160,12 +169,66 @@ function addStockToUser (stockID,stockName,quantity,price,state){
 
 function attachUserMethods(userObject) {
 // This function will attach appropriate methods to the user...
+
+
 	userObject.upDate = function() {
 		console.log('Update our user');
 		// Function used by user object to update ....
 		// Question : since prototype, should we perhaps define this after pulling object from store.js ...
 		// TODO : need to create some kind of backend call suitable for getting the data for a user...
+
+
+    //Update current price of stocks in portfolio
+    var code = "";
+    for(var stock in this.ownedStocks) {
+      code = code + this.ownedStocks[stock].stockID + " ";
+    }
+		//console.log("Code is: " + code);
+		$.getJSON(DEVSERVER_URL + "/price/" + code, function(data) {
+  	  console.log("Portfolio data is:\n" + JSON.stringify(data));
+
+      if(data[0]) {  //There is more than one stock queried so it has been wrapped in a key-index array
+        var i = 0;
+        for(stock in this.ownedStocks) {
+          //console.log(">>>>>>>>" + data[i].AskRealtime);
+          this.ownedStocks[stock].currentPrice = data[i].AskRealtime;
+          i++;
+        }  
+      } else {  //Only one stock was queried
+        for(stock in window.user.ownedStocks) { //Use for loop to get the key
+          this.ownedStocks[stock].currentPrice = data.AskRealtime;
+        } 
+      }
+  	});
+
+
+    //Update current price of stocks in watchlist
+  	code = "";
+    for(var stock in this.watchedStocks) {
+      code = code + this.watchedStocks[stock].stockID + " ";
+    }
+		//console.log("Code is: " + code);
+
+		$.getJSON(DEVSERVER_URL + "/price/" + code, function(data) {
+  	  console.log("Watchlist data is:\n" + JSON.stringify(data));
+
+      if(data[0]) { //There is more than one stock queried so it has been wrapped in a key-index array
+        var i = 0;
+        for(stock in this.watchedStocks) {
+          //console.log(">>>>>>>>" + data[i].AskRealtime);
+          this.watchedStocks[stock].currentPrice = data[i].AskRealtime;
+          i++;
+        }  
+      } else {  //Only one stock was queried
+        for(stock in this.watchedStocks) { //Use for loop to get the key
+          this.watchedStocks[stock].currentPrice = data.AskRealtime;
+        }
+      }   
+  	});  	
+    refreshStocks();
 	}
+
+	
 	userObject.save = function(){ // function used to save this object to memory...
 		console.log('Save our user');
 		store.set('user',this);
@@ -199,18 +262,38 @@ function attachUserMethods(userObject) {
 			return this.watchedStocks;
 		}
 	}
-	userObject.updateServer = function(){
-	// This function will update the server with the current state of this object...
-	// 	var out = JSON.stringify(this);
-// 		$.ajax ({
-// 			url: 'http://ec2-54-79-50-63.ap-southeast-2.compute.amazonaws.com:8080/data_historical/' , // server address
-// 			type:'POST',
-// 			contentType : 'application/json',
-// 			data: { json: out},
-// 			dataType:'json'
-// 		});
-	
+	userObject.updateServer = function(stockID, quantity, price, state){
+	// This function updates the server when transactions are made
+
+	  console.log("user object to be sent is: " + JSON.stringify(this));
+
+    if(state == BUY_STOCK) {
+      //The commented one is plain object format
+	    //var transactionData = '{"username:"' + this.userName + '", "stockID:"' + stockID 
+	    //  + '", "originalPrice:"' + price + '", "amount:"' + quantity + '"}'; 
+
+      //This one is just string format delimited by commas
+      var transactionData = this.userName + ", " + stockID + ", " + price + ", " + quantity;
+
+          
+	    $.ajax({
+        url: DEVSERVER_URL + "/update",
+        type: "POST",
+        data: {transaction: transactionData},
+        beforeSend: function(x) {
+          if (x && x.overrideMimeType) {
+            x.overrideMimeType("application/j-son;charset=UTF-8");
+          }
+        },
+        success: function(result) {
+          console.log("Success!" + result);
+        }
+      });
+    }
+    //TODO - same thing except for selling stocks
+    
 	}
+	
 }
 
 // 1. User Object
@@ -229,13 +312,15 @@ function userObj (userName,firstName,lastName,email) {
 }
 
 // 2. Stock Object
-function stockObj (stockID,stockName,quantity,price) {
+function stockObj (stockID,stockName,quantity,price,targetPrice) {
 	this.stockID=stockID;
 	this.stockName = stockName;
 	this.quantity=quantity;
 	this.purchaseDate = 0;
-	this.purchasePrice=price;
+	this.purchasePrice=price;       //Or price of stock if being added to watchlist
 	this.currentPrice=price;
+  this.targetPrice=targetPrice;   //Used for watchlist
+	
 	var historicalData=null; // private variable...
 	// historical data remains undefined until it is pulled for that stock
 	// at which point it remains until the application closes....
