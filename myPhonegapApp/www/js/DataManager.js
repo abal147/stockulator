@@ -324,4 +324,30 @@ $(function() {
 		//	console.log("Well that's fucked ! Error is not known (yet)");
 		//}
 	}
+
+/*
+	$("#searchStock").empty();
+	refreshASXCodes();
+
+	var codes = localStorage.getItem("stockCSV").split("\n");
+
+	$("#searchStock").listview().listview("refresh");
+
+	for (var i = 3; i < 100; ++i) {
+		var info = codes[i].split(",");
+		var li = '<li><a href="#stockInfo">' + info[0] + '</a></li>';
+		//console.log("Appending: " + li);
+		$('#searchStock').append(li).listview('refresh');
+	}
+
+	console.log(codes.length);
+
+	$("#searchStock").listview().listview("refresh");
+*/
+/*
+	console.log("Altering listview");
+	$("#searchStock").listview().listview("refresh");
+	$("#searchStock").listview('option', 'filterCallback', filterStockCodes);
+	$("#searchStock").listview("refresh");
+*/
 }); // self executing anonymous function ....

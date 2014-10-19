@@ -15,127 +15,6 @@ function handle(e){
  	return false;
 }
 
-
-/*
-	Event handler for key presses into the search bar on the search page
-*/
-function handleNameSearch(e){
-	refreshASXCodes();
-
-	//Grab search code
-	code = $('#nameSearch').val();
-
-	//Refresh the results table first by deleting all rows
-	var table = document.getElementById("searchTable");
-
-	var rowCount = table.rows.length;
-    while(rowCount > 0) {
-        table.deleteRow(-1);
-        rowCount--;
-    }
-
-    //if the search bar is empty show no results
-	if (code.length == 0) {
-		return false;
-	}
-
-	var ASXcodes = localStorage.getItem("stockCSV").split("\n");
-	var re = new RegExp(code.toUpperCase());
-
-	/*
-		For each row in the ASX code list,
-		match it against the search term
-		for any match, return that row
-	*/
-	
-	for (var i = 3; i < ASXcodes.length; ++i) {
-		if (re.test(ASXcodes[i].toUpperCase())) {
-			var stock = ASXcodes[i].split(",");
-
-			var currRow = table.insertRow();
-
-			// Create a dynamic button to link to the stock page            
-            var text = document.createTextNode(ASXcodes[i]);
-			var $button = $('<button/>', {
-				type: 'button',
-				'class': 'dynBtn',
-				id: stock[1],
-				text: stock[0].replace(/\"/g, ''),
-				inline: false,
-				click: function() {
-
-					makeRequest(this.id);
-					setCurrentStock(this.id);
-					plotData(getCurrentStock(),200);
-
-					document.location = "#stockInfo";
-					console.log("Clicked: " + this.id);
-				}
-			});
-
-			$button.appendTo(document.getElementById("searchTable").insertRow());
-		}
-	}
-
-	return false;
-}
-
-function refreshASXCodes() {
-
-	var grabbed = false;
-
-	var lines = localStorage.getItem("stockCSV");
-	if (lines == null) {
-		// If there is no stored list, grab it
-		grabASXCodes();
-		grabbed = true;
-		lines = localStorage.getItem("stockCSV");
-	} else {
-
-		//If a list is in local storage, grab a new one if it was grabbed before today
-
-		var firstLine = lines.split("\n")[0].split(" ");
-		//looks like
-		//"ASX listed companies as at Tue Oct 14 20:14:17 EST 2014"
-		var lastPulled = firstLine[6] + " " + firstLine[7] + ", " + firstLine[10];
-
-		var dateLastPulled = new Date(lastPulled);
-		var today = new Date(Date.now());
-
-		if (today.getDate() != dateLastPulled.getDate() ||
-				today.getMonth() != dateLastPulled.getMonth() ||
-				today.getFullYear() != dateLastPulled.getFullYear()) {
-			grabASXCodes();
-			grabbed = true;
-		}
-	}
-	if (grabbed) {
-		console.log("Grabbed new ASX codes");
-	} else {
-		console.log("Using existing ASX Codes");
-	}
-	return grabbed;
-}
-
-
-/*
-	Grabs ASX codes from the asx page and cleans the results a bit
-*/
-function grabASXCodes() {
-	$.get("http://www.asx.com.au/asx/research/ASXListedCompanies.csv"
-			, function(data) {
-				var lines = data.split("\n");
-				for (var i = 3; i < lines.length; ++i) {
-					var stock = lines[i].split(",");
-					stock[1] = stock[1] + ".AX";
-					lines[i] = stock.join(",");
-				}
-				data = lines.join("\n");
-				localStorage.setItem("stockCSV",data);
-			}
-		);
-}
-
 function refreshStocks() {
 // Function will refresh the lists and dynamic elements in a page with stocks...
 	if (window.user) {
@@ -223,6 +102,10 @@ $(document).ready (function(){
 	// 4. Load Dynamic Content
 	refreshStocks();
 
+	refreshASXCodes();
+	setupSearch("#searchStock");
+	setupSearch("#searchStock2");
+	setupSearch("#searchStock3");
 });
 
 
