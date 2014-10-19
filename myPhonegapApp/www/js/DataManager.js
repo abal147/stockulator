@@ -90,12 +90,39 @@ function setUser(user) {
 	localStorage.setItem("userName",user);
 }
 
+// Deprecate ......
 function setCurrentStock (stockName) {
 // Sets the local variable for the current stock
 	localStorage.setItem("currStock",stockName);
 	console.log("Set the Current Stock as:" + stockName);
 }
 
+// This is horirble.... but fuck it
+function setCurrentStockObject (stockID,stockName,pegRatio,marketCap,peRatio,currentPrice,previousClose,earningShare) {
+	var myStockObj={};
+	
+	// Create a basic stock object and append to window
+	myStockObj.stockID=stockID;
+	myStockObj.stockName=stockName;
+	myStockObj.pegRatio=parseFloat (pegRatio);
+	myStockObj.marketCap=parseFloat(marketCap);
+	myStockObj.peRatio=parseFloat(peRatio);
+	myStockObj.currentPrice=parseFloat(currentPrice);
+	myStockObj.previousClose=parseFloat(previousClose);
+	myStockObj.earningShare=parseFloat(earningShare);
+	
+	window.myStockObj=myStockObj;
+	
+	// Save to localstorage to retrive later perhaps
+	store.set('currentStock',window.myStockObj);
+	refreshStockInfo();
+}
+
+function getCurrentStockObject(){
+	return window.myStockObj;
+}
+
+// Deprecate me ...!!!!
 function getCurrentStock () {
 // Gets the Current Stock we are looking at in the app
 	var out = localStorage.getItem("currStock");
@@ -115,11 +142,10 @@ function currentStockDefined() {
 	return true;
 }
 
-function createUserFromData(userName,firstName,secondName,email){
+function createUserFromData(userName,firstName,secondName,email,password){
 	
 	// 1. Create user object
-	var user = new userObj(userName,firstName,secondName,email);
-	
+	var user = new userObj(userName,firstName,secondName,email,password);
 	console.log("User is : " + user);
 	// 2. Store in memory
 	store.set('user',user);
@@ -128,6 +154,18 @@ function createUserFromData(userName,firstName,secondName,email){
 	window.user=user;
 	// TODO - potentially change this in future if not successful
 	return 1;
+}
+
+function sellStock(stockID,quantity,price) {
+// Function is called to sell a stock
+
+	if (stockID in window.user.ownedStocks) {
+		//if (quantity > ...) TODO - implement quantity checking
+		addStockToUser(stockID,stockID,-quantity,price,0,1);
+	}
+	else {
+		console.log("error - cannot sell a stock that we do not own");
+	}
 }
 
 function addStockToUser (stockID,stockName,quantity,price,targetPrice,state){
@@ -153,7 +191,13 @@ function addStockToUser (stockID,stockName,quantity,price,targetPrice,state){
 			if (state == 1) {
 				// The stock is currently in the watched list ... remove from watched list and add to bought list
 				delete window.user.watchedStocks[stockID];
-				var tempStock = new stockObj(stockID,stockName,quantity,price,targetPrice);
+				var tempStock = new Stock(stockID,stockName,quantity,price,targetPrice);
+				tempStock.pegRatio=window.myStockObj.pegRatio;
+				tempStock.marketCap=window.myStockObj.marketCap;
+				tempStock.peRatio=window.myStockObj.peRatio;
+				tempStock.currentPrice=window.myStockObj.currentPrice;
+				tempStock.previousClose=window.myStockObj.previousClose;
+				tempStock.earningShare=window.myStockObj.earningShare;
 				window.user.addStock(tempStock,state);
 			}
 			else {
@@ -162,11 +206,18 @@ function addStockToUser (stockID,stockName,quantity,price,targetPrice,state){
 			}
 		}
 		else {	
-			var tempStock = new stockObj(stockID,stockName,quantity,price,targetPrice);
-	
+			console.log("Fuck this shit....!!! - where is my fucking stockobj");
+			var tempStock = new Stock(stockID,stockName,quantity,price,targetPrice);
+			// Update Stock Data with Data from current stockObject
+			tempStock.pegRatio=window.myStockObj.pegRatio;
+			tempStock.marketCap=window.myStockObj.marketCap;
+			tempStock.peRatio=window.myStockObj.peRatio;
+			tempStock.currentPrice=window.myStockObj.currentPrice;
+			tempStock.previousClose=window.myStockObj.previousClose;
+			tempStock.earningShare=window.myStockObj.earningShare;
+			
 			// 2. Append to the correct user dict
 			window.user.addStock(tempStock,state);
-
 		}
 	window.user.save();
 	console.log("User is:");
@@ -226,6 +277,14 @@ function attachUserMethods(userObject) {
 			return this.watchedStocks;
 		}
 	}
+	userObject.getValue = function() {
+	// Function will return the value of all stocks
+		var value=0;
+		for (var stockID in this.ownedStocks) {
+			value=value+this.ownedStocks[stockID].getCurrentValue();
+		}
+		return value;
+	}
 	userObject.updateServer = function(){
 	// This function will update the server with the current state of this object...
 	// 	var out = JSON.stringify(this);
@@ -244,36 +303,37 @@ function attachStockMethods(stockObject){
 	stockObject.getQuantity=function() {
 		// Return quantity of the stock
 		var out=0;
-		for (var quantity in stockObject.quantity ) {
-			out=stockObject.quantity[quantity] + out;
+		for (var quantity in this.quantity ) {
+			out=this.quantity[quantity] + out;
 		}
 		return out;
 	}
 	
 	stockObject.getCurrentValue=function(){
 		// Returns the total value of a stock
-		return stockObject.getQuantity() * stockObject.currentPrice; 
+		return this.getQuantity() * this.currentPrice; 
 		// NB - assuming current price is correct....
 		// Check that current price is correct
 	}
 	
 	stockObject.getProfit=function(){
-		// var out=0;
-// 		for (var i=0;i<stockObject.quantity.length;i++) {
-// 			out+=stockObject.quantity[i] * stockObject.purchasePrice[i];
-// 		}
+		var out=0;
+		for (var i=0;i<stockObject.quantity.length;i++) {
+			out+=this.quantity[i] * this.purchasePrice[i];
+		}
+		return 1;
 	}
 	
 	stockObject.getHistoricalData= function () {
 		// 1. Check if stocks historical data is already stored in object
-		if (stockObject.historicalData != null ) { // it is defined 
-			return stockObject.historicalData;	// assume stock is already up to date		
+		if (this.historicalData != null ) { // it is defined 
+			return this.historicalData;	// assume stock is already up to date		
 		}
 		else {
 			// Check if defined in localMemory...
 			// some people claim it throws an error whilst others claim it is null
 			try {
-				var temp = stocks.get(stockObject.stockID);
+				var temp = stocks.get(this.stockID);
 				if (temp == null ) {
 					throw "Stock is not defined"
 				}
@@ -297,7 +357,7 @@ function attachStockMethods(stockObject){
 }
 
 // 1. User Object
-function userObj (userName,firstName,lastName,email) {
+function userObj (userName,firstName,lastName,email,password) {
 // used to store user data etc ... whilst the program is running
 	this.userName=userName;
 	this.firstName= firstName;
@@ -306,6 +366,7 @@ function userObj (userName,firstName,lastName,email) {
 	this.netProfit=0; // not sure if we need this..
 	this.lastUpdate=0; // update has not occured today
 	this.availableFunds=0; // These are funds that user has on their account which are able to be used to purchase stocks
+	this.password=password;
 	
 	this.ownedStocks = {}; // associative array of owned stock objects
 	this.watchedStocks = {}; // associative array of watching stocks
@@ -313,7 +374,8 @@ function userObj (userName,firstName,lastName,email) {
 }
 
 // 2. Stock Object
-function stockObj (stockID,stockName,quantity,price,targetPrice) {
+// had to do a name change for some reason as shit was fucking up...
+function Stock (stockID,stockName,quantity,price,targetPrice) {
 	this.stockID=stockID;
 	this.stockName = stockName;
 	// Implementing quantity, purchaseDate and purchasePrice as corresponding 
@@ -333,7 +395,7 @@ function stockObj (stockID,stockName,quantity,price,targetPrice) {
 	this.previousClose=0;
 	this.earningShare=0;
 	
-	var historicalData=null; // private variable...
+	//var historicalData=null; // private variable...
 	// historical data remains undefined until it is pulled for that stock
 	// at which point it remains until the application closes....
 	attachStockMethods(this);
@@ -370,6 +432,7 @@ $(function() {
 	try {
 		// 2. Load Stored user data
 		window.user = store.get('user');
+		
 		// a. Attach user methods to user Object
 		attachUserMethods(window.user);
 		
@@ -384,11 +447,12 @@ $(function() {
 		console.log(window.user);
 		
 		if (window.user == null) {
-			throw "undefined user"
+			throw "undefined user";
 		} 
 	
 		// 3. Begin Update Process ...
 			// TODO - call the server and update our user object...
+			// Edward......
 	}
 	catch (err) {
 		console.log("Error is: " + err);

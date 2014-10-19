@@ -37,6 +37,12 @@ function makeRequest(code){
 
     //Insert rows into table
     var rows = string.split(",");
+    
+    
+    // Save Rows in the current Stock Data
+    // Lindsay 
+    setCurrentStockObject (rows[4].split(':')[1],rows[2].split(':')[1],rows[0].split(':')[1],rows[1].split(':')[1],rows[3].split(':')[1],rows[5].split(':')[1],rows[6].split(':')[1],rows[7].split(':')[1]);
+    
               
     for(var i = 0; i < rows.length; ++i) {
       var currRow = table.insertRow();

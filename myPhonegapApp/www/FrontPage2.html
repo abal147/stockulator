@@ -19,6 +19,7 @@
     <link rel="stylesheet" href="css/themes/StockulatorTheme.css" />
   	<link rel="stylesheet" href="css/themes/jquery.mobile.icons.min.css" />
   	<link rel="stylesheet" href="css/jquery.mobile.structure-1.4.4.min.css"></script>
+  	<link rel="stylesheet" href="css/validate/screen.css">
   			
   	<!-- Scripts we want executed before the page loads 
   		 Other scripts that we don't care about are loaded after the page --!>
@@ -30,12 +31,14 @@
 	<script src="js/highcharts-all.js"></script> <!-- There is some kind of problem here ... not affecting however -->
 	<script src="js/exporting.js"></script>
 	<script src="js/store+json2.min.js"></script> <!-- include our store js script here ... -->
+	<script src="js/jquery.validate.js"></script>
+	<script src="js/highcharts-more.js"></script>
 				
 	<!-- JS - our own written scripts...-->
 	<script src="js/DataManager.js"></script>
 	<script src="js/TableManager.js"></script>
 	<script src="js/PlotManager.js"></script>
-  <script src="js/ActionManager.js"></script>
+    <script src="js/ActionManager.js"></script>
   			
 <title>Hello World</title>
 </head>
@@ -96,6 +99,17 @@
 		<input type="search" name="searchBar" id="search-3" class="search" placeholder="Enter ASX Code" data-theme="b" onkeyup="handle(event, value)" />
 		<!-- example .. stuff -->
 		<div id="pieChart" style="min-width: 310px; height: 250px; margin: 0 auto"></div>
+		<div data-role="fieldcontain">
+	    	<fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
+	     		<!-- <legend>Layout view:</legend> -->
+	         	<input type="radio" name="radio-view" id="pieView" value="list"  />
+	         	<label for="pieView">BreakDown</label>
+	         	<input type="radio" name="radio-view" id="historyView" value="grid"  />
+	         	<label for="historyView">History</label>
+	         	<input type="radio" name="radio-view" id="profitView" value="gallery"  />
+	         	<label for="profitView">Profit</label>
+	    	</fieldset>
+		</div>
 		<ul data-role="listview" data-filter="true" data-filter-placeholder="Filter my stocks..." data-inset="true">
 		</ul>
 
@@ -151,18 +165,18 @@
   		  <h1>Buy Stock</h1>
   		</div>
   		<div role="main" class="ui-content">
-  			<p> Price : 100 </p>
-  			<p> StockID : WOW.ax </p>
-  			<p> stockName : Woolworths </p>
+  			<div class="price"> <p> Price : 100 </p> </div>
+  			<div class ="stockID"> <p> StockID : WOW.ax </p> </div>
+  			<div class = "stockName"> <p> stockName : Woolworths </p></div>
       		<form>
       			<div style="padding:10px 20px;">
-        			<div data-role="fieldcontain">
+        			 <div data-role="fieldcontain" id="pageSlider">
 					      <label for="slider">Qty:</label>
-	 				      <input type="range" name="slider" id="slider" value="50" min="0" max="1000" data-highlight="true"  />
-				      </div>
+	 				      <input type="range" name="slider" id="slider" value="0" min="0" max="1000" data-highlight="true"  />
+				     </div>
      		    </div>
   			  </form>
-  			<p> Cost : Qty x cost </p>
+  			<div class = "cost"> <p> Cost : $0.00 </p></div>
     		<a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" data-rel="back">Cancel</a>
     		<a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" id="buyStock" data-rel="back" data-transition="flow">Buy</a>
   		</div>
@@ -173,9 +187,9 @@
     		<h1>Watch Stock</h1>
     	</div>
     	<div role="main" class="ui-content">
-  			<p> Price : 100 </p>
-  			<p> StockID : WOW.ax </p>
-  			<p> stockName : Woolworths </p>
+  			<div class="price"> <p> Price : 100 </p> </div>
+  			<div class ="stockID"> <p> StockID : WOW.ax </p> </div>
+  			<div class = "stockName"> <p> stockName : Woolworths </p></div>
   			<input type="number" id="targetPrice" placeholder="Target Price" />    <!-- default value should be changed to currentPrice + someAmount. 
   			                                                                              Also need to check that value is valid -->
     		<a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" data-rel="back">Cancel</a>
@@ -284,27 +298,26 @@
 	<!-- Content Part of Document-->
 	<div data-theme="a" data-role="content" id="postlist">	
 		<h4>Signup</h4>
+		
+	  <form  id="commentForm" method="get" action="">
 		<div data-role="fieldcontain">
     		<label for="name">Username:</label>
-   	 		<input type="text" name="name" id="username" value=""  />
+   	 		<input type="text" name="name" id="name" value=""  data-mini="true" required/>
 		</div>	
 		<div data-role="fieldcontain">
 	         <label for="password">Password:</label>
-	         <input type="password" name="password" id="password" value="" />
+	         <input type="password" name="password" id="password" value="" data-mini="true" required/>
 		</div>
 		<div data-role="fieldcontain">
-    		<label for="name">First Name:</label>
-   	 		<input type="text" name="name" id="firstname" value=""  />
-		</div>
-		<div data-role="fieldcontain">
-    		<label for="name">Last Name:</label>
-   	 		<input type="text" name="name" id="lastname" value=""  />
+	         <label for="password">Confirm Password:</label>
+	         <input type="password" name="confirm_password" id="confirm_password" value="" data-mini="true" required/>
 		</div>
 		<div data-role="fieldcontain">
 	         <label for="email">Email:</label>
-	         <input type="email" name="email" id="email" value="" />
+	         <input type="email" name="email" id="email" value="" data-mini="true" required/>
 		</div>
 		<button type="submit" data-theme="a" id ="signupSubmit">Sign Up</button>
+	  </form>
 	</div><!-- content -->
 </div> <!-- End of LoginPage -->
 
