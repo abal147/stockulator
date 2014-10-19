@@ -14,13 +14,12 @@ function handle(e, code){
  	if(e.keyCode === 13){
  	// TODO - change this to focus etc...
  	// Also, change to be more of the jquery style etc...
+ 		code = $("#search-3").val();
+		console.log("Handler: Code is:" + code );
+		setCurrentStock($("#search-3").val());
+		plotData(code,300); // lets plot data from the last 300 days for the code...
+		makeRequest(code); // call eddies script to make the request..
 
-
-		console.log("Code is:" + code);
-		setCurrentStock(code);
-		window.location.href = "#stockInfo";    //redirects to stockInfo page
-    plotData(code, 200);                    //TODO - need to clear plot for invalid search code
-		makeRequest(code);
  	}
 
 }
@@ -282,3 +281,51 @@ $(document).ready (function(){
 
 
 
+//Clear Text Box : When text box is clicked...clear it
+// TODO
+
+function setupSearch(code = "#searchStock") {
+console.log("________________________________________________________________");
+    $(code).listview();
+
+    $(code).on("filterablebeforefilter", function(e, data) {
+        var $ul = $(this),
+            $input = $(data.input),
+            value = $input.val(),
+            html = "";
+        $ul.html("");
+        console.log("SearchValue: " + value);
+
+        var li = "";
+
+        if (value && value.length > 1) {
+            var codes = localStorage.getItem("stockCSV").split("\n");
+
+            $ul.html( "<li><div class='ui-loader'><span class='ui-icon ui-icon-loading'></span></div></li>" );
+            $ul.listview( "refresh" );
+
+            for (var i = 3; i < codes.length; ++i) {
+                if (codes[i].toLowerCase().indexOf( value.toLowerCase() ) != -1) {
+                    var info = codes[i].split(",");
+                    li += '<li data-chapter="' + info[1] + '" data-filtertext="' + codes[i].replace(/\"/g, '') + '"><a href="#stockInfo">' + info[0].replace(/\"/g, '') + '</a></li>\n';
+                }
+            }
+            //console.log(li);
+            $ul.append(li);
+            $ul.listview("refresh");
+            $ul.trigger("updatelayout");
+        }
+    });
+
+    $(document).on('click', code + ' li a', function (info) {
+        var source = $(this).closest("li").attr("data-chapter");
+
+        makeRequest(source);
+        setCurrentStock(source);
+        plotData(getCurrentStock(),200);
+        $('input[data-type="search"]').val('');
+        $('input[data-type="search"]').trigger("keyup");
+
+        console.log("CLICKITY CLACKITY ");
+    });
+}
