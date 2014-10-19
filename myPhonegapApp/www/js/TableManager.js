@@ -41,6 +41,7 @@ function makeRequest(code){
     
     // Save Rows in the current Stock Data
     // Lindsay 
+    console.log("Set current stock object for lindsay");
     setCurrentStockObject (rows[4].split(':')[1],rows[2].split(':')[1],rows[0].split(':')[1],rows[1].split(':')[1],rows[3].split(':')[1],rows[5].split(':')[1],rows[6].split(':')[1],rows[7].split(':')[1]);
     
               

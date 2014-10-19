@@ -95,6 +95,10 @@ function setCurrentStock (stockName) {
 // Sets the local variable for the current stock
 	localStorage.setItem("currStock",stockName);
 	console.log("Set the Current Stock as:" + stockName);
+	
+	// Lets pull all of the data again...and reload...
+	plotData(stockName,200);
+	makeRequest(stockName);
 }
 
 // This is horirble.... but fuck it

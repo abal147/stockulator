@@ -14,12 +14,16 @@ function handle(e, code){
  	if(e.keyCode === 13){
  	// TODO - change this to focus etc...
  	// Also, change to be more of the jquery style etc...
- 		code = $("#search-3").val();
-		console.log("Handler: Code is:" + code );
-		setCurrentStock($("#search-3").val());
-		plotData(code,300); // lets plot data from the last 300 days for the code...
-		makeRequest(code); // call eddies script to make the request..
-
+ 		// code = $("#search-3").val();
+// 		console.log("Handler: Code is:" + code );
+// 		setCurrentStock($("#search-3").val());
+// 		plotData(code,300); // lets plot data from the last 300 days for the code...
+// 		makeRequest(code); // call eddies script to make the request..
+		console.log("Code is:" + code);
+		setCurrentStock(code);
+		window.location.href = "#stockInfo";    //redirects to stockInfo page
+    	plotData(code, 200);                    //TODO - need to clear plot for invalid search code
+		makeRequest(code);
  	}
 
 }
@@ -44,6 +48,7 @@ function refreshStockInfo() {
 // when called function will refresh all classes that contain the stock info 
 // TO be used to refresh the buy and watch popup
 	// Get the current stockObject
+	console.log("Refresh stock info");
 	stockObj=getCurrentStockObject();
 	if (stockObj==null) {
 		return; // leave as we cannot use it
@@ -54,12 +59,12 @@ function refreshStockInfo() {
   	$(".stockName").replaceWith("<div class = \"stockName\"> <p> stockName : " + stockObj.stockName + "</p></div>");
 }
 
-function buyWatchStock(stockID, state){
+function buyWatchStock(stockID, state,qty){
   // Function is called when one wants to buy a stock that is currently selected
   // state 0 is watching stock, state 1 is buying stock
 	
 	var stockName = window.myStockObj.stockName; // TODO - extract stock name?
-	var quantity = parseFloat ($("#slider").val());
+	var quantity = parseFloat (qty);
 	var price = window.myStockObj.currentPrice;
   	var targetPrice = 0; // TODO - fix this
 	if(state == WATCH_STOCK) {
@@ -141,7 +146,18 @@ $(document).ready (function(){
 		
 
 	$("#buyStock").click(function() {
-		buyWatchStock(getCurrentStock(),1);
+		buyWatchStock(getCurrentStock(),1,$("#slider").val());
+		// Create the user
+		$.mobile.loading( "hide" );
+		
+		// If successful then return to main page...
+		if (out ==1 ) {
+			$.mobile.changePage("#home");
+		}
+	});
+	
+	$("#buyStock2").click(function() {
+		buyWatchStock(getCurrentStock(),1,$("#slider2").val());
 		// Create the user
 		$.mobile.loading( "hide" );
 		
@@ -155,7 +171,13 @@ $(document).ready (function(){
 			console.log("Value has changed");
 			var val = parseInt ($("#slider").val());
 			$(".cost").replaceWith("<div class = \"cost\"> <p> Cost : $" + window.myStockObj.currentPrice*val + " </p></div>"); 
-		});
+	});
+	
+	$("#pageSlider2").change(function() {
+			console.log("Value has changed");
+			var val = parseInt ($("#slider2").val());
+			$(".cost").replaceWith("<div class = \"cost\"> <p> Cost : $" + window.myStockObj.currentPrice*val + " </p></div>"); 
+	});
 	
 	$("#watchStock").click(function() {
 		buyWatchStock(getCurrentStock(), WATCH_STOCK);
