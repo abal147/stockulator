@@ -25,6 +25,17 @@ def get_data(code=""):
    response.content_type = 'application/json'
    return dumps(result)
 
+@app.post('/update', methods='POST')
+def insertTransaction():
+   transaction=request.forms['transaction']
+   
+
+   #return scriptName.functionName(transaction)
+   #technically don't even need to return if not debugging
+
+   #eg.
+   return updateUserObject.updateUserObject(transaction)
+
 @app.route('/price/<code>')
 def get_price(code=""):
 	result = dataScraper.grabStockPriceOnly([code])

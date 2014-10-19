@@ -49,7 +49,8 @@ def grabStockPriceOnly(codes):
    processedCodes = scraperUtility.commaString(codes, ', ')
 
    selectedColumns = ['*']
-   selectedColumns = ['symbol', 'Name', 'AskRealtime']
+   #selectedColumns = ['symbol', 'Name', 'AskRealtime'] # Aarons server
+   selectedColumns = ['AskRealtime'] # Ed's server change
 
    # Build the proper url
    query = "select " + scraperUtility.commaString(selectedColumns, ', ')
