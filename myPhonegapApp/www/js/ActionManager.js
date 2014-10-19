@@ -283,8 +283,9 @@ $(document).ready (function(){
 
 //Clear Text Box : When text box is clicked...clear it
 // TODO
+//function setupSearch(code = "#searchStock") { // this is wrong
 
-function setupSearch(code = "#searchStock") {
+function setupSearch(code) {
 console.log("________________________________________________________________");
     $(code).listview();
 
