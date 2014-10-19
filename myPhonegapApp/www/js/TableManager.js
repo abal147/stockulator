@@ -5,8 +5,8 @@ function makeRequest(code){
   console.log("Making request with code: " + code);
 
   
-  $.getJSON("http://ec2-54-79-50-63.ap-southeast-2.compute.amazonaws.com:8080/data/" + code, function(data) {
-  	console.log("Data is:\n" + data);        
+  $.getJSON(DEVSERVER_URL + "/data/" + code, function(data) {
+  	//console.log("Data is:\n" + JSON.stringify(data));        
 
   	var table = document.getElementById("myTable");
 
@@ -47,7 +47,7 @@ function makeRequest(code){
     for(var i = 0; i < rows.length; ++i) {
       var currRow = table.insertRow();
 
-      console.log("row is: " + rows[i]);
+      //console.log("row is: " + rows[i]);
       var data = document.createElement("TD");
       var text = document.createTextNode(rows[i]);
       data.appendChild(text);
@@ -66,14 +66,16 @@ function populateWatchlist() {
   //Append to list for each stock in watchedStocks
   for(var key in window.user.watchedStocks) {
   
-    var li = '<li class="watchlistRow ui-btn ui-btn-icon-right">';
+   
     var stock = window.user.watchedStocks[key];
-    var difference = stock.purchasePrice - stock.currentPrice;
-    var text = stock.stockID + " Diff: " + difference + " " + (difference / stock.purchasePrice) + "%"
+    var difference = stock.currentPrice - stock.purchasePrice;
+    var text = stock.stockID + " Diff: " + difference + " " + (difference * 100 / stock.purchasePrice) + "%"
       + " Current Price: " + stock.currentPrice + " Target Price: " + stock.targetPrice;
-    var span = "";
-    var a = '<a href="#" class="ui-btn ui-btn-icon-right ';
 
+    var li = '<li class="watchlistRow ui-btn ui-btn-icon-right" id="' + stock.stockID + '">';
+    var span = "";
+
+    var a = '<a href="#watchlistDialog" data-rel="popup" data-position-to="window" data-transition="pop" class="watchedStock ui-btn ui-btn-icon-right"';
     
     if(stock.currentPrice > stock.purchasePrice) {
       a = a + 'ui-icon-arrow-u">';
@@ -87,7 +89,6 @@ function populateWatchlist() {
     }
 
     $("#myWatchlist").append(li + a + span + text + '</span></a></li>');
-    
   }
   
   $("#myWatchlist .watchlistRow:first-child").addClass("ui-first-child");
@@ -108,14 +109,13 @@ function populatePortfolio() {
   //Append to list for each stock in ownedStocks
   for(var key in window.user.ownedStocks) {
   
-    var li = '<li class="portfolioRow ui-btn ui-btn-icon-right">';
     var stock = window.user.ownedStocks[key];
-    var difference = stock.purchasePrice - stock.currentPrice;
-    var text = stock.stockID + " Difference: " + difference + " " + (difference / stock.purchasePrice) + "%";
+    var difference = stock.currentPrice - stock.purchasePrice;
+    var text = stock.stockID + " Difference: " + difference + " " + (difference * 100 / stock.purchasePrice) + "%";
+    var li = '<li class="portfolioRow ui-btn ui-btn-icon-right" id="' + stock.stockID + '">';
     var span = "";
-    var a = '<a href="#" class="ui-btn ui-btn-icon-right ';              //Can change href to a popup window for selling stocks
-
-    
+    var a = '<a href="#" class="boughtStock ui-btn ui-btn-icon-right ';              //Can change href to a popup window for selling stocks
+ 
     if(stock.currentPrice > stock.purchasePrice) {
       a = a + 'ui-icon-arrow-u">';
       span = '<span style="color:green">';

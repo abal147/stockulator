@@ -129,7 +129,7 @@ function getCurrentStock () {
 	if (out == undefined) {
 		out = "Enter ASX Code";
 	}
-	console.log("Current Stock is" + out);
+	console.log("Current Stock is: " + out);
 	return out;
 }
 
@@ -224,6 +224,12 @@ function addStockToUser (stockID,stockName,quantity,price,targetPrice,state){
 	console.log(window.user);
 }
 
+//Deletes stock from watchlist
+function deleteStock(stockID) {
+  delete window.user.watchedStocks[stockID];
+  refreshStocks();
+  window.user.save();
+}
 // ------------------------------------------------------------ 
 
 
@@ -238,12 +244,66 @@ function addStockToUser (stockID,stockName,quantity,price,targetPrice,state){
 
 function attachUserMethods(userObject) {
 // This function will attach appropriate methods to the user...
+
+
 	userObject.upDate = function() {
 		console.log('Update our user');
 		// Function used by user object to update ....
 		// Question : since prototype, should we perhaps define this after pulling object from store.js ...
 		// TODO : need to create some kind of backend call suitable for getting the data for a user...
+
+
+    //Update current price of stocks in portfolio
+    var code = "";
+    for(var stock in this.ownedStocks) {
+      code = code + this.ownedStocks[stock].stockID + " ";
+    }
+		//console.log("Code is: " + code);
+		$.getJSON(DEVSERVER_URL + "/price/" + code, function(data) {
+  	  console.log("Portfolio data is:\n" + JSON.stringify(data));
+
+      if(data[0]) {  //There is more than one stock queried so it has been wrapped in a key-index array
+        var i = 0;
+        for(stock in this.ownedStocks) {
+          //console.log(">>>>>>>>" + data[i].AskRealtime);
+          this.ownedStocks[stock].currentPrice = data[i].AskRealtime;
+          i++;
+        }  
+      } else {  //Only one stock was queried
+        for(stock in window.user.ownedStocks) { //Use for loop to get the key
+          this.ownedStocks[stock].currentPrice = data.AskRealtime;
+        } 
+      }
+  	});
+
+
+    //Update current price of stocks in watchlist
+  	code = "";
+    for(var stock in this.watchedStocks) {
+      code = code + this.watchedStocks[stock].stockID + " ";
+    }
+		//console.log("Code is: " + code);
+
+		$.getJSON(DEVSERVER_URL + "/price/" + code, function(data) {
+  	  console.log("Watchlist data is:\n" + JSON.stringify(data));
+
+      if(data[0]) { //There is more than one stock queried so it has been wrapped in a key-index array
+        var i = 0;
+        for(stock in this.watchedStocks) {
+          //console.log(">>>>>>>>" + data[i].AskRealtime);
+          this.watchedStocks[stock].currentPrice = data[i].AskRealtime;
+          i++;
+        }  
+      } else {  //Only one stock was queried
+        for(stock in this.watchedStocks) { //Use for loop to get the key
+          this.watchedStocks[stock].currentPrice = data.AskRealtime;
+        }
+      }   
+  	});  	
+    refreshStocks();
 	}
+
+	
 	userObject.save = function(){ // function used to save this object to memory...
 		console.log('Save our user');
 		store.set('user',this);
@@ -277,6 +337,7 @@ function attachUserMethods(userObject) {
 			return this.watchedStocks;
 		}
 	}
+	
 	userObject.getValue = function() {
 	// Function will return the value of all stocks
 		var value=0;
@@ -285,18 +346,38 @@ function attachUserMethods(userObject) {
 		}
 		return value;
 	}
-	userObject.updateServer = function(){
-	// This function will update the server with the current state of this object...
-	// 	var out = JSON.stringify(this);
-// 		$.ajax ({
-// 			url: 'http://ec2-54-79-50-63.ap-southeast-2.compute.amazonaws.com:8080/data_historical/' , // server address
-// 			type:'POST',
-// 			contentType : 'application/json',
-// 			data: { json: out},
-// 			dataType:'json'
-// 		});
-	
+
+	userObject.updateServer = function(stockID, quantity, price, state){
+	// This function updates the server when transactions are made
+
+	  console.log("user object to be sent is: " + JSON.stringify(this));
+
+    if(state == BUY_STOCK) {
+      //The commented one is plain object format
+	    //var transactionData = '{"username:"' + this.userName + '", "stockID:"' + stockID 
+	    //  + '", "originalPrice:"' + price + '", "amount:"' + quantity + '"}'; 
+
+      //This one is just string format delimited by commas
+      var transactionData = this.userName + ", " + stockID + ", " + price + ", " + quantity;
+
+          
+	    $.ajax({
+        url: DEVSERVER_URL + "/update",
+        type: "POST",
+        data: {transaction: transactionData},
+        beforeSend: function(x) {
+          if (x && x.overrideMimeType) {
+            x.overrideMimeType("application/j-son;charset=UTF-8");
+          }
+        },
+        success: function(result) {
+          console.log("Success!" + result);
+        }
+      });
+    }
+    //TODO - same thing except for selling stocks
 	}
+	
 }
 
 function attachStockMethods(stockObject){
