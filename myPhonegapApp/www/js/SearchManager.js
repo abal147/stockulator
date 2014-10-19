@@ -78,8 +78,6 @@ function makeRequest(code){
 }        
 
 
-
-
 /*
 $(document).ready(function() {
     console.log("poo");
@@ -99,18 +97,6 @@ function defaultSearch( text, searchValue ) {
 */
 /*
 $(document).on('click', '#searchStock li a', function (info) {
-    var source = $(this).closest("li").attr("data-chapter");
-
-    makeRequest(source);
-    setCurrentStock(source);
-    plotData(getCurrentStock(),200);
-    $('input[data-type="search"]').val('');
-    $('input[data-type="search"]').trigger("keyup");
-
-    console.log("CLICKITY CLACKITY ");
-});
-
-$(document).on('click', '#searchStock2 li a', function (info) {
     var source = $(this).closest("li").attr("data-chapter");
 
     makeRequest(source);
@@ -188,10 +174,12 @@ function handleNameSearch(e){
 }
 
 function refreshASXCodes() {
+    console.log("Step1");
 
     var grabbed = false;
-
+    console.log("Step1");
     var lines = localStorage.getItem("stockCSV");
+    console.log("Step1");
     if (lines == null) {
         // If there is no stored list, grab it
         grabASXCodes();
@@ -248,48 +236,3 @@ filterStockCodes = function (text, searchVal) {
     return false;
 }
 
-function setupSearch(code = "#searchStock") {
-
-    $(code).listview();
-
-    $(code).on("filterablebeforefilter", function(e, data) {
-        var $ul = $(this),
-            $input = $(data.input),
-            value = $input.val(),
-            html = "";
-        $ul.html("");
-        console.log("SearchValue: " + value);
-
-        var li = "";
-
-        if (value && value.length > 1) {
-            var codes = localStorage.getItem("stockCSV").split("\n");
-
-            $ul.html( "<li><div class='ui-loader'><span class='ui-icon ui-icon-loading'></span></div></li>" );
-            $ul.listview( "refresh" );
-
-            for (var i = 3; i < codes.length; ++i) {
-                if (codes[i].toLowerCase().indexOf( value.toLowerCase() ) != -1) {
-                    var info = codes[i].split(",");
-                    li += '<li data-chapter="' + info[1] + '" data-filtertext="' + codes[i].replace(/\"/g, '') + '"><a href="#stockInfo">' + info[0].replace(/\"/g, '') + '</a></li>\n';
-                }
-            }
-            //console.log(li);
-            $ul.append(li);
-            $ul.listview("refresh");
-            $ul.trigger("updatelayout");
-        }
-    });
-
-    $(document).on('click', code + ' li a', function (info) {
-        var source = $(this).closest("li").attr("data-chapter");
-
-        makeRequest(source);
-        setCurrentStock(source);
-        plotData(getCurrentStock(),200);
-        $('input[data-type="search"]').val('');
-        $('input[data-type="search"]').trigger("keyup");
-
-        console.log("CLICKITY CLACKITY ");
-    });
-}
