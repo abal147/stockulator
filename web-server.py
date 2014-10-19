@@ -25,6 +25,12 @@ def get_data(code=""):
    response.content_type = 'application/json'
    return dumps(result)
 
+@app.route('/price/<code>')
+def get_price(code=""):
+	result = dataScraper.grabStockPriceOnly([code])
+	response.content_type = 'application/json'
+	return dumps(result)
+
 @app.route('/data_historical/<code>')
 @app.route('/data_historical/<code>/<numDays:int>')
 @app.route('/data_historical/<code>/<numDays:int>/<filter:int>')
