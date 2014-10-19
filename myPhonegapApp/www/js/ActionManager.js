@@ -7,7 +7,7 @@ function handle(e){
  	// TODO - change this to focus etc...
  	// Also, change to be more of the jquery style etc...
  		code = $("#search-3").val();
-		console.log("Code is:" + code);
+		console.log("Handler: Code is:" + code );
 		setCurrentStock($("#search-3").val());
 		plotData(code,300); // lets plot data from the last 300 days for the code...
 		makeRequest(code); // call eddies script to make the request..
@@ -102,6 +102,10 @@ $(document).ready (function(){
 	// 4. Load Dynamic Content
 	refreshStocks();
 
+	refreshASXCodes();
+	setupSearch("#searchStock");
+	setupSearch("#searchStock2");
+	setupSearch("#searchStock3");
 });
 
 
