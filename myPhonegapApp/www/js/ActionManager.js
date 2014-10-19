@@ -37,8 +37,7 @@ function refreshStocks() {
     // Refresh portfolio
     populatePortfolio();
 	
-		// Update the Server about user
-		//window.user.updateServer();
+		window.user.save();
 	}
 }
 
@@ -182,12 +181,11 @@ $(document).ready (function(){
 
 
   //Set a 10 second interval for refreshing current stock prices in user's portfolio
-  window.user.upDate();
+  window.user.upDate(); //Not sure why initial call doesn't refresh watchlist/portfolio
   setInterval(function() {window.user.upDate()}, 10000);
-	
-	console.log("here");
+
 	// 4. Load Dynamic Content
-	refreshStocks();
+	//refreshStocks();
  
 
 });

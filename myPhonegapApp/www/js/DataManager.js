@@ -169,24 +169,66 @@ function deleteStock(stockID) {
 
 function attachUserMethods(userObject) {
 // This function will attach appropriate methods to the user...
+
+
 	userObject.upDate = function() {
 		console.log('Update our user');
 		// Function used by user object to update ....
 		// Question : since prototype, should we perhaps define this after pulling object from store.js ...
 		// TODO : need to create some kind of backend call suitable for getting the data for a user...
 
+
+    //Update current price of stocks in portfolio
     var code = "";
     for(var stock in this.ownedStocks) {
       code = code + this.ownedStocks[stock].stockID + " ";
     }
-		console.log("Code is: " + code);
-		//$.getJSON("http://ec2-54-79-50-63.ap-southeast-2.compute.amazonaws.com:8080/SOMETHINGELSEHERE/" + code, function(data) {
-  	//  console.log("Data is:\n" + data);
-        //TODO - update current price of all stocks in portfolio
-        
-  	//});
+		//console.log("Code is: " + code);
+		$.getJSON("http://ec2-54-66-183-165.ap-southeast-2.compute.amazonaws.com:8080/price/" + code, function(data) {
+  	  console.log("Portfolio data is:\n" + JSON.stringify(data));
+
+      if(data[0]) {  //There is more than one stock queried so it has been wrapped in a key-index array
+        var i = 0;
+        for(stock in this.ownedStocks) {
+          //console.log(">>>>>>>>" + data[i].AskRealtime);
+          this.ownedStocks[stock].currentPrice = data[i].AskRealtime;
+          i++;
+        }  
+      } else {  //Only one stock was queried
+        for(stock in window.user.ownedStocks) { //Use for loop to get the key
+          this.ownedStocks[stock].currentPrice = data.AskRealtime;
+        } 
+      }
+  	});
+
+
+    //Update current price of stocks in watchlist
+  	code = "";
+    for(var stock in this.watchedStocks) {
+      code = code + this.watchedStocks[stock].stockID + " ";
+    }
+		//console.log("Code is: " + code);
+
+		$.getJSON("http://ec2-54-66-183-165.ap-southeast-2.compute.amazonaws.com:8080/price/" + code, function(data) {
+  	  console.log("Watchlist data is:\n" + JSON.stringify(data));
+
+      if(data[0]) { //There is more than one stock queried so it has been wrapped in a key-index array
+        var i = 0;
+        for(stock in this.watchedStocks) {
+          //console.log(">>>>>>>>" + data[i].AskRealtime);
+          this.watchedStocks[stock].currentPrice = data[i].AskRealtime;
+          i++;
+        }  
+      } else {  //Only one stock was queried
+        for(stock in this.watchedStocks) { //Use for loop to get the key
+          this.watchedStocks[stock].currentPrice = data.AskRealtime;
+        }
+      }   
+  	});  	
     refreshStocks();
 	}
+
+	
 	userObject.save = function(){ // function used to save this object to memory...
 		console.log('Save our user');
 		store.set('user',this);

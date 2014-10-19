@@ -6,7 +6,7 @@ function makeRequest(code){
 
   
   $.getJSON("http://ec2-54-79-50-63.ap-southeast-2.compute.amazonaws.com:8080/data/" + code, function(data) {
-  	console.log("Data is:\n" + data);        
+  	//console.log("Data is:\n" + JSON.stringify(data));        
 
   	var table = document.getElementById("myTable");
 
@@ -62,8 +62,8 @@ function populateWatchlist() {
   
    
     var stock = window.user.watchedStocks[key];
-    var difference = stock.purchasePrice - stock.currentPrice;
-    var text = stock.stockID + " Diff: " + difference + " " + (difference / stock.purchasePrice) + "%"
+    var difference = stock.currentPrice - stock.purchasePrice;
+    var text = stock.stockID + " Diff: " + difference + " " + (difference * 100 / stock.purchasePrice) + "%"
       + " Current Price: " + stock.currentPrice + " Target Price: " + stock.targetPrice;
 
     var li = '<li class="watchlistRow ui-btn ui-btn-icon-right" id="' + stock.stockID + '">';
@@ -104,8 +104,8 @@ function populatePortfolio() {
   for(var key in window.user.ownedStocks) {
   
     var stock = window.user.ownedStocks[key];
-    var difference = stock.purchasePrice - stock.currentPrice;
-    var text = stock.stockID + " Difference: " + difference + " " + (difference / stock.purchasePrice) + "%";
+    var difference = stock.currentPrice - stock.purchasePrice;
+    var text = stock.stockID + " Difference: " + difference + " " + (difference * 100 / stock.purchasePrice) + "%";
     var li = '<li class="portfolioRow ui-btn ui-btn-icon-right" id="' + stock.stockID + '">';
     var span = "";
     var a = '<a href="#" class="boughtStock ui-btn ui-btn-icon-right ';              //Can change href to a popup window for selling stocks
