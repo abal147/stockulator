@@ -3,6 +3,7 @@
 import urllib, urllib2
 import datetime
 import re
+import sys
 
 def grabAllCodes():
 
@@ -15,10 +16,12 @@ def grabAllCodes():
 
 	today = datetime.date.today()
 
+	todayInt = 10000 * today.year + 100 * today.month + today.day
+
 	if (today.year == lastScraped.year 
 		and today.month == lastScraped.month 
 		and today.day == lastScraped.day):
-		return False
+		return todayInt
 
 	url = 'http://www.asx.com.au/asx/research/ASXListedCompanies.csv'
 	page = urllib2.urlopen(url).read()
@@ -46,7 +49,18 @@ def grabAllCodes():
 	file.write(allCodes)
 	file.close()
 
-	return True
+	return todayInt
+
+def requestCodes():
+	grabAllCodes()	
+	
+	result = dict()
+
+	file = open('ASXCodes.csv', 'r')
+	result['data'] = file.read()
+	file.close()
+
+	return result	
 
 
 def getCodes(regex, industry = ''):
@@ -81,7 +95,4 @@ def getCodes(regex, industry = ''):
 	return results
 
 if __name__ == "__main__":
-	print getCodes('Wool', '')
-
-
-
+	print requestCodes()
