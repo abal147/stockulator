@@ -572,9 +572,9 @@ $(function() {
 	$("#searchStock").listview().listview("refresh");
 */
 
-    console.log("AARON IS CRYINGGGGGGG");
+    //console.log("AARON IS CRYINGGGGGGG");
     refreshASXCodes();
-    console.log("I FUCKING HATE THIS FUCKING THING");
+    //console.log("I FUCKING HATE THIS FUCKING THING");
     
     var codes = ["#searchStock", "#searchStock2", "#searchStock3"];
 
@@ -603,7 +603,7 @@ $(function() {
 	            $ul.html( "<li><div class='ui-loader'><span class='ui-icon ui-icon-loading'></span></div></li>" );
 	            $ul.listview( "refresh" );
 
-	            for (var i = 3; i < codes.length; ++i) {
+	            for (var i = 1; i < codes.length; ++i) {
 	                if (codes[i].toLowerCase().indexOf( value.toLowerCase() ) != -1) {
 	                    var info = codes[i].split(",");
 	                    li += '<li data-chapter="' + info[1] + '" data-filtertext="' + codes[i].replace(/\"/g, '') + '"><a href="#stockInfo">' + info[0].replace(/\"/g, '') + '</a></li>\n';
@@ -625,11 +625,11 @@ $(function() {
 	        $('input[data-type="search"]').val('');
 	        $('input[data-type="search"]').trigger("keyup");
 
-	        console.log("CLICKITY CLACKITY ");
+	        //console.log("CLICKITY CLACKITY ");
 	    });
     }
 
-    console.log("I FUCKING HATE THIS FUCKING THING EVEN");
+    //console.log("I FUCKING HATE THIS FUCKING THING EVEN");
 
 
 }); // self executing anonymous function ....

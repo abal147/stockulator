@@ -175,12 +175,12 @@ function handleNameSearch(e){
 }
 
 function refreshASXCodes() {
-    console.log("Step1");
+    //console.log("Step1");
 
     var grabbed = false;
-    console.log("Step1");
+    //console.log("Step1");
     var lines = localStorage.getItem("stockCSV");
-    console.log("Step1");
+    //console.log("Step1");
     if (lines == null) {
         // If there is no stored list, grab it
         grabASXCodes();
@@ -198,6 +198,13 @@ function refreshASXCodes() {
         var dateLastPulled = new Date(lastPulled);
         var today = new Date(Date.now());
 
+        var lastPulledDateInt = 0;
+        lastPulledDateInt += 10000 * dateLastPulled.getFullYear();
+        lastPulledDateInt += 100 * dateLastPulled.getMonth();
+        lastPulledDateInt += dateLastPulled.getDate();
+
+        console.log("Last pulled on: " + lastPulledDateInt);
+
         if (today.getDate() != dateLastPulled.getDate() ||
                 today.getMonth() != dateLastPulled.getMonth() ||
                 today.getFullYear() != dateLastPulled.getFullYear()) {
@@ -213,11 +220,11 @@ function refreshASXCodes() {
     return grabbed;
 }
 
-
 /*
     Grabs ASX codes from the asx page and cleans the results a bit
 */
 function grabASXCodes() {
+    /*
     $.get("http://www.asx.com.au/asx/research/ASXListedCompanies.csv"
         , function(data) {
             var lines = data.split("\n");
@@ -228,6 +235,25 @@ function grabASXCodes() {
             }
             data = lines.join("\n");
             localStorage.setItem("stockCSV",data);
+        }
+    );
+    */
+
+    $.getJSON("http://ec2-54-66-137-0.ap-southeast-2.compute.amazonaws.com:8080/asxcodes"
+        , function(data) {
+
+            var lines = data["data"].split("\n");
+            for (var i = 1; i < lines.length; ++i) {
+                var stock = lines[i].split(",");
+                stock[1] = stock[1] + ".AX";
+                lines[i] = stock.join(",");
+            }
+
+            data = lines.join("\n");
+
+            //console.log(data);
+
+            localStorage.setItem("stockCSV", data);
         }
     );
 }
