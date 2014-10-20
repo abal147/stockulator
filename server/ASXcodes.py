@@ -38,7 +38,7 @@ def grabAllCodes():
 	cleanedRecords.append(lines[0])
 
 	for line in lines[3:]:
-		record = line.split(',')
+		record = line.split(',', 2)
 		if len(record) == 3:
 			record[1] += '.AX'
 			cleanedRecords.append(','.join(record))
