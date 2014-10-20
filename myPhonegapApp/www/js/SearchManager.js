@@ -239,7 +239,7 @@ function grabASXCodes() {
     );
     */
 
-    $.getJSON("http://ec2-54-66-137-0.ap-southeast-2.compute.amazonaws.com:8080/asxcodes"
+    $.getJSON(DEVSERVER_URL + "/asxcodes"
         , function(data) {
 
             var lines = data["data"].split("\n");
