@@ -1,6 +1,6 @@
 from bottle import Bottle, run, response
 from json import dumps
-from server import dataScraper, historical, metric
+from server import dataScraper, historical, metric, ASXcodes
 
 app = Bottle()
 
@@ -18,6 +18,13 @@ def enable_cors():
 @app.route('/hello')
 def hello():
     return "Hello World!"
+
+@app.route('/asxcodes')
+def get_codes():
+	result = ASXcodes.requestCodes()
+	response.content_type = 'application/json'
+	return dumps(result)
+	
 
 @app.route('/data/<code>')
 def get_data(code=""):
