@@ -54,17 +54,17 @@ def insertTransaction():
    #eg.
    return updateUserObject.updateUserObject(transaction)
 
-@app.post('/adduser', methods='POST')
-def addUser():
-	user=request.forms['user']
-	print "User is " + user
+@app.route('/addUser/<userData>')
+def addUser(userData=""):
+
+	print "User Data is " + userData
 	# TODO - insert the user into the database
 	# Assuming user is valid... if not valid then bad luck , make nothing happen
 	# as an invalid user should be caught by the frontend / above method...
 	# Should not need to return -- a failed 
-	response="good"
+	result="good"
 	response.content_type = 'application/json'
-	return dumps(response)
+	return dumps(result)
 
 @app.route('/price/<code>')
 def get_price(code=""):

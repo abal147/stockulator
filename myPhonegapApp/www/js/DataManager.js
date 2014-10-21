@@ -161,23 +161,16 @@ function createUserFromData(userName,firstName,secondName,email,password){
 	// 4. Let the server know that we have created a new user...
 	var output = user.userName + "," + user.email + "," + user.password;
 	
-	$.ajax({
-        url: DEVSERVER_URL + "/adduser",
-        //url: "0.0.0.0:8080/adduser",//TODO - change to correct server address...
-        type: "POST",
-        data: {user: output},
-        beforeSend: function(x) {
-          if (x && x.overrideMimeType) {
-            x.overrideMimeType("application/j-son;charset=UTF-8");
-          }
-        },
-        success: function(result) {
-          console.log("Success!" + result);
-        }
-        // TODO - insert something for fail here...
-      });
+	//$.getJSON("http://0.0.0.0:8080/addUser/" + output, function(data) {
+	$.getJSON(DEVSERVER_URL +"/addUser/"  + output, function(data) {
 	
-	
+        	console.log("User added successfully!");
+    })
+    .fail(function() {
+    	console.log("Can't reach server ...fuck!");
+    	retval=false;
+    });
+    
 	return 1;
 }
 
@@ -300,7 +293,6 @@ function attachUserMethods(userObject) {
         } 
       }
   	});
-
 
     //Update current price of stocks in watchlist
   	code = "";

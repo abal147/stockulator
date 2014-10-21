@@ -128,19 +128,25 @@ jQuery.validator.addMethod("isUserNew",function(value) {
 	});
 	
 	// TODO - change to correct server address..
-	$.getJSON("http://0.0.0.0:8080/isusernew/" + $('#name').val(), function(data) {
+	//$.getJSON("http://0.0.0.0:8080/isusernew/" + $('#name').val(), function(data) {
+	$.getJSON(DEVSERVER_URL + "/isusernew/" + $('#name').val(), function(data) {
         if (data ==="yes") {
         	console.log("User is new!");
         	retval=true;
         }
         else {
         	console.log("User is not new!");
-        	retval=false;
+        	//retval=false;
+        	retval=true; // TODO - remove this to enable username validity checking
+        	// do this once the server is up to date
         }
     })
     .fail(function() {
     	console.log("Can't reach server ...fuck!");
-    	retval=false;
+    	//retval=false;
+    	retval=true;
+    	// TODO - remove this to enable username validity checking
+        // do this once the server is up to date
     	
     	$.ajaxSetup({
 			async:true
