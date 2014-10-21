@@ -78,10 +78,10 @@ def getUserID(name):
 	db.close()
 	return userID
 
-def getUser(name):
+def getAllUsers(name):
 	db = sqlite3.connect('stock_db.db')
 	cursor = db.cursor()
-	cursor.execute('''SELECT * FROM users WHERE name = (?)''', (name,))
+	cursor.execute('''SELECT name FROM users WHERE name = (?)''', (name,))
 	userinfo = cursor.fetchall()
 	db.close()
 	return userinfo
@@ -155,15 +155,19 @@ def getPortfolio(name):
 	db.close()
 	return str(portfolio)#returnstr
 
+#creates new game and will return the gameID
 def newGame(gameName, name):
 	db = sqlite3.connect('stock_db.db')
 	cursor = db.cursor()
 	userID = getUserID(name)
 	cursor.execute(
 		'''INSERT INTO games (gameName, userID) values (?,?)''', (gameName, userID))
+	cursor.execute(
+		'''SELECT COUNT * FROM games''')
+	gameID = cursor.fetchone()[0]
 	db.commit()
 	db.close()
-	return
+	return gameID
 
 #need function to put users into gamestable
 
