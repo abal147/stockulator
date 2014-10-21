@@ -87,6 +87,8 @@ function buyWatchStock(stockID, state,qty){
  console.log("Stock " + stockID + " is bought or watched");
 }
 
+
+// User name validation ... etc
 //Create user if the data is valid...
 $.validator.setDefaults({
 		submitHandler: function() {
@@ -112,6 +114,50 @@ $.validator.setDefaults({
 			}
 		}
 });
+
+// Custom validation method checks that user does not already exist...
+jQuery.validator.addMethod("isUserNew",function(value) {
+	
+	var retval=false;
+	// Lets call server to see if user exists
+	console.log("Check if user is new!");
+	
+	// Make getJson synchronous as we want to wait to see if correct user or not...
+	$.ajaxSetup({
+		async:false
+	});
+	
+	// TODO - change to correct server address..
+	$.getJSON("http://0.0.0.0:8080/isusernew/" + $('#name').val(), function(data) {
+        if (data ==="yes") {
+        	console.log("User is new!");
+        	retval=true;
+        }
+        else {
+        	console.log("User is not new!");
+        	retval=false;
+        }
+    })
+    .fail(function() {
+    	console.log("Can't reach server ...fuck!");
+    	retval=false;
+    	
+    	$.ajaxSetup({
+			async:true
+		});
+    });
+    
+    // make sure all ajax calls from here on in are asynchronous
+    $.ajaxSetup({
+		async:true
+	});
+	
+	return retval;
+},"Username already exists!");
+
+jQuery.validator.classRuleSettings.isUserNew = {isUserNew : true} ; // Not sure why I have to do this...
+// End of user validation ....
+
 
 // Main Document Manipulation Script
 // This script will be run by all documents to perform manipulation of the page..
@@ -188,7 +234,8 @@ $(document).ready (function(){
 
 				name: {
 					required: true,
-					minlength: 5
+					minlength: 5 ,
+					isUserNew : true
 				},
 				password: {
 					required: true,

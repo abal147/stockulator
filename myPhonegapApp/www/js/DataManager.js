@@ -151,12 +151,33 @@ function createUserFromData(userName,firstName,secondName,email,password){
 	// 1. Create user object
 	var user = new userObj(userName,firstName,secondName,email,password);
 	console.log("User is : " + user);
+	
 	// 2. Store in memory
 	store.set('user',user);
 	
 	// 3. Get the window user...
 	window.user=user;
-	// TODO - potentially change this in future if not successful
+	
+	// 4. Let the server know that we have created a new user...
+	var output = user.userName + "," + user.email + "," + user.password;
+	
+	$.ajax({
+        url: DEVSERVER_URL + "/adduser",
+        //url: "0.0.0.0:8080/adduser",//TODO - change to correct server address...
+        type: "POST",
+        data: {user: output},
+        beforeSend: function(x) {
+          if (x && x.overrideMimeType) {
+            x.overrideMimeType("application/j-son;charset=UTF-8");
+          }
+        },
+        success: function(result) {
+          console.log("Success!" + result);
+        }
+        // TODO - insert something for fail here...
+      });
+	
+	
 	return 1;
 }
 
