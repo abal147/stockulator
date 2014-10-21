@@ -1,6 +1,6 @@
 from bottle import Bottle, run, response
 from json import dumps
-from server import dataScraper, historical, metric
+from server import dataScraper, historical, metric, ASXcodes
 
 app = Bottle()
 
@@ -19,11 +19,35 @@ def enable_cors():
 def hello():
     return "Hello World!"
 
+@app.route('/asxcodes')
+def get_codes():
+	result = ASXcodes.requestCodes()
+	response.content_type = 'application/json'
+	return dumps(result)
+	
+
 @app.route('/data/<code>')
 def get_data(code=""):
    result = dataScraper.grabCurrentData([code])
    response.content_type = 'application/json'
    return dumps(result)
+
+@app.post('/update', methods='POST')
+def insertTransaction():
+   transaction=request.forms['transaction']
+   
+
+   #return scriptName.functionName(transaction)
+   #technically don't even need to return if not debugging
+
+   #eg.
+   return updateUserObject.updateUserObject(transaction)
+
+@app.route('/price/<code>')
+def get_price(code=""):
+	result = dataScraper.grabStockPriceOnly([code])
+	response.content_type = 'application/json'
+	return dumps(result)
 
 @app.route('/data_historical/<code>')
 @app.route('/data_historical/<code>/<numDays:int>')

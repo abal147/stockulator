@@ -113,3 +113,24 @@ h1 {
     animation:fade 3000ms infinite;
     -webkit-animation:fade 3000ms infinite;
 }
+
+#jqvForm label.valid {
+  width: 16px;
+  color:green;
+  height: 16px;
+  /*background: url("../images/tick.png") center center no-repeat;*/
+  display: inline-block;
+  text-indent: -9999em !important;
+  position: absolute;
+}
+#jqvForm label.error {
+  color: red;
+  display: inline;
+  float: none;
+  font-size:11px;
+  font-weight: bold;
+  margin-left: 10px;
+  text-align: left;
+  padding: 2px 8px;
+  margin-top: 2px;
+}
