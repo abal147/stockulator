@@ -78,7 +78,7 @@ function refreshStockInfo() {
   	$(".stockName").replaceWith("<div class = \"stockName\"> <p> stockName : " + stockObj.stockName + "</p></div>");
 	
 	// Plot the guage for the stuff...
-	plotRatios();
+	//plotRatios();
 }
 
 function buyWatchStock(stockID, state,qty){
