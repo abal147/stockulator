@@ -7,8 +7,8 @@
 var WATCH_STOCK = 0;
 var BUY_STOCK = 1;
 var MODIFY_STOCK = 2;
-//var DEVSERVER_URL = "http://ec2-54-79-50-63.ap-southeast-2.compute.amazonaws.com:8080";
-var DEVSERVER_URL = "http://0.0.0.0:8080";
+var DEVSERVER_URL = "http://ec2-54-79-50-63.ap-southeast-2.compute.amazonaws.com:8080";
+//var DEVSERVER_URL = "http://0.0.0.0:8080";
 
 function handle(e, code){
  	if(e.keyCode === 13){
