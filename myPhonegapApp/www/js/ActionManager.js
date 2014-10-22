@@ -7,8 +7,8 @@
 var WATCH_STOCK = 0;
 var BUY_STOCK = 1;
 var MODIFY_STOCK = 2;
-var DEVSERVER_URL = "http://ec2-54-79-50-63.ap-southeast-2.compute.amazonaws.com:8080";
-
+//var DEVSERVER_URL = "http://ec2-54-79-50-63.ap-southeast-2.compute.amazonaws.com:8080";
+var DEVSERVER_URL = "http://0.0.0.0:8080";
 
 function handle(e, code){
  	if(e.keyCode === 13){
@@ -26,6 +26,25 @@ function handle(e, code){
 		makeRequest(code);
  	}
 
+}
+
+function changeButtons (stockName) {
+	if (stockName in window.user.ownedStocks) { // Check that this is correct
+			// Stock is defined....if it is 
+			console.log("Stock is already owned");
+			$('#sellButton').removeClass('ui-disabled');
+			$('#watchButton').addClass('ui-disabled');
+	}
+	else if (stockName in window.user.watchedStocks) {
+			console.log("Stock is watched");
+			$('#watchButton').addClass('ui-disabled');
+			$('#sellButton').addClass('ui-disabled');
+	}
+	else {
+			console.log("Stock is neither watched nor owned");
+			$('#sellButton').addClass('ui-disabled');
+			$('#watchButton').removeClass('ui-disabled');	
+	}
 }
 
 function refreshStocks() {
@@ -57,6 +76,9 @@ function refreshStockInfo() {
 	$(".price").replaceWith("<div class=\"price\"> <p> Price : " + stockObj.currentPrice + "</p></div>");
   	$(".stockID").replaceWith("<div class =\"stockID\"> <p> StockID :" + stockObj.stockID + "</p> </div>");
   	$(".stockName").replaceWith("<div class = \"stockName\"> <p> stockName : " + stockObj.stockName + "</p></div>");
+	
+	// Plot the guage for the stuff...
+	plotRatios();
 }
 
 function buyWatchStock(stockID, state,qty){
@@ -85,6 +107,10 @@ function buyWatchStock(stockID, state,qty){
   }
   //TODO - update server for selling stocks as well
  console.log("Stock " + stockID + " is bought or watched");
+ 
+ // Refresh the buttons
+ changeButtons(stockID);
+ 
 }
 
 
@@ -188,6 +214,7 @@ $(document).ready (function(){
 		plotData(getCurrentStock(),200);
 		makeRequest(getCurrentStock());
 		refreshStockInfo();
+		changeButtons(getCurrentStock());
 	}
 	
 	// Change current stock in text Box
@@ -219,16 +246,35 @@ $(document).ready (function(){
 		}
 	});
 	
+	$(".sellStock").click(function() {
+		sellStock(getCurrentStock(),$("#sellSliderVal").val(),window.myStockObj.currentPrice);
+	});
+	
 	$("#pageSlider").change(function() {
 			console.log("Value has changed");
 			var val = parseInt ($("#slider").val());
-			$(".cost").replaceWith("<div class = \"cost\"> <p> Cost : $" + window.myStockObj.currentPrice*val + " </p></div>"); 
+			$(".cost").replaceWith("<div class = \"cost\"> <p> Cost : $" + parseInt(window.myStockObj.currentPrice*val) + " </p></div>"); 
 	});
 	
 	$("#pageSlider2").change(function() {
 			console.log("Value has changed");
 			var val = parseInt ($("#slider2").val());
-			$(".cost").replaceWith("<div class = \"cost\"> <p> Cost : $" + window.myStockObj.currentPrice*val + " </p></div>"); 
+			$(".cost").replaceWith("<div class = \"cost\"> <p> Cost : $" + parseInt(window.myStockObj.currentPrice*val) + " </p></div>"); 
+	});
+	
+	$("#sellSlider").change(function() {
+			console.log("Sell Qty has changed");
+			var val = parseInt ($("#sellSliderVal").val());
+			$(".sellCost").replaceWith("<div class = \"sellCost\"> <p> Sell Value : $" + parseInt(window.myStockObj.currentPrice*val)+ " </p></div>"); 
+	});
+	
+	$("#sellButton").click(function() {
+		// Set the Sell quantity to be correct
+		console.log("Sell button is clicked!");
+		var thisStock = window.user.ownedStocks[getCurrentStock()];
+		// NB: assuming that the stock can be bought....
+		$("#sellSliderVal").attr("max",thisStock.getQuantity());
+		$(".stockCurrQty").replaceWith("<div class = \"stockCurrQty\"> <p> Current Stock Qty: " + thisStock.getQuantity() + " </p></div>" );
 	});
 	
 	$("#watchStock").click(function() {

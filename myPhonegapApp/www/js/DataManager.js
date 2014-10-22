@@ -99,6 +99,10 @@ function setCurrentStock (stockName) {
 	// Lets pull all of the data again...and reload...
 	plotData(stockName,200);
 	makeRequest(stockName);
+	
+	// Lets make sure that sell, buy and watch are updated accordingly
+	// cannot test this because my network is down....
+	changeButtons(stockName);
 }
 
 // This is horirble.... but fuck it
@@ -176,14 +180,28 @@ function createUserFromData(userName,firstName,secondName,email,password){
 
 function sellStock(stockID,quantity,price) {
 // Function is called to sell a stock
-
+	console.log("Sell the Stock!");
 	if (stockID in window.user.ownedStocks) {
-		//if (quantity > ...) TODO - implement quantity checking
-		addStockToUser(stockID,stockID,-quantity,price,0,1);
+		console.log("Quantity is " + quantity);
+		console.log("User quantity is " + window.user.ownedStocks[stockID].getQuantity());
+		if (quantity < window.user.ownedStocks[stockID].getQuantity()){
+			addStockToUser(stockID,stockID,-quantity,price,0,1);
+		}
+		else {
+			// lets just assume they want to sell everything
+			console.log("Fuck it ,... lets sell it all");
+			addStockToUser(stockID,stockID,-quantity,price,0,1);
+			
+			// Move stock from ownedList to sold list
+			var helper = window.user.ownedStocks[stockID];
+			delete window.user.ownedStocks[stockID];
+			window.user.soldStocks[stockID]=helper; // append to the sold stock list...
+		}
 	}
 	else {
 		console.log("error - cannot sell a stock that we do not own");
 	}
+	window.user.save();
 }
 
 function addStockToUser (stockID,stockName,quantity,price,targetPrice,state){
@@ -265,59 +283,59 @@ function attachUserMethods(userObject) {
 
 
 	userObject.upDate = function() {
-		console.log('Update our user');
-		// Function used by user object to update ....
-		// Question : since prototype, should we perhaps define this after pulling object from store.js ...
-		// TODO : need to create some kind of backend call suitable for getting the data for a user...
-
-
-    //Update current price of stocks in portfolio
-    var code = "";
-    for(var stock in this.ownedStocks) {
-      code = code + this.ownedStocks[stock].stockID + " ";
-    }
-		//console.log("Code is: " + code);
-		$.getJSON(DEVSERVER_URL + "/price/" + code, function(data) {
-  	  console.log("Portfolio data is:\n" + JSON.stringify(data));
-
-      if(data[0]) {  //There is more than one stock queried so it has been wrapped in a key-index array
-        var i = 0;
-        for(stock in this.ownedStocks) {
-          //console.log(">>>>>>>>" + data[i].AskRealtime);
-          this.ownedStocks[stock].currentPrice = data[i].AskRealtime;
-          i++;
-        }  
-      } else {  //Only one stock was queried
-        for(stock in window.user.ownedStocks) { //Use for loop to get the key
-          this.ownedStocks[stock].currentPrice = data.AskRealtime;
-        } 
-      }
-  	});
-
-    //Update current price of stocks in watchlist
-  	code = "";
-    for(var stock in this.watchedStocks) {
-      code = code + this.watchedStocks[stock].stockID + " ";
-    }
-		//console.log("Code is: " + code);
-
-		$.getJSON(DEVSERVER_URL + "/price/" + code, function(data) {
-  	  console.log("Watchlist data is:\n" + JSON.stringify(data));
-
-      if(data[0]) { //There is more than one stock queried so it has been wrapped in a key-index array
-        var i = 0;
-        for(stock in this.watchedStocks) {
-          //console.log(">>>>>>>>" + data[i].AskRealtime);
-          this.watchedStocks[stock].currentPrice = data[i].AskRealtime;
-          i++;
-        }  
-      } else {  //Only one stock was queried
-        for(stock in this.watchedStocks) { //Use for loop to get the key
-          this.watchedStocks[stock].currentPrice = data.AskRealtime;
-        }
-      }   
-  	});  	
-    refreshStocks();
+		// console.log('Update our user');
+// 		// Function used by user object to update ....
+// 		// Question : since prototype, should we perhaps define this after pulling object from store.js ...
+// 		// TODO : need to create some kind of backend call suitable for getting the data for a user...
+// 
+// 
+//     //Update current price of stocks in portfolio
+//     var code = "";
+//     for(var stock in this.ownedStocks) {
+//       code = code + this.ownedStocks[stock].stockID + " ";
+//     }
+// 		//console.log("Code is: " + code);
+// 		$.getJSON(DEVSERVER_URL + "/price/" + code, function(data) {
+//   	  console.log("Portfolio data is:\n" + JSON.stringify(data));
+// 
+//       if(data[0]) {  //There is more than one stock queried so it has been wrapped in a key-index array
+//         var i = 0;
+//         for(stock in this.ownedStocks) {
+//           //console.log(">>>>>>>>" + data[i].AskRealtime);
+//           this.ownedStocks[stock].currentPrice = data[i].AskRealtime;
+//           i++;
+//         }  
+//       } else {  //Only one stock was queried
+//         for(stock in window.user.ownedStocks) { //Use for loop to get the key
+//           this.ownedStocks[stock].currentPrice = data.AskRealtime;
+//         } 
+//       }
+//   	});
+// 
+//     //Update current price of stocks in watchlist
+//   	code = "";
+//     for(var stock in this.watchedStocks) {
+//       code = code + this.watchedStocks[stock].stockID + " ";
+//     }
+// 		//console.log("Code is: " + code);
+// 
+// 		$.getJSON(DEVSERVER_URL + "/price/" + code, function(data) {
+//   	  console.log("Watchlist data is:\n" + JSON.stringify(data));
+// 
+//       if(data[0]) { //There is more than one stock queried so it has been wrapped in a key-index array
+//         var i = 0;
+//         for(stock in this.watchedStocks) {
+//           //console.log(">>>>>>>>" + data[i].AskRealtime);
+//           this.watchedStocks[stock].currentPrice = data[i].AskRealtime;
+//           i++;
+//         }  
+//       } else {  //Only one stock was queried
+//         for(stock in this.watchedStocks) { //Use for loop to get the key
+//           this.watchedStocks[stock].currentPrice = data.AskRealtime;
+//         }
+//       }   
+//   	});  	
+//     refreshStocks();
 	}
 
 	
@@ -468,6 +486,7 @@ function userObj (userName,firstName,lastName,email,password) {
 	
 	this.ownedStocks = {}; // associative array of owned stock objects
 	this.watchedStocks = {}; // associative array of watching stocks
+	this.soldStocks = {}; // store the sold stocks here for reference....
 	attachUserMethods(this); // attach the user methods to this object..
 }
 
@@ -631,7 +650,10 @@ $(function() {
 
 	    $(document).on('click', code + ' li a', function (info) {
 	        var source = $(this).closest("li").attr("data-chapter");
-
+			
+			// Simple fix
+			source=source.substring(0,source.length-3); // trim of double .AX
+			
 	        makeRequest(source);
 	        setCurrentStock(source);
 	        plotData(getCurrentStock(),200);
