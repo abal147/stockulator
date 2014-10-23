@@ -76,7 +76,7 @@ function populateWatchlist() {
     var li = '<li class="watchlistRow ui-btn ui-btn-icon-right" id="' + stock.stockID + '">';
     var span = "";
 
-    var a = '<a href="#watchlistDialog" data-rel="popup" data-position-to="window" data-transition="pop" class="watchedStock ui-btn ui-btn-icon-right"';
+    var a = '<a href="#watchlistDialog" data-rel="popup" data-position-to="window" data-transition="pop" class="watchedStock ui-btn ui-btn-icon-right ';
     
     if(stock.currentPrice > stock.purchasePrice) {
       a = a + 'ui-icon-arrow-u">';
@@ -115,7 +115,7 @@ function populatePortfolio() {
     var text = stock.stockID + " Difference: " + difference + " " + (difference * 100 / stock.purchasePrice) + "%";
     var li = '<li class="portfolioRow ui-btn ui-btn-icon-right" id="' + stock.stockID + '">';
     var span = "";
-    var a = '<a href="#" class="boughtStock ui-btn ui-btn-icon-right ';              //Can change href to a popup window for selling stocks
+    var a = '<a href="#sellDialog" data-rel="popup" data-position-to="window" data-transition="pop" class="boughtStock ui-btn ui-btn-icon-right ';              //Can change href to a popup window for selling stocks
  
     if(stock.currentPrice > stock.purchasePrice) {
       a = a + 'ui-icon-arrow-u">';

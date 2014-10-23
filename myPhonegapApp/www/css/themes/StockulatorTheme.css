@@ -26,13 +26,19 @@ body {
 }
 
 .portfolioRow {
+/*
   left : 35%;
   width : 30%;
+*/
+  width : 100%;
 }
 
 .watchlistRow {
+/*
   left : 25%;
   width : 50%;
+*/
+  width : 100%;
 }
 
 /*******************************/
