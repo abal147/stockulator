@@ -61,11 +61,11 @@ def insertUser(name, email, password):
 	return 1
 
 #returns true if user is new, else if email is not unique then false
-def newUser(email):
+def newUser(name):
 	db = sqlite3.connect('stock_db.db')
 	cursor = db.cursor()
 	cursor.execute(
-	'''SELECT * FROM users WHERE email = (?)''', (email,))
+	'''SELECT * FROM users WHERE name = (?)''', (name,))
 	if len(cursor.fetchall()) > 0:
 		db.close()
 		return 0
