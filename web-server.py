@@ -24,7 +24,18 @@ def get_codes():
 	result = ASXcodes.requestCodes()
 	response.content_type = 'application/json'
 	return dumps(result)
-	
+
+@app.route('/isusernew/<user>')
+def checkUser(user=""):
+	# Check to see if username exists ...
+	# TODO - query the database and replace true with database result...
+	if user == "terry" :
+		result = "yes"
+	else :
+		result = "no"
+		
+	response.content_type = 'application/json'
+	return dumps(result)	
 
 @app.route('/data/<code>')
 def get_data(code=""):
@@ -42,6 +53,18 @@ def insertTransaction():
 
    #eg.
    return updateUserObject.updateUserObject(transaction)
+
+@app.route('/addUser/<userData>')
+def addUser(userData=""):
+
+	print "User Data is " + userData
+	# TODO - insert the user into the database
+	# Assuming user is valid... if not valid then bad luck , make nothing happen
+	# as an invalid user should be caught by the frontend / above method...
+	# Should not need to return -- a failed 
+	result="good"
+	response.content_type = 'application/json'
+	return dumps(result)
 
 @app.route('/price/<code>')
 def get_price(code=""):

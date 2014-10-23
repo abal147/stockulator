@@ -19,7 +19,9 @@
     <link rel="stylesheet" href="css/themes/StockulatorTheme.css" />
   	<link rel="stylesheet" href="css/themes/jquery.mobile.icons.min.css" />
   	<link rel="stylesheet" href="css/jquery.mobile.structure-1.4.4.min.css"></script>
+  	<link href="css/jquery.zrssfeed.css" rel="stylesheet" type="text/css" />
   	<link rel="stylesheet" href="css/validate/screen.css">
+  	<link rel="stylesheet" href="css/">
   			
   	<!-- Scripts we want executed before the page loads 
   		 Other scripts that we don't care about are loaded after the page --!>
@@ -33,7 +35,10 @@
 	<script src="js/store+json2.min.js"></script> <!-- include our store js script here ... -->
 	<script src="js/jquery.validate.js"></script>
 	<script src="js/highcharts-more.js"></script>
-				
+	<script src="http://code.highcharts.com/modules/solid-gauge.src.js"></script>
+	<script src="js/jquery.zrssfeed.min.js" type="text/javascript"></script>
+	<script src="js/jquery.vticker.js" type="text/javascript"></script>
+
 	<!-- JS - our own written scripts...-->
 	<script src="js/DataManager.js"></script>
 	<script src="js/TableManager.js"></script>
@@ -55,6 +60,7 @@
 	
 	<!-- Header of the Document -->
 	<div data-role="header" data-theme="a" data-position="fixed" data-id="vs_header">
+		<Br>  </Br>
 		<h1>Home</h1>
 		<a href="#home" data-icon="home" data-iconpos="notext">Home</a>
 		<a href="#signup" data-icon="info" data-iconpos="notext" data-rel="dialog" >Info</a>
@@ -66,14 +72,20 @@
 		</ul>
 	</div>
 
-	<!-- Content Part of Document-->
-	<div data-theme="a" data-role="content" id="postlist">	
-	
-	<!-- Place in here the shit that you need to put in your page .. --!>
-	<input type="search" name="searchBar" id="search-3" class="search" placeholder="Enter ASX Code" data-theme="b" onkeyup="handle(event, value)" />
-	<!-- TODO -fill me out ... --!> 
-	</div><!-- content -->
-	
+
+	<!-- Content Part of Document-->	
+	<div data-theme="a" data-role="content" id="postlist">
+		<div class="ui-grid-a">
+			<div class="ui-block-a"><div id="ticker"></div></div>
+			<div class="ui-block-b">
+				<div style = "height: 35px"></div>
+				<div id="indicie1" style="height: 200px; min-width: 310px"></div>
+				<div id="indicie2" style="height: 200px; min-width: 310px"></div>
+				<div id="indicie3" style="height: 200px; min-width: 310px"></div>
+			</div>
+		</div><!-- /grid-a -->
+	</div>
+
 	<!-- Page Footer -->
 	<div data-role="footer" data-position="fixed" data-theme="a" data-id="vs_footer">
 		<div data-role="navbar">
@@ -110,7 +122,7 @@
 	<!-- Content Part of Document-->
 	<div data-theme="a" data-role="content" id="postlist">	
 		<!-- Place in here the shit that you need to put in your page .. --!>
-		<input type="search" name="searchBar" id="search-3" class="search" placeholder="Enter ASX Code" data-theme="b" onkeyup="handle(event, value)" />
+		<!--<input type="search" name="searchBar" id="search-3" class="search" placeholder="Enter ASX Code" data-theme="b" onkeyup="handle(event, value)" /> -->
 		<!-- example .. stuff -->
 		<div id="pieChart" style="min-width: 310px; height: 250px; margin: 0 auto"></div>
 		<div data-role="fieldcontain">
@@ -170,15 +182,21 @@
 	<!-- Content Part of Document-->
 	<div data-theme="a" data-role="content" id="postlist">	
 
-		<input type="search" name="searchBar" id="search-3" class="search" value="Enter ASX Code" data-theme="b" onkeyup="handle(event, value)" />	
-
+		<!--<input type="search" name="searchBar" id="search-3" class="search" value="Enter ASX Code" data-theme="b" onkeyup="handle(event, value)" />	-->
+		<!-- 
+<div style="width: 300px; height: 200px; margin: 0 auto">
+			<div id="container-speed" style="width: 100px; height: 100px; float: left auto"></div>
+			<div id="container-rpm" style="width: 100px; height: 100px; float: left auto"></div>
+		</div>
+ -->
 		<table id="myTable">
-    </table>
+    	</table>
 		<div id="stockChart" style="height: 300px; min-width: 310px"></div>
 		<div class="ui-body ui-body-b">
 			<fieldset class="ui-grid-a">
-				<a href="#buyDialog" data-rel="popup" data-position-to="window" data-transition="pop" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b">Buy</a>
-				<a href="#watchDialog" data-rel="popup" data-position-to="window" data-transition="pop" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b">Watch</a>
+				<a href="#buyDialog" id = "buyButton" data-rel="popup" data-position-to="window" data-transition="pop" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b">Buy</a>
+				<a href="#watchDialog" id ="watchButton" data-rel="popup" data-position-to="window" data-transition="pop" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b">Watch</a>
+				<a href="#sellDialog" id = "sellButton" data-rel="popup" data-position-to="window" data-transition="pop" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b ">Sell</a>
 			</fieldset>
 		</div>
 		
@@ -218,6 +236,29 @@
     		<a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" id="watchStock" data-rel="back" data-transition="flow">Watch</a>
     	</div>
 		</div>
+		
+		<div data-role="popup" id="sellDialog" data-overlay-theme="b" data-theme="b" data-dismissible="false" style="max-width:400px;">
+ 	 		<div data-role="header" data-theme="a">
+  		  <h1>Sell Stock</h1>
+  		</div>
+  		<div role="main" class="ui-content">
+  			<div class="price"> <p> Price : 100 </p> </div>
+  			<div class ="stockID"> <p> StockID : WOW.ax </p> </div>
+  			<div class = "stockName"> <p> stockName : Woolworths </p></div>
+  			<div class = "stockCurrQty"> <p> Current Stock Qty: </p></div>
+      		<form>
+      			<div style="padding:10px 20px;">
+        			 <div data-role="fieldcontain" class = "pageSlider" id="sellSlider">
+					      <label for="slider">Sell Qty:</label>
+	 				      <input type="range" name="sellSliderVal" id="sellSliderVal" class = "slider" value="0" min="0" max="1000" data-highlight="true"  />
+				     </div>
+     		    </div>
+  			  </form>
+  			<div class = "sellCost"> <p> Money : $0.00 </p></div>
+    		<a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" data-rel="back">Cancel</a>
+    		<a href="#" id ="sellStock" class="sellStock ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" data-rel="back" data-transition="flow">Sell</a>
+  		</div>
+		</div>
 	</div><!-- content -->
 	
 	<!-- Page Footer -->
@@ -246,17 +287,23 @@
 		<a href="#info" data-icon="info" data-iconpos="notext" data-rel="dialog" >Info</a>
 	</div><!-- header -->
 	
+	<div data-role="collapsible">
+		<h2>Search stocks</h2>
+		<ul data-role="listview" data-filter="true" id="searchStock3" data-filter-placeholder="Search stocks..." data-inset="true" data-filter-reveal="true">
+		</ul>
+	</div>
+	
 	<!-- Content Part of Document-->
 	<div data-theme="a" data-role="content" id="postlist">	
 
-		<input type="search" name="searchBar" id="nameSearch" class="search-3" value="Enter ASX Code" data-theme="b" onkeyup="handleNameSearch(event)" />
+		<!--<input type="search" name="searchBar" id="nameSearch" class="search-3" value="Enter ASX Code" data-theme="b" onkeyup="handleNameSearch(event)" /> -->
 
 		<table id="searchTable">
       	</table>
 
 		<!-- Place in here the shit that you need to put in your page .. --!>
 
-		<input type="search" name="searchbar" id="search-3" class="search" placeholder="Enter ASX Code" data-theme="b" onkeyup="handle(event, value)" />
+		<!--<input type="search" name="searchbar" id="search-3" class="search" placeholder="Enter ASX Code" data-theme="b" onkeyup="handle(event, value)" /> -->
 
     <ul id="myWatchlist" data-role="listview" data-inset="true">
     </ul>
@@ -366,7 +413,7 @@
 	  <form  id="commentForm" method="get" action="">
 		<div data-role="fieldcontain">
     		<label for="name">Username:</label>
-   	 		<input type="text" name="name" id="name" value=""  data-mini="true" required/>
+   	 		<input type="text" name="name" id="name" value=""  data-mini="true" required />
 		</div>	
 		<div data-role="fieldcontain">
 	         <label for="password">Password:</label>

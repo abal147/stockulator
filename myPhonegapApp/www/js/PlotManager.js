@@ -310,7 +310,7 @@ function plotData(code,numDays) {
 				theme: "a",
 				html: ""
 			});
-			$.getJSON('http://ec2-54-79-50-63.ap-southeast-2.compute.amazonaws.com:8080/data_historical/'+ code + '/' + numDays).done( function (data) {
+			$.getJSON(DEVSERVER_URL + '/data_historical/'+ code + '/' + numDays).done( function (data) {
         console.log("Process the data!");
         
         // 1. Fix up the json since it is not formatted correctly
@@ -340,4 +340,203 @@ function plotData(code,numDays) {
     		console.log("Done!");
     		$.mobile.loading( "hide" );
     	});
+}
+
+function plotRatios() {
+// function will plot a simple guage plot for pe and peg ratio
+	var gaugeOptions = {
+
+        chart: {
+            type: 'solidgauge'
+        },
+
+        title: null,
+
+        pane: {
+            center: ['50%', '85%'],
+            size: '140%',
+            startAngle: -90,
+            endAngle: 90,
+            background: {
+                backgroundColor: (Highcharts.theme && Highcharts.theme.background2) || '#EEE',
+                innerRadius: '60%',
+                outerRadius: '100%',
+                shape: 'arc'
+            }
+        },
+
+        tooltip: {
+            enabled: false
+        },
+
+        // the value axis
+        yAxis: {
+            stops: [
+                [0.1, '#55BF3B'], // green
+                [0.5, '#DDDF0D'], // yellow
+                [0.9, '#DF5353'] // red
+            ],
+            lineWidth: 0,
+            minorTickInterval: null,
+            tickPixelInterval: 400,
+            tickWidth: 0,
+            title: {
+                y: -70
+            },
+            labels: {
+                y: 16
+            }
+        },
+
+        plotOptions: {
+            solidgauge: {
+                dataLabels: {
+                    y: 5,
+                    borderWidth: 0,
+                    useHTML: true
+                }
+            }
+        }
+    };
+
+    // The speed gauge
+    $('#container-speed').highcharts(Highcharts.merge(gaugeOptions, {
+        yAxis: {
+            min: 0,
+            max: 200,
+            title: {
+                text: 'Speed'
+            }
+        },
+
+        credits: {
+            enabled: false
+        },
+
+        series: [{
+            name: 'Speed',
+            data: [80],
+            dataLabels: {
+                format: '<div style="text-align:center"><span style="font-size:25px;color:' +
+                    ((Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black') + '">{y}</span><br/>' +
+                       '<span style="font-size:12px;color:silver">km/h</span></div>'
+            },
+            tooltip: {
+                valueSuffix: ' km/h'
+            }
+        }]
+
+    }));
+
+    // The RPM gauge
+    $('#container-rpm').highcharts(Highcharts.merge(gaugeOptions, {
+        yAxis: {
+            min: 0,
+            max: 5,
+            title: {
+                text: 'RPM'
+            }
+        },
+
+        series: [{
+            name: 'RPM',
+            data: [1],
+            dataLabels: {
+                format: '<div style="text-align:center"><span style="font-size:25px;color:' +
+                    ((Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black') + '">{y:.1f}</span><br/>' +
+                       '<span style="font-size:12px;color:silver">* 1000 / min</span></div>'
+            },
+            tooltip: {
+                valueSuffix: ' revolutions/min'
+            }
+        }]
+
+    }));
+
+    // Bring life to the dials
+    setInterval(function () {
+        // Speed
+        var chart = $('#container-speed').highcharts(),
+            point,
+            newVal,
+            inc;
+
+        if (chart) {
+            point = chart.series[0].points[0];
+            inc = Math.round((Math.random() - 0.5) * 100);
+            newVal = point.y + inc;
+
+            if (newVal < 0 || newVal > 200) {
+                newVal = point.y - inc;
+            }
+
+            point.update(newVal);
+        }
+
+        // RPM
+        chart = $('#container-rpm').highcharts();
+        if (chart) {
+            point = chart.series[0].points[0];
+            inc = Math.random() - 0.5;
+            newVal = point.y + inc;
+
+            if (newVal < 0 || newVal > 5) {
+                newVal = point.y - inc;
+            }
+
+            point.update(newVal);
+        }
+    }, 2000);
+
+
+}
+
+function plotDataIndicie(code,name,numDays,element) {
+            // Function, will plot into #stockChart the data for a code and numDays...
+            
+            vars={};
+            vars['code']=code;
+            vars['numDays']=numDays;
+            console.log("Update the plot with :" + vars);
+            
+            // Lets show a loading widget
+            $.mobile.loading( 'show', {
+                text: 'Loading Data',
+                textVisible: true,
+                theme: "a",
+                html: ""
+            });
+            $.getJSON('http://ec2-54-79-50-63.ap-southeast-2.compute.amazonaws.com:8080/data_historical/'+ code + '/' + numDays).done( function (data) {
+        console.log("Process the data!");
+        
+        // 1. Fix up the json since it is not formatted correctly
+        obj = stringToJSON(data);
+        
+        // 2. Convert the JSON Object to a series for plotting
+        var seriesData = objToSeries(obj);
+        
+        // 3. Plot the shit             
+        $(element).highcharts('StockChart', {
+            rangeSelector : {
+                enabled : false,
+                selected : 1,
+                inputEnabled: $('#container').width() > 480
+            },
+            navigator : {
+                enabled: false
+            },
+            title : {
+                text : name
+            },
+
+            series : seriesData
+        });
+        $.mobile.loading( "hide" );
+        })
+        .fail (function(jqxhr,textStatus,error) {
+            var err = textStatus + ", " + error;
+            console.log( "Request Failed: " + err );
+            console.log("Done!");
+            $.mobile.loading( "hide" );
+        });
 }
