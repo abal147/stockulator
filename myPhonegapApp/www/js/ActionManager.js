@@ -195,6 +195,8 @@ jQuery.validator.classRuleSettings.isUserNew = {isUserNew : true} ; // Not sure 
 // This script will be run by all documents to perform manipulation of the page..
 $(document).ready (function(){
 
+
+
 	console.log("Document Manipulation Script has been run");
 	
 	// 1. initialise mobile loader
@@ -223,6 +225,13 @@ $(document).ready (function(){
 // 		setCurrentStock($("#search-3").val());
 // 	});
 		
+	$('#ticker').rssfeed('https://au.finance.yahoo.com/news/category-stocks/?format=rss',{}, function(e) {
+		$(e).find('div.rssBody').vTicker({showItems: 5});
+	});
+
+	plotDataIndicie("^AORD", "ALL ORDINARIES",60,"#indicie1");
+	plotDataIndicie("^AXDJ", "S&P/ASX 200 Consumer Discretionary Index" ,60,"#indicie2");
+	plotDataIndicie("^AXNJ", "S&P/ASX 200 Industrials Index " ,60,"#indicie3");
 
 	$("#buyStock").click(function() {
 		buyWatchStock(getCurrentStock(),1,$("#slider").val());
@@ -335,6 +344,9 @@ $(document).ready (function(){
     	focusInvalid: false
 	});
 	
+
+	
+
 	$("#historyView").click(function(){
 		plotPortHistory();
 	});

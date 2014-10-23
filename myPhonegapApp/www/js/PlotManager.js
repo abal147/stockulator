@@ -490,3 +490,53 @@ function plotRatios() {
 
 
 }
+
+function plotDataIndicie(code,name,numDays,element) {
+            // Function, will plot into #stockChart the data for a code and numDays...
+            
+            vars={};
+            vars['code']=code;
+            vars['numDays']=numDays;
+            console.log("Update the plot with :" + vars);
+            
+            // Lets show a loading widget
+            $.mobile.loading( 'show', {
+                text: 'Loading Data',
+                textVisible: true,
+                theme: "a",
+                html: ""
+            });
+            $.getJSON('http://ec2-54-79-50-63.ap-southeast-2.compute.amazonaws.com:8080/data_historical/'+ code + '/' + numDays).done( function (data) {
+        console.log("Process the data!");
+        
+        // 1. Fix up the json since it is not formatted correctly
+        obj = stringToJSON(data);
+        
+        // 2. Convert the JSON Object to a series for plotting
+        var seriesData = objToSeries(obj);
+        
+        // 3. Plot the shit             
+        $(element).highcharts('StockChart', {
+            rangeSelector : {
+                enabled : false,
+                selected : 1,
+                inputEnabled: $('#container').width() > 480
+            },
+            navigator : {
+                enabled: false
+            },
+            title : {
+                text : name
+            },
+
+            series : seriesData
+        });
+        $.mobile.loading( "hide" );
+        })
+        .fail (function(jqxhr,textStatus,error) {
+            var err = textStatus + ", " + error;
+            console.log( "Request Failed: " + err );
+            console.log("Done!");
+            $.mobile.loading( "hide" );
+        });
+}
