@@ -10,7 +10,8 @@ def createDB():
 		name TEXT,
 		userID INTEGER PRIMARY KEY,
 		email TEXT unqiue,
-		password TEXT
+		password TEXT,
+		balance REAL
 	)
 	''')
 	#add gameID to this table and where null it is a non-game
@@ -52,8 +53,9 @@ def insertUser(name, email, password):
 	cursor = db.cursor()
 	if newUser(email) == 0:
 		return 0	
+	defaultBalance = 10000
 	cursor.execute('''
-	INSERT INTO users (name, email, password) values (?,?,?)''', (name, email, password))
+	INSERT INTO users (name, email, password, balance) values (?,?,?,?)''', (name, email, password, defaultBalance))
 	db.commit()
 	db.close()
 	return 1
@@ -97,6 +99,15 @@ def printUsers():
 		print row[2]
 		print row[3]
 		print row[4]
+	db.close()
+	return
+
+def changeBalance(name, newBalance):
+	db = sqlite3.connect('stock_db.db')
+	cursor = db.cursor()
+	userID = getUserID(name)
+	cursor.execute('''UPDATE users SET balance = (?) WHERE userID = (?)''', (newBalance, userID))
+	db.commit()
 	db.close()
 	return
 
@@ -154,6 +165,18 @@ def getPortfolio(name):
 	returnstr += ']'
 	db.close()
 	return str(portfolio)#returnstr
+
+def getCurrBalance(name):
+	db = sqlite3.connect('stock_db.db')
+	cursor = db.cursor()
+	userID = getUserID(name)
+	cursor.execute(
+		'''SELECT price, numStocks FROM transactions WHERE userID = (?)''', (userID,))
+	balance = 0
+	for row in cursor:
+		balance += row[0]*row[1]
+	db.close()
+	return balance
 
 #creates new game and will return the gameID
 def newGame(gameName, name):
