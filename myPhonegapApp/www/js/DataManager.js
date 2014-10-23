@@ -550,6 +550,9 @@ $(function() {
 		// 2. Load Stored user data
 		window.user = store.get('user');
 		
+		// 3. plot the pie chart
+		//plotPieChart("Breakdown",window.user.ownedStocks);
+		
 		// a. Attach user methods to user Object
 		attachUserMethods(window.user);
 		
@@ -566,7 +569,7 @@ $(function() {
 		if (window.user == null) {
 			throw "undefined user";
 		} 
-	
+		plotPieChart("Breakdown",window.user.ownedStocks);
 		// 3. Begin Update Process ...
 			// TODO - call the server and update our user object...
 			// Edward......
@@ -583,7 +586,7 @@ $(function() {
 		//	console.log("Well that's fucked ! Error is not known (yet)");
 		//}
 	}
-
+	
 /*
 	$("#searchStock").empty();
 	refreshASXCodes();
