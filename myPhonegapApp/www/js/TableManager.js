@@ -69,19 +69,19 @@ function populateWatchlist() {
   
    
     var stock = window.user.watchedStocks[key];
-    var difference = stock.currentPrice - stock.purchasePrice;
-    var text = stock.stockID + " Diff: " + difference + " " + (difference * 100 / stock.purchasePrice) + "%"
+    var difference = stock.currentPrice - stock.purchasePrice[0];
+    var text = stock.stockID + " Diff: " + difference + " " + (difference * 100 / stock.purchasePrice[0]) + "%"
       + " Current Price: " + stock.currentPrice + " Target Price: " + stock.targetPrice;
 
     var li = '<li class="watchlistRow ui-btn ui-btn-icon-right" id="' + stock.stockID + '">';
     var span = "";
 
-    var a = '<a href="#watchlistDialog" data-rel="popup" data-position-to="window" data-transition="pop" class="watchedStock ui-btn ui-btn-icon-right"';
+    var a = '<a href="#watchlistDialog" data-rel="popup" data-position-to="window" data-transition="pop" class="watchedStock ui-btn ui-btn-icon-right ';
     
-    if(stock.currentPrice > stock.purchasePrice) {
+    if(stock.currentPrice > stock.purchasePrice[0]) {
       a = a + 'ui-icon-arrow-u">';
       span = '<span style="color:green">';
-    } else if(stock.currentPrice == stock.purchasePrice) {
+    } else if(stock.currentPrice == stock.purchasePrice[0]) {
       a = a + 'ui-icon-minus">';
       span = '<span style="color:black">';
     } else {
@@ -111,16 +111,16 @@ function populatePortfolio() {
   for(var key in window.user.ownedStocks) {
   
     var stock = window.user.ownedStocks[key];
-    var difference = stock.currentPrice - stock.purchasePrice;
-    var text = stock.stockID + " Difference: " + difference + " " + (difference * 100 / stock.purchasePrice) + "%";
+    var difference = stock.currentPrice - stock.purchasePrice[0];
+    var text = stock.stockID + " Difference: " + difference + " " + (difference * 100 / stock.purchasePrice[0]) + "%";
     var li = '<li class="portfolioRow ui-btn ui-btn-icon-right" id="' + stock.stockID + '">';
     var span = "";
-    var a = '<a href="#" class="boughtStock ui-btn ui-btn-icon-right ';              //Can change href to a popup window for selling stocks
+    var a = '<a href="#stockInfo" class="boughtStock ui-btn ui-btn-icon-right ';              //Can change href to a popup window for selling stocks
  
-    if(stock.currentPrice > stock.purchasePrice) {
+    if(stock.currentPrice > stock.purchasePrice[0]) {
       a = a + 'ui-icon-arrow-u">';
       span = '<span style="color:green">';
-    } else if(stock.currentPrice == stock.purchasePrice) {
+    } else if(stock.currentPrice == stock.purchasePrice[0]) {
       a = a + 'ui-icon-minus">';
       span = '<span style="color:black">';
     } else {

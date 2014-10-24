@@ -7,6 +7,7 @@
 var WATCH_STOCK = 0;
 var BUY_STOCK = 1;
 var MODIFY_STOCK = 2;
+var SELL_STOCK = 3;
 var DEVSERVER_URL = "http://ec2-54-79-50-63.ap-southeast-2.compute.amazonaws.com:8080";
 //var DEVSERVER_URL = "http://0.0.0.0:8080";
 
@@ -58,6 +59,9 @@ function refreshStocks() {
 
     // Refresh portfolio
     populatePortfolio();
+
+    //Refresh balance - bit of a dirty fix for positioning
+    $(".balanceText").html("Balance: $" + window.user.availableFunds + "                       ");
 	
 		window.user.save();
 	}
@@ -82,13 +86,12 @@ function refreshStockInfo() {
 }
 
 function buyWatchStock(stockID, state,qty){
-  // Function is called when one wants to buy a stock that is currently selected
-  // state 0 is watching stock, state 1 is buying stock
+  // Function is called when one wants to buy or watch a stock that is currently selected
 	
-	var stockName = window.myStockObj.stockName; // TODO - extract stock name?
+	var stockName = window.myStockObj.stockName;
 	var quantity = parseFloat (qty);
 	var price = window.myStockObj.currentPrice;
-  	var targetPrice = 0; // TODO - fix this
+  var targetPrice = 0;
 	if(state == WATCH_STOCK) {
 	  targetPrice = $("#targetPrice").val();
   } else if(state == MODIFY_STOCK) {
@@ -175,14 +178,14 @@ jQuery.validator.addMethod("isUserNew",function(value) {
         // do this once the server is up to date
     	
     	$.ajaxSetup({
-			async:true
-		});
-    });
+			  async:true
+		  });
+      });
     
-    // make sure all ajax calls from here on in are asynchronous
-    $.ajaxSetup({
-		async:true
-	});
+      // make sure all ajax calls from here on in are asynchronous
+      $.ajaxSetup({
+		    async:true
+	    });
 	
 	return retval;
 },"Username already exists!");
@@ -260,7 +263,7 @@ $(document).ready (function(){
 	});
 	
 	$("#pageSlider").change(function() {
-			console.log("Value has changed");
+			//console.log("Value has changed");
 			var val = parseInt ($("#slider").val());
 			$(".cost").replaceWith("<div class = \"cost\"> <p> Cost : $" + parseInt(window.myStockObj.currentPrice*val) + " </p></div>"); 
 	});
@@ -364,7 +367,6 @@ $(document).ready (function(){
 		buyWatchStock(getCurrentStock(), MODIFY_STOCK);
 	});
 
-  //Besides the handle function, when does currentStock get set?
   $("#unwatchStock").click(function() {
     console.log("Unwatching stock: " + getCurrentStock());
     deleteStock(getCurrentStock());
@@ -402,15 +404,38 @@ $(document).ready (function(){
   });
 
 
-  //Set a 10 second interval for refreshing current stock prices in user's portfolio
+  //Set a 120 second interval for refreshing current stock prices in user's portfolio
   window.user.upDate(); //Not sure why initial call doesn't refresh watchlist/portfolio
-  setInterval(function() {window.user.upDate()}, 10000);
+  setInterval(function() {window.user.upDate()}, 120000);
 
 	// 4. Load Dynamic Content
 	//refreshStocks();
  
 
 });
+
+
+/********************** Awesomeness - one menu panel for all pages :D - could probably do this for search bar *****************/
+//Only downside is writing html in one line =_=
+
+var panel =     '<div data-role="panel" data-position="right" data-position-fixed="false" data-display="overlay" id="menu" data-theme="b">';
+panel = panel +   '<div data-role="header" data-theme="a" data-position="fixed">';
+panel = panel +     '<a href="#" data-icon="gear" data-rel="close" data-iconpos="notext" data-role="button" class="ui-btn-right"></a>';
+panel = panel +   '</div>';
+panel = panel +   '<div data-role="main" class="ui-content" data-theme="a">';
+panel = panel +     '<a href="#" id="chargeButton" data-rel="popup" data-position-to="window" data-transition="pop"';
+panel = panel +       'class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b">Charge</a>';
+panel = panel +   '</div>';
+panel = panel + '</div>';
+
+
+$(document).one('pagebeforecreate', function () {
+  $.mobile.pageContainer.prepend(panel);
+  $("#menu").panel().enhanceWithin();
+});
+
+/*************************************************/
+
 
 
 

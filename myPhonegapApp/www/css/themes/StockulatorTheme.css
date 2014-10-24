@@ -35,6 +35,12 @@ body {
   width : 50%;
 }
 
+.balanceText {
+  float : right;
+  white-space : pre;
+}
+
+
 /*******************************/
 
 
