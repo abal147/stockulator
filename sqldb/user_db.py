@@ -199,7 +199,7 @@ def getRequest(name):
 	for row in cursor:
 		requestlist.append(str(row[0]))
 	db.close()
-	return str(requestlist)
+	return requestlist
 
 def acceptRequest(name, friend):
 	db = sqlite3.connect('stock_db.db')
@@ -249,7 +249,7 @@ def getFriends(name):
 	for row in cursor:
 		friendlist.append(str(row[0]))
 	db.close()
-	return str(friendlist)
+	return friendlist
 
 def printFriends():
 	db = sqlite3.connect('stock_db.db')
