@@ -1,6 +1,6 @@
 from bottle import Bottle, run, response
 from json import dumps
-from server import dataScraper, historical, metric, ASXcodes
+from server import dataScraper, historical, metric, ASXcodes, user_db
 
 app = Bottle()
 
@@ -43,7 +43,7 @@ def get_data(code=""):
    response.content_type = 'application/json'
    return dumps(result)
 
-@app.post('/update', methods='POST')
+@app.post('/insertTransaction', methods='POST')
 def insertTransaction():
    transaction=request.forms['transaction']
    
@@ -52,7 +52,7 @@ def insertTransaction():
    #technically don't even need to return if not debugging
 
    #eg.
-   return updateUserObject.updateUserObject(transaction)
+   return user_db.insertTrans(transaction)
 
 @app.route('/addUser/<userData>')
 def addUser(userData=""):
