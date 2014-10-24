@@ -645,7 +645,6 @@ $(function() {
 	    });
     }
 
-    console.log("I FUCKING HATE THIS FUCKING THING EVEN");
     setupFriends();
 
 }); // self executing anonymous function ....
