@@ -28,13 +28,8 @@ def get_codes():
 
 @app.route('/getfriends/<user>')
 def get_friends(user=''):
-	result = dict()
-	result['data'] = user_db.getFriends(user)
-	result['numFriends'] = len(result['data'])
-	if result['numFriends'] == 0:
-		result['data'] = 'N/A'
 	response.content_type = 'application/json'
-	return dumps(result);
+	return dumps(user_db.getFriends(user));
 
 @app.route('/reqfriend/<user>/<friend>')
 def request_friend(user='', friend=''):
