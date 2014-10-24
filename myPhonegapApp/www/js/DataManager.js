@@ -287,59 +287,66 @@ function attachUserMethods(userObject) {
 
 
 	userObject.upDate = function() {
-		// console.log('Update our user');
- 		// Function used by user object to update ....
- 		// Question : since prototype, should we perhaps define this after pulling object from store.js ...
- 		// TODO : need to create some kind of backend call suitable for getting the data for a user...
- 
- 
-     //Update current price of stocks in portfolio
-     var code = "";
-     for(var stock in this.ownedStocks) {
-       code = code + this.ownedStocks[stock].stockID + " ";
-     }
- 		//console.log("Code is: " + code);
- 		$.getJSON(DEVSERVER_URL + "/price/" + code, function(data) {
-   	  console.log("Portfolio data is:\n" + JSON.stringify(data));
- 
-       if(data[0]) {  //There is more than one stock queried so it has been wrapped in a key-index array
-         var i = 0;
-         for(stock in this.ownedStocks) {
-           //console.log(">>>>>>>>" + data[i].AskRealtime);
-           this.ownedStocks[stock].currentPrice = data[i].AskRealtime;
-           i++;
-         }  
-       } else {  //Only one stock was queried
-         for(stock in window.user.ownedStocks) { //Use for loop to get the key
-           this.ownedStocks[stock].currentPrice = data.AskRealtime;
-         } 
-       }
-   	});
- 
-     //Update current price of stocks in watchlist
-   	code = "";
-     for(var stock in this.watchedStocks) {
-       code = code + this.watchedStocks[stock].stockID + " ";
-     }
- 		//console.log("Code is: " + code);
- 
- 		$.getJSON(DEVSERVER_URL + "/price/" + code, function(data) {
-   	  console.log("Watchlist data is:\n" + JSON.stringify(data));
- 
-       if(data[0]) { //There is more than one stock queried so it has been wrapped in a key-index array
-         var i = 0;
-         for(stock in this.watchedStocks) {
-           //console.log(">>>>>>>>" + data[i].AskRealtime);
-           this.watchedStocks[stock].currentPrice = data[i].AskRealtime;
-           i++;
-         }  
-       } else {  //Only one stock was queried
-         for(stock in this.watchedStocks) { //Use for loop to get the key
-           this.watchedStocks[stock].currentPrice = data.AskRealtime;
+    // console.log('Update our user');
+    // Function used by user object to update ....
+    // Question : since prototype, should we perhaps define this after pulling object from store.js ...
+    // TODO : need to create some kind of backend call suitable for getting the data for a user...
+
+
+    //Update current price of stocks in portfolio
+    var code = "";
+    for(var stock in this.ownedStocks) {
+     code = code + this.ownedStocks[stock].stockID + " ";
+    }
+
+    if(code != "") {  //Skip if no stocks in portfolio
+      //console.log("Code is: " + code);
+      $.getJSON(DEVSERVER_URL + "/price/" + code, function(data) {
+        console.log("Portfolio data is:\n" + JSON.stringify(data));
+
+         if(data[0]) {  //There is more than one stock queried so it has been wrapped in a key-index array
+           var i = 0;
+           for(stock in this.ownedStocks) {
+             //console.log(">>>>>>>>" + data[i].AskRealtime);
+             this.ownedStocks[stock].currentPrice = data[i].AskRealtime;
+             i++;
+           }  
+         } else {  //Only one stock was queried
+           for(stock in window.user.ownedStocks) { //Use for loop to get the key
+             this.ownedStocks[stock].currentPrice = data.AskRealtime;
+           } 
          }
-       }   
-   	});  	
-     refreshStocks();
+      });
+    }
+     
+ 
+    //Update current price of stocks in watchlist
+   	code = "";
+    for(var stock in this.watchedStocks) {
+     code = code + this.watchedStocks[stock].stockID + " ";
+    }
+ 		//console.log("Code is: " + code);
+
+    if(code != "") {  //Skip if watchlist is empty
+   		$.getJSON(DEVSERVER_URL + "/price/" + code, function(data) {
+     	  console.log("Watchlist data is:\n" + JSON.stringify(data));
+   
+         if(data[0]) { //There is more than one stock queried so it has been wrapped in a key-index array
+           var i = 0;
+           for(stock in this.watchedStocks) {
+             //console.log(">>>>>>>>" + data[i].AskRealtime);
+             this.watchedStocks[stock].currentPrice = data[i].AskRealtime;
+             i++;
+           }  
+         } else {  //Only one stock was queried
+           for(stock in this.watchedStocks) { //Use for loop to get the key
+             this.watchedStocks[stock].currentPrice = data.AskRealtime;
+           }
+         }   
+     	});
+    } 
+     	
+    refreshStocks();
 	}
 
 	
