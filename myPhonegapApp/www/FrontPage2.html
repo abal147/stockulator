@@ -45,6 +45,7 @@
 	<script src="js/PlotManager.js"></script>
     <script src="js/ActionManager.js"></script>
     <script src="js/SearchManager.js"></script>
+    <script src="js/FriendManager.js"></script>
   			
 <title>Hello World</title>
 </head>
@@ -363,21 +364,58 @@
 
 <!----------------------------------------
          Start of the games Page 
- ----------------------------------------!>		
-<div data-role="page" id="game">
+ ---------------------------------------->		
+<div data-role="page" id="games">
 
 	<!-- Header of the Document -->
 	<div data-role="header" data-theme="a" data-position="fixed" data-id="vs_header">
-		<h1>Games</h1>
+		<h1>Friends</h1>
 		<a href="#home" data-icon="home" data-iconpos="notext">Home</a>
 		<a href="#info" data-icon="info" data-iconpos="notext" data-rel="dialog" >Info</a>
 	</div><!-- header -->
 	
 	<!-- Content Part of Document-->
 	<div data-theme="a" data-role="content" id="postlist">	
-	<!-- Place in here the shit that you need to put in your page .. --!>
-	<!-- TODO -fill me out ... --!> 
-	</div><!-- content -->
+	<!-- Place in here the shit that you need to put in your page .. -->
+	<!-- TODO -fill me out ... -->
+
+		<ul data-role="listview" data-filter="true" id="findFriends" data-filter-placeholder="Search users..." data-inset="true" data-filter-reveal="true">
+		</ul>
+
+
+		<a href="#friendRequests" id = "showFriendRequests" data-rel="popup" data-position-to="window" data-transition="pop" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b">Friend Requests</a>
+		<a href="#friendList" id = "showFriendList" data-rel="popup" data-position-to="window" data-transition="pop" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b">Friends</a>
+
+		<div data-role="popup" id="friendRequests">
+	 	 	<div data-role="header">
+	  			<h1>Friend Requests</h1>
+	  		</div>
+		 	<div class="content" data-role="content">
+		  		<ul data-role="listview" id="requestList" class="friendlistview">
+				</ul>
+			</div>
+			<div data-role="footer">
+	    		<a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" data-rel="back">Close</a>
+	    	</div>
+	  	</div>
+	  	
+	  	<div data-role="popup" id="friendList">
+			<div data-role="header">
+	  			<h1>Friends</h1>
+	  		</div>
+	  		<div class="content" data-role="content">
+		  		<ul data-role="listview" id="myFriends" data-inset="true">
+				</ul>
+			</div>
+			<div data-role="footer">
+				<a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" data-rel="back">Close</a>
+			</div>
+		</div>
+
+	</div>
+
+    
+</div><!-- content -->
 	
 	<!-- Page Footer -->
 	<div data-role="footer" data-position="fixed" data-theme="a" data-id="vs_footer">

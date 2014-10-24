@@ -620,3 +620,27 @@ button[disabled],
 	outline-width: 1px;
 	outline-style: auto;
 }
+
+
+.ui-popup .ui-content {
+    height: 300px !important;
+}
+
+.ui-content {
+    padding: 0 !important;
+}
+
+.friendlistview {
+    margin: 0 !important;
+    max-height: 100%;
+    overflow-y: scroll;
+}
+
+.ui-grid-a>.ui-block-a{
+width:75%;
+}
+
+.ui-grid-a>.ui-block-b {
+width:25%;
+
+}

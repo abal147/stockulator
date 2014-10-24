@@ -587,29 +587,7 @@ $(function() {
 		//}
 	}
 	
-/*
-	$("#searchStock").empty();
-	refreshASXCodes();
-
-	var codes = localStorage.getItem("stockCSV").split("\n");
-
-	$("#searchStock").listview().listview("refresh");
-
-	for (var i = 3; i < 100; ++i) {
-		var info = codes[i].split(",");
-		var li = '<li><a href="#stockInfo">' + info[0] + '</a></li>';
-		//console.log("Appending: " + li);
-		$('#searchStock').append(li).listview('refresh');
-	}
-
-	console.log(codes.length);
-
-	$("#searchStock").listview().listview("refresh");
-*/
-
-    //console.log("AARON IS CRYINGGGGGGG");
     refreshASXCodes();
-    //console.log("I FUCKING HATE THIS FUCKING THING");
     
     var codes = ["#searchStock", "#searchStock2", "#searchStock3"];
 
@@ -667,8 +645,8 @@ $(function() {
 	    });
     }
 
-    //console.log("I FUCKING HATE THIS FUCKING THING EVEN");
-
+    console.log("I FUCKING HATE THIS FUCKING THING EVEN");
+    setupFriends();
 
 }); // self executing anonymous function ....
 
