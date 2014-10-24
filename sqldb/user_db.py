@@ -261,32 +261,32 @@ def printFriends():
 	return
 
 #need function to put users into gamestable
+if __name__ == "__main__":
+	os.remove('stock_db.db')
+	createDB()
+	insertUser('bob', 'asdf', 'quet')
+	insertUser('jane', 'asdf', 'qiet')
+	insertUser('mark', 'asdf', 'asdf')
 
-os.remove('stock_db.db')
-createDB()
-insertUser('bob', 'asdf', 'quet')
-insertUser('jane', 'asdf', 'qiet')
-insertUser('mark', 'asdf', 'asdf')
+	insertTrans('bob,wow.ax,40,1')
+	print getCurrBalance('bob')
 
-insertTrans('bob,wow.ax,40,1')
-print getCurrBalance('bob')
-
-print 'inserting request from bob to jane'
-insertRequest('bob', 'jane')
-printFriends()
-print getRequest('jane')
-print 'jane accepts request'
-acceptRequest('bob', 'jane')
-printFriends()
-print 'insert request from mark to jane'
-insertRequest('mark', 'jane')
-acceptRequest('mark', 'jane')
-printFriends()
-print 'bob rejects request from mark'
-insertRequest('mark', 'bob')
-rejectRequest('mark', 'bob')
-print 'these are janes friends'
-print getFriends('jane')
-print 'jane chooses mark and deletes bob'
-deleteFriend('jane', 'bob')
-print getAllUsers()
+	print 'inserting request from bob to jane'
+	insertRequest('bob', 'jane')
+	printFriends()
+	print getRequest('jane')
+	print 'jane accepts request'
+	acceptRequest('bob', 'jane')
+	printFriends()
+	print 'insert request from mark to jane'
+	insertRequest('mark', 'jane')
+	acceptRequest('mark', 'jane')
+	printFriends()
+	print 'bob rejects request from mark'
+	insertRequest('mark', 'bob')
+	rejectRequest('mark', 'bob')
+	print 'these are janes friends'
+	print getFriends('jane')
+	print 'jane chooses mark and deletes bob'
+	deleteFriend('jane', 'bob')
+	print getAllUsers()
