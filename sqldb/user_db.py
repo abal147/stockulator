@@ -188,6 +188,19 @@ def insertRequest(name, friend):
 	db.close()
 	return
 
+def getRequest(name):
+	db = sqlite3.connect('stock_db.db')
+	cursor = db.cursor()
+	userID = getUserID(name)
+	cursor.execute(
+		'''SELECT name FROM users WHERE userID IN
+			(SELECT userID FROM friends WHERE friendID = (?) AND accepted = (?))''', (userID,0))
+	requestlist = []
+	for row in cursor:
+		requestlist.append(str(row[0]))
+	db.close()
+	return str(requestlist)
+
 def acceptRequest(name, friend):
 	db = sqlite3.connect('stock_db.db')
 	cursor = db.cursor()
@@ -261,6 +274,7 @@ print getCurrBalance('bob')
 print 'inserting request from bob to jane'
 insertRequest('bob', 'jane')
 printFriends()
+print getRequest('jane')
 print 'jane accepts request'
 acceptRequest('bob', 'jane')
 printFriends()
