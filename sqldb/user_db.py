@@ -1,4 +1,5 @@
-import sqlite3, time, os
+import sqlite3, time, os, json
+#from server import scraperUtility
 
 #create a new database and set up the tables
 def createDB():
@@ -25,21 +26,13 @@ def createDB():
 		unixDate INTEGER
 	)
 	''')
-	#userID in the table below is the creator?
+	#list of distinct pairs of friends
 	cursor.execute('''
-	CREATE TABLE games
+	CREATE TABLE friends
 	(
-		gameName TEXT,
-		gameID INTEGER PRIMARY KEY,
-		userID INTEGER
-	)
-	''')
-	#list of non-distinct users in games
-	cursor.execute('''
-	CREATE TABLE gameusers
-	(
-		gameID INTEGER,
-		userID INTEGER
+		userID INT,
+		friendID INT,
+		accepted INT
 	)
 	''')
 	db.commit()
@@ -80,27 +73,23 @@ def getUserID(name):
 	db.close()
 	return userID
 
-def getAllUsers(name):
+def getUser(name):
 	db = sqlite3.connect('stock_db.db')
 	cursor = db.cursor()
-	cursor.execute('''SELECT name FROM users WHERE name = (?)''', (name,))
+	cursor.execute('''SELECT * FROM users WHERE name = (?)''', (name,))
 	userinfo = cursor.fetchall()
 	db.close()
 	return userinfo
 
-#prints all rowsi n the users table
-def printUsers():
+def getAllUsers():
 	db = sqlite3.connect('stock_db.db')
 	cursor = db.cursor()
-	cursor.execute('''SELECT * FROM users''')
+	cursor.execute('''SELECT name FROM users''')
+	allusers = []
 	for row in cursor:
-		print row[0]
-		print row[1]
-		print row[2]
-		print row[3]
-		print row[4]
+		allusers.append(str(row[0]))
 	db.close()
-	return
+	return str(allusers)
 
 def changeBalance(name, newBalance):
 	db = sqlite3.connect('stock_db.db')
@@ -122,7 +111,7 @@ def insertTrans(inputstr):
 		'''INSERT INTO transactions (userID, stockID, price, numStocks, unixDate) values (?,?,?,?,?)''', (userID, inputs[1], inputs[2], inputs[3], int(time.time())))
 	db.commit()
 	db.close()
-	return
+	return 'transaction inserted for:' + inputstr
 
 #just prints out all the transactions in the transaction table
 def printTrans():
@@ -155,53 +144,135 @@ def getPortfolio(name):
 		'''SELECT * FROM transactions WHERE userID = (?)''', (userID,))
 	portfolio = {}
 	for row in cursor:
+		stockID = str(row[1])
 		if row[1] in portfolio:
-			portfolio[row[1]] += row[2]*row[3]
+			portfolio[stockID] += row[2]*row[3]
 		else:
-			portfolio[row[1]] = row[2]*row[3]
+			portfolio[stockID] = row[2]*row[3]
 	returnstr = '['
 	for stockID in portfolio:
 		returnstr += stockID + ':' + str(portfolio[stockID])
 	returnstr += ']'
 	db.close()
-	return str(portfolio)#returnstr
+	return json.dumps(portfolio)
+
+def getInitialBalance(name):
+	db = sqlite3.connect('stock_db.db')
+	cursor = db.cursor()
+	cursor.execute(
+		'''SELECT balance FROM users WHERE name = (?)''', (name,))
+	initial = cursor.fetchone()[0]
+	db.close()
+	return initial
 
 def getCurrBalance(name):
 	db = sqlite3.connect('stock_db.db')
 	cursor = db.cursor()
 	userID = getUserID(name)
+	balance = getInitialBalance(name)
 	cursor.execute(
 		'''SELECT price, numStocks FROM transactions WHERE userID = (?)''', (userID,))
-	balance = 0
 	for row in cursor:
-		balance += row[0]*row[1]
+		balance -= row[0]*row[1]
 	db.close()
 	return balance
 
-#creates new game and will return the gameID
-def newGame(gameName, name):
+def insertRequest(name, friend):
+	db = sqlite3.connect('stock_db.db')
+	cursor = db.cursor()
+	userID = getUserID(name)
+	friendID = getUserID(friend)
+	cursor.execute(
+		'''INSERT INTO friends (userID, friendID, accepted) VALUES (?,?,?)''', (userID, friendID, 0))
+	db.commit()
+	db.close()
+	return
+
+def acceptRequest(name, friend):
+	db = sqlite3.connect('stock_db.db')
+	cursor = db.cursor()
+	userID = getUserID(name)
+	friendID = getUserID(friend)
+	cursor.execute(
+		'''UPDATE friends SET accepted = (?) WHERE userID = (?) AND friendID = (?)''', (1, userID, friendID))
+	cursor.execute(
+		'''INSERT INTO friends (userID, friendID, accepted) VALUES (?,?,?)''', (friendID, userID, 1))
+	db.commit()
+	db.close()
+	return
+
+def rejectRequest(name, friend):
+	db = sqlite3.connect('stock_db.db')
+	cursor = db.cursor()
+	userID = getUserID(name)
+	friendID = getUserID(friend)
+	cursor.execute(
+		'''DELETE FROM friends WHERE userID = (?) AND friendID = (?)''', (userID, friendID))
+	db.commit()
+	db.close()
+	return
+
+def deleteFriend(name, friend):
+	db = sqlite3.connect('stock_db.db')
+	cursor = db.cursor()
+	userID = getUserID(name)
+	friendID = getUserID(friend)
+	cursor.execute(
+		'''DELETE FROM friends WHERE userID = (?) AND friendID = (?)''', (userID, friendID))
+	cursor.execute(
+		'''DELETE FROM friends WHERE userID = (?) AND friendID = (?)''', (friendID, userID))
+	db.commit()
+	db.close()
+	return
+
+def getFriends(name):
 	db = sqlite3.connect('stock_db.db')
 	cursor = db.cursor()
 	userID = getUserID(name)
 	cursor.execute(
-		'''INSERT INTO games (gameName, userID) values (?,?)''', (gameName, userID))
-	cursor.execute(
-		'''SELECT COUNT * FROM games''')
-	gameID = cursor.fetchone()[0]
-	db.commit()
+		'''SELECT name FROM users WHERE userID IN 
+			(SELECT friendID FROM friends WHERE userID = (?))''', (userID,))
+	friendlist = []
+	for row in cursor:
+		friendlist.append(str(row[0]))
 	db.close()
-	return gameID
+	return str(friendlist)
+
+def printFriends():
+	db = sqlite3.connect('stock_db.db')
+	cursor = db.cursor()
+	cursor.execute(
+		'''SELECT * FROM friends''')
+	print cursor.fetchall()
+	db.close()
+	return
 
 #need function to put users into gamestable
 
 os.remove('stock_db.db')
 createDB()
-newUser('asdf')
 insertUser('bob', 'asdf', 'quet')
-newUser('asdf')
-#printUsers()
-insertTrans('bob,wow.ax,40,2.15,13456898763')
+insertUser('jane', 'asdf', 'qiet')
+insertUser('mark', 'asdf', 'asdf')
 
-printTrans()
-str = getPortfolio('bob')
-print str
+insertTrans('bob,wow.ax,40,1')
+print getCurrBalance('bob')
+
+print 'inserting request from bob to jane'
+insertRequest('bob', 'jane')
+printFriends()
+print 'jane accepts request'
+acceptRequest('bob', 'jane')
+printFriends()
+print 'insert request from mark to jane'
+insertRequest('mark', 'jane')
+acceptRequest('mark', 'jane')
+printFriends()
+print 'bob rejects request from mark'
+insertRequest('mark', 'bob')
+rejectRequest('mark', 'bob')
+print 'these are janes friends'
+print getFriends('jane')
+print 'jane chooses mark and deletes bob'
+deleteFriend('jane', 'bob')
+print getAllUsers()
