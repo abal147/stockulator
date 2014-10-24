@@ -13,7 +13,7 @@ function makeRequest(code){
 	  //Clean out the rows from a previous search if any
     var rowCount = table.rows.length;
     while(rowCount > 0) {
-      table.deleteRow();
+      table.deleteRow(-1);
       rowCount--;
     }
         
