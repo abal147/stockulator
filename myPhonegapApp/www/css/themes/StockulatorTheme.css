@@ -40,6 +40,10 @@ body {
   white-space : pre;
 }
 
+#panelDivider {
+  font-size : 16;
+  font-weight : bold;
+}
 
 /*******************************/
 

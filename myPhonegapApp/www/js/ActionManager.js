@@ -101,15 +101,16 @@ function buyWatchStock(stockID, state,qty){
 
 	addStockToUser(stockID, stockName, quantity, price, targetPrice, state);
 	
-	//refresh appropriate document elements which display owned stocks...
-	refreshStocks();
+	
 
   //Update the server
   if(state == BUY_STOCK) {
+    window.user.availableFunds -= (quantity * price);
     window.user.updateServer(stockID, quantity, price, state);
   }
-  //TODO - update server for selling stocks as well
- console.log("Stock " + stockID + " is bought or watched");
+
+  //refresh appropriate document elements which display owned stocks...
+	refreshStocks();
  
  // Refresh the buttons
  changeButtons(stockID);
@@ -418,14 +419,24 @@ $(document).ready (function(){
 /********************** Awesomeness - one menu panel for all pages :D - could probably do this for search bar *****************/
 //Only downside is writing html in one line =_=
 
-var panel =     '<div data-role="panel" data-position="right" data-position-fixed="false" data-display="overlay" id="menu" data-theme="b">';
-panel = panel +   '<div data-role="header" data-theme="a" data-position="fixed">';
+var panel =     '<div data-role="panel" data-position="right" data-position-fixed="false" data-display="overlay" id="menu" data-theme="a" class="ui-panel ui-panel-position-right ui-panel-display-overlay ui-body-c ui-panel-animate ui-panel-open">';
+panel = panel +   '<div data-role="header" data-position="fixed">';
 panel = panel +     '<a href="#" data-icon="gear" data-rel="close" data-iconpos="notext" data-role="button" class="ui-btn-right"></a>';
 panel = panel +   '</div>';
-panel = panel +   '<div data-role="main" class="ui-content" data-theme="a">';
-panel = panel +     '<a href="#" id="chargeButton" data-rel="popup" data-position-to="window" data-transition="pop"';
-panel = panel +       'class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b">Charge</a>';
+
+//panel = panel +   '<div data-role="main" class="ui-content" data-theme="a">';
+//panel = panel +     '<a href="#" id="chargeButton" data-rel="popup" data-position-to="window" data-transition="pop"';
+//panel = panel +       'class="ui-btn ui-li ui-corner-all ui-shadow ui-btn-inline ui-btn-b">Charge</a>';
+
+panel = panel +   '<div class="ui-panel-inner">';
+panel = panel +   '<ul data-role="listview" data-icon="false">';
+panel = panel +     '<li id="panelDivider" data-role="list-divider">Menu</li>';
+panel = panel +     '<li><a href="#">Twitter</a></li>';
+panel = panel +     '<li><a href="#">Facebook</a></li>';
+panel = panel +     '<li><a href="#">Google +</a></li>';
+panel = panel +   '</ul>';
 panel = panel +   '</div>';
+
 panel = panel + '</div>';
 
 

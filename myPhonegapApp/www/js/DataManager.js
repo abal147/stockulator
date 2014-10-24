@@ -197,13 +197,14 @@ function sellStock(stockID,quantity,price) {
 			delete window.user.ownedStocks[stockID];
 			window.user.soldStocks[stockID]=helper; // append to the sold stock list...
 		}
+    window.user.availableFunds -= (quantity * price);
 		//Send transaction to server
 		window.user.updateServer(stockID, quantity, price, SELL_STOCK);
 	}
 	else {
 		console.log("error - cannot sell a stock that we do not own");
 	}
-	window.user.save();
+	refreshStocks();
 }
 
 function addStockToUser (stockID,stockName,quantity,price,targetPrice,state){
