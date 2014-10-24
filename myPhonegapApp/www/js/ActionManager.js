@@ -2,17 +2,49 @@
 // This JS has the following responsibilities :
 // 1. Handle dynamic actions involved with boxes and elements of a page 
 // 2. Handle Initialisation of page loading w.r.t jquery and javascript
-function handle(e){
+
+//Constants
+var WATCH_STOCK = 0;
+var BUY_STOCK = 1;
+var MODIFY_STOCK = 2;
+var DEVSERVER_URL = "http://ec2-54-79-50-63.ap-southeast-2.compute.amazonaws.com:8080";
+//var DEVSERVER_URL = "http://0.0.0.0:8080";
+
+function handle(e, code){
  	if(e.keyCode === 13){
  	// TODO - change this to focus etc...
  	// Also, change to be more of the jquery style etc...
- 		code = $("#search-3").val();
+ 		// code = $("#search-3").val();
+// 		console.log("Handler: Code is:" + code );
+// 		setCurrentStock($("#search-3").val());
+// 		plotData(code,300); // lets plot data from the last 300 days for the code...
+// 		makeRequest(code); // call eddies script to make the request..
 		console.log("Code is:" + code);
-		setCurrentStock($("#search-3").val());
-		plotData(code,300); // lets plot data from the last 300 days for the code...
-		makeRequest(code); // call eddies script to make the request..
+		setCurrentStock(code);
+		window.location.href = "#stockInfo";    //redirects to stockInfo page
+    	plotData(code, 200);                    //TODO - need to clear plot for invalid search code
+		makeRequest(code);
  	}
- 	return false;
+
+}
+
+function changeButtons (stockName) {
+	if (stockName in window.user.ownedStocks) { // Check that this is correct
+			// Stock is defined....if it is 
+			console.log("Stock is already owned");
+			$('#sellButton').removeClass('ui-disabled');
+			$('#watchButton').addClass('ui-disabled');
+	}
+	else if (stockName in window.user.watchedStocks) {
+			console.log("Stock is watched");
+			$('#watchButton').addClass('ui-disabled');
+			$('#sellButton').addClass('ui-disabled');
+	}
+	else {
+			console.log("Stock is neither watched nor owned");
+			$('#sellButton').addClass('ui-disabled');
+			$('#watchButton').removeClass('ui-disabled');	
+	}
 }
 
 function refreshStocks() {
@@ -20,28 +52,152 @@ function refreshStocks() {
 	if (window.user) {
 		// Refresh the stock pie chart breakdown with bought data...
 		plotPieChart('Stock Breakdown',window.user.getStocks(1));
+
+    // Refresh watchlist
+    populateWatchlist();
+
+    // Refresh portfolio
+    populatePortfolio();
 	
-		// Update the Server about user
-		window.user.updateServer();
+		window.user.save();
 	}
 }
 
-function buyWatchStock(stockID,state){
-// Function is called when one wants to buy a stock that is currently selected
-	var stockName="woolworths";
-	var quantity = parseInt ($("#slider").val());
-	var price = 100; // TODO - fix this...
-	addStockToUser(stockID,stockName,quantity,price,state);
+function refreshStockInfo() {
+// when called function will refresh all classes that contain the stock info 
+// TO be used to refresh the buy and watch popup
+	// Get the current stockObject
+	console.log("Refresh stock info");
+	stockObj=getCurrentStockObject();
+	if (stockObj==null) {
+		return; // leave as we cannot use it
+	}
+	
+	$(".price").replaceWith("<div class=\"price\"> <p> Price : " + stockObj.currentPrice + "</p></div>");
+  	$(".stockID").replaceWith("<div class =\"stockID\"> <p> StockID :" + stockObj.stockID + "</p> </div>");
+  	$(".stockName").replaceWith("<div class = \"stockName\"> <p> stockName : " + stockObj.stockName + "</p></div>");
+	
+	// Plot the guage for the stuff...
+	//plotRatios();
+}
+
+function buyWatchStock(stockID, state,qty){
+  // Function is called when one wants to buy a stock that is currently selected
+  // state 0 is watching stock, state 1 is buying stock
+	
+	var stockName = window.myStockObj.stockName; // TODO - extract stock name?
+	var quantity = parseFloat (qty);
+	var price = window.myStockObj.currentPrice;
+  	var targetPrice = 0; // TODO - fix this
+	if(state == WATCH_STOCK) {
+	  targetPrice = $("#targetPrice").val();
+  } else if(state == MODIFY_STOCK) {
+    targetPrice = $("#modifyTargetPrice").val();
+  }
+	console.log("TARGET PRICE IS: " + targetPrice);
+
+	addStockToUser(stockID, stockName, quantity, price, targetPrice, state);
 	
 	//refresh appropriate document elements which display owned stocks...
 	refreshStocks();
-	console.log("Stock " + stockID + " is bought or watched"); 
+
+  //Update the server
+  if(state == BUY_STOCK) {
+    window.user.updateServer(stockID, quantity, price, state);
+  }
+  //TODO - update server for selling stocks as well
+ console.log("Stock " + stockID + " is bought or watched");
+ 
+ // Refresh the buttons
+ changeButtons(stockID);
+ 
 }
+
+
+// User name validation ... etc
+//Create user if the data is valid...
+$.validator.setDefaults({
+		submitHandler: function() {
+			alert("User Created Successfully!"); // TODO - change to jquery alert...
+			console.log("Signup submit clicked");
+			// Lets show a loading widget
+			$.mobile.loading( 'show', {
+				text: 'Loading Data',
+				textVisible: true,
+				theme: "a",
+				html: ""
+			});
+			// TODO - check that values input are consistent o correct
+			// highlight if wrong ...
+		
+			// Create the user
+			var out = createUserFromData($('#name').val(),"undefined","undefined",$('#email').val(),$('#password').val());
+			$.mobile.loading( "hide" );
+		
+			// If successful then return to main page...
+			if (out ==1 ) {
+				$.mobile.changePage("#home");
+			}
+		}
+});
+
+// Custom validation method checks that user does not already exist...
+jQuery.validator.addMethod("isUserNew",function(value) {
+	
+	var retval=false;
+	// Lets call server to see if user exists
+	console.log("Check if user is new!");
+	
+	// Make getJson synchronous as we want to wait to see if correct user or not...
+	$.ajaxSetup({
+		async:false
+	});
+	
+	// TODO - change to correct server address..
+	//$.getJSON("http://0.0.0.0:8080/isusernew/" + $('#name').val(), function(data) {
+	$.getJSON(DEVSERVER_URL + "/isusernew/" + $('#name').val(), function(data) {
+        if (data ==="yes") {
+        	console.log("User is new!");
+        	retval=true;
+        }
+        else {
+        	console.log("User is not new!");
+        	//retval=false;
+        	retval=true; // TODO - remove this to enable username validity checking
+        	// do this once the server is up to date
+        }
+    })
+    .fail(function() {
+    	console.log("Can't reach server ...fuck!");
+    	//retval=false;
+    	retval=true;
+    	// TODO - remove this to enable username validity checking
+        // do this once the server is up to date
+    	
+    	$.ajaxSetup({
+			async:true
+		});
+    });
+    
+    // make sure all ajax calls from here on in are asynchronous
+    $.ajaxSetup({
+		async:true
+	});
+	
+	return retval;
+},"Username already exists!");
+
+jQuery.validator.classRuleSettings.isUserNew = {isUserNew : true} ; // Not sure why I have to do this...
+// End of user validation ....
 
 
 // Main Document Manipulation Script
 // This script will be run by all documents to perform manipulation of the page..
 $(document).ready (function(){
+
+
+
+	console.log("Document Manipulation Script has been run");
 	
 	// 1. initialise mobile loader
 	$( document ).bind( 'mobileinit', function(){
@@ -59,6 +215,8 @@ $(document).ready (function(){
 	if (currentStockDefined()) {
 		plotData(getCurrentStock(),200);
 		makeRequest(getCurrentStock());
+		refreshStockInfo();
+		changeButtons(getCurrentStock());
 	}
 	
 	// Change current stock in text Box
@@ -66,22 +224,18 @@ $(document).ready (function(){
 // 	$("#search-3").change (function() {
 // 		setCurrentStock($("#search-3").val());
 // 	});
-	
-	// JQuery asynchronous watching functions...
-	$("#signupSubmit").click(function() {
-		console.log("Signup submit clicked");
-		// Lets show a loading widget
-		$.mobile.loading( 'show', {
-			text: 'Loading Data',
-			textVisible: true,
-			theme: "a",
-			html: ""
-		});
-		// TODO - check that values input are consistent o correct
-		// highlight if wrong ...
 		
+	$('#ticker').rssfeed('https://au.finance.yahoo.com/news/category-stocks/?format=rss',{}, function(e) {
+		$(e).find('div.rssBody').vTicker({showItems: 5});
+	});
+
+	plotDataIndicie("^AORD", "ALL ORDINARIES",60,"#indicie1");
+	plotDataIndicie("^AXDJ", "S&P/ASX 200 Consumer Discretionary Index" ,60,"#indicie2");
+	plotDataIndicie("^AXNJ", "S&P/ASX 200 Industrials Index " ,60,"#indicie3");
+
+	$("#buyStock").click(function() {
+		buyWatchStock(getCurrentStock(),1,$("#slider").val());
 		// Create the user
-		var out = createUserFromData($('#username').val(),$('#firstname').val(),$('#lastname').val(),$('#email').val());;
 		$.mobile.loading( "hide" );
 		
 		// If successful then return to main page...
@@ -90,22 +244,222 @@ $(document).ready (function(){
 		}
 	});
 	
-	$("#buyStock").click(function() {
-		buyWatchStock(getCurrentStock(),1);
+	$("#buyStock2").click(function() {
+		buyWatchStock(getCurrentStock(),1,$("#slider2").val());
+		// Create the user
+		$.mobile.loading( "hide" );
+		
+		// If successful then return to main page...
+		if (out ==1 ) {
+			$.mobile.changePage("#home");
+		}
+	});
+	
+	$(".sellStock").click(function() {
+		sellStock(getCurrentStock(),$("#sellSliderVal").val(),window.myStockObj.currentPrice);
+	});
+	
+	$("#pageSlider").change(function() {
+			console.log("Value has changed");
+			var val = parseInt ($("#slider").val());
+			$(".cost").replaceWith("<div class = \"cost\"> <p> Cost : $" + parseInt(window.myStockObj.currentPrice*val) + " </p></div>"); 
+	});
+	
+	$("#pageSlider2").change(function() {
+			console.log("Value has changed");
+			var val = parseInt ($("#slider2").val());
+			$(".cost").replaceWith("<div class = \"cost\"> <p> Cost : $" + parseInt(window.myStockObj.currentPrice*val) + " </p></div>"); 
+	});
+	
+	$("#sellSlider").change(function() {
+			console.log("Sell Qty has changed");
+			var val = parseInt ($("#sellSliderVal").val());
+			$(".sellCost").replaceWith("<div class = \"sellCost\"> <p> Sell Value : $" + parseInt(window.myStockObj.currentPrice*val)+ " </p></div>"); 
+	});
+	
+	$("#sellButton").click(function() {
+		// Set the Sell quantity to be correct
+		console.log("Sell button is clicked!");
+		var thisStock = window.user.ownedStocks[getCurrentStock()];
+		// NB: assuming that the stock can be bought....
+		$("#sellSliderVal").attr("max",thisStock.getQuantity());
+		$(".stockCurrQty").replaceWith("<div class = \"stockCurrQty\"> <p> Current Stock Qty: " + thisStock.getQuantity() + " </p></div>" );
 	});
 	
 	$("#watchStock").click(function() {
-		buyWatchStock(getCurrentStock(),0);
+		buyWatchStock(getCurrentStock(), WATCH_STOCK);
 	});
 	
-	console.log("here");
+	$( "#commentForm" ).validate({
+    	rules: {
+
+				name: {
+					required: true,
+					minlength: 5 ,
+					isUserNew : true
+				},
+				password: {
+					required: true,
+					minlength: 5
+				},
+				confirm_password: {
+					required: true,
+					minlength: 5,
+					equalTo: "#password"
+				},
+				email: {
+					required: true,
+					email: true
+				},
+		},
+		highlight: function(label) {
+            $(label).closest('.form-element').addClass('error')
+            .closest('.form-element').removeClass('success');;
+        },
+        success: function(label) {
+            label
+            .text('OK!').addClass('valid')
+            .closest('.form-element').addClass('success');
+        },
+    	messages: {
+        	name: {
+        		required:"UserName is required.",
+        		minlength : "Your Username must be atleast 5 characters long"
+        	},
+        	email: {
+            	required: "Email is required.",
+            	email: "You must provide a valid email address."
+        	},
+        	password: {
+					required: "Please provide a password",
+					minlength: "Your password must be at least 5 characters long"
+			},
+			confirm_password: {
+					required: "Please provide a password",
+					minlength: "Your password must be at least 5 characters long",
+					equalTo: "Please enter the same password as above"
+			},
+    	},
+    	
+    	focusInvalid: false
+	});
+	
+
+	
+
+	$("#historyView").click(function(){
+		plotPortHistory();
+	});
+	
+	$("#profitView").click(function(){
+		plotProfitData();
+	});
+	
+	$("#pieView").click(function(){
+		plotPieChart("Stock BreakDown",window.user.ownedStocks);
+	});
+	
+  //Same as watchStock but called to modify an already watched stock
+  $("#setTargetPrice").click(function() {
+		buyWatchStock(getCurrentStock(), MODIFY_STOCK);
+	});
+
+  //Besides the handle function, when does currentStock get set?
+  $("#unwatchStock").click(function() {
+    console.log("Unwatching stock: " + getCurrentStock());
+    deleteStock(getCurrentStock());
+  });
+
+  //Can't seem to write a named function instead of using the same
+  //anonymous function without getting an error
+
+  //Called when something with the "a" tag and "watchedStock" class is clicked
+  $(document).on("click", "a.watchedStock" , function (event) {
+    //Traverse up tree until an element has an id
+    
+    //Necessary because for some reason this function is still called when the
+    //text part is clicked (which doesn't have the class "watchedStock")
+    var target = event.target || event.srcElement;
+    while (target && !target.id) {
+        target = target.parentNode;
+    }
+        
+    setCurrentStock(target.id);
+    console.log("Current stock is:" + getCurrentStock());
+    //console.log("Event id is: " + target.id);
+  });
+
+  //Called when something with the "a" tag and "boughtStock" class is clicked
+  $(document).on("click", "a.boughtStock" , function(event) {
+    //Traverse up tree until an element has an id
+    var target = event.target || event.srcElement;
+    while (target && !target.id) {
+        target = target.parentNode;
+    }
+    setCurrentStock(target.id);
+    //console.log("Current stock is:" + getCurrentStock());
+    //console.log("Event id is: " + target.id);
+  });
+
+
+  //Set a 10 second interval for refreshing current stock prices in user's portfolio
+  window.user.upDate(); //Not sure why initial call doesn't refresh watchlist/portfolio
+  setInterval(function() {window.user.upDate()}, 10000);
+
 	// 4. Load Dynamic Content
-	refreshStocks();
+	//refreshStocks();
+ 
 
 });
 
 
+
 //Clear Text Box : When text box is clicked...clear it
 // TODO
+//function setupSearch(code = "#searchStock") { // this is wrong
 
+function setupSearch(code) {
+console.log("________________________________________________________________");
+    $(code).listview();
 
+    $(code).on("filterablebeforefilter", function(e, data) {
+        var $ul = $(this),
+            $input = $(data.input),
+            value = $input.val(),
+            html = "";
+        $ul.html("");
+        console.log("SearchValue: " + value);
+
+        var li = "";
+
+        if (value && value.length > 1) {
+            var codes = localStorage.getItem("stockCSV").split("\n");
+
+            $ul.html( "<li><div class='ui-loader'><span class='ui-icon ui-icon-loading'></span></div></li>" );
+            $ul.listview( "refresh" );
+
+            for (var i = 3; i < codes.length; ++i) {
+                if (codes[i].toLowerCase().indexOf( value.toLowerCase() ) != -1) {
+                    var info = codes[i].split(",");
+                    li += '<li data-chapter="' + info[1] + '" data-filtertext="' + codes[i].replace(/\"/g, '') + '"><a href="#stockInfo">' + info[0].replace(/\"/g, '') + '</a></li>\n';
+                }
+            }
+            //console.log(li);
+            $ul.append(li);
+            $ul.listview("refresh");
+            $ul.trigger("updatelayout");
+        }
+    });
+
+    $(document).on('click', code + ' li a', function (info) {
+        var source = $(this).closest("li").attr("data-chapter");
+
+        makeRequest(source);
+        setCurrentStock(source);
+        plotData(getCurrentStock(),200);
+        $('input[data-type="search"]').val('');
+        $('input[data-type="search"]').trigger("keyup");
+
+        console.log("CLICKITY CLACKITY ");
+    });
+}

@@ -17,9 +17,11 @@
     <!-- CSS Stylesheets - local files are used to reduce load time /network --> 
     <link rel="stylesheet" type="text/css" href="css/index.css" />
     <link rel="stylesheet" href="css/themes/StockulatorTheme.css" />
-  	<link rel="stylesheet" href="css/themes/html5-pagination.css" />
   	<link rel="stylesheet" href="css/themes/jquery.mobile.icons.min.css" />
   	<link rel="stylesheet" href="css/jquery.mobile.structure-1.4.4.min.css"></script>
+  	<link href="css/jquery.zrssfeed.css" rel="stylesheet" type="text/css" />
+  	<link rel="stylesheet" href="css/validate/screen.css">
+  	<link rel="stylesheet" href="css/">
   			
   	<!-- Scripts we want executed before the page loads 
   		 Other scripts that we don't care about are loaded after the page --!>
@@ -31,12 +33,18 @@
 	<script src="js/highcharts-all.js"></script> <!-- There is some kind of problem here ... not affecting however -->
 	<script src="js/exporting.js"></script>
 	<script src="js/store+json2.min.js"></script> <!-- include our store js script here ... -->
-				
+	<script src="js/jquery.validate.js"></script>
+	<script src="js/highcharts-more.js"></script>
+	<script src="http://code.highcharts.com/modules/solid-gauge.src.js"></script>
+	<script src="js/jquery.zrssfeed.min.js" type="text/javascript"></script>
+	<script src="js/jquery.vticker.js" type="text/javascript"></script>
+
 	<!-- JS - our own written scripts...-->
 	<script src="js/DataManager.js"></script>
-	<script src="js/SearchManager.js"></script>
+	<script src="js/TableManager.js"></script>
 	<script src="js/PlotManager.js"></script>
-  	<script src="js/ActionManager.js"></script>
+    <script src="js/ActionManager.js"></script>
+    <script src="js/SearchManager.js"></script>
   			
 <title>Hello World</title>
 </head>
@@ -52,25 +60,40 @@
 	
 	<!-- Header of the Document -->
 	<div data-role="header" data-theme="a" data-position="fixed" data-id="vs_header">
+		<Br>  </Br>
 		<h1>Home</h1>
 		<a href="#home" data-icon="home" data-iconpos="notext">Home</a>
 		<a href="#signup" data-icon="info" data-iconpos="notext" data-rel="dialog" >Info</a>
 	</div><!-- header -->
-	
-	<!-- Content Part of Document-->
-	<div data-theme="a" data-role="content" id="postlist">	
-	<!-- Place in here the shit that you need to put in your page .. --!>
-	<!-- TODO -fill me out ... --!> 
-	</div><!-- content -->
-	
+
+	<div data-role="collapsible">
+		<h2>Search stocks</h2>
+		<ul data-role="listview" data-filter="true" id="searchStock" data-filter-placeholder="Search stocks..." data-inset="true" data-filter-reveal="true">
+		</ul>
+	</div>
+
+
+	<!-- Content Part of Document-->	
+	<div data-theme="a" data-role="content" id="postlist">
+		<div class="ui-grid-a">
+			<div class="ui-block-a"><div id="ticker"></div></div>
+			<div class="ui-block-b">
+				<div style = "height: 35px"></div>
+				<div id="indicie1" style="height: 200px; min-width: 310px"></div>
+				<div id="indicie2" style="height: 200px; min-width: 310px"></div>
+				<div id="indicie3" style="height: 200px; min-width: 310px"></div>
+			</div>
+		</div><!-- /grid-a -->
+	</div>
+
 	<!-- Page Footer -->
 	<div data-role="footer" data-position="fixed" data-theme="a" data-id="vs_footer">
 		<div data-role="navbar">
 			<ul>
-				<li><a href="#" data-role="button" data-icon="home" >Home</a></li>
-				<li><a href="#portfolio" data-role="button" data-icon="plus" >Portfolio</a></li>
+				<li><a href="#" class="ui-btn-active ui-state-persist" data-icon="home" >Home</a></li>
+				<li><a href="#portfolio" data-role="button" data-icon="plus" onclick="populatePortfolio()">Portfolio</a></li>
 				<li><a href="#stockInfo" data-role="button" data-icon="shop" >StockInfo</a></li>
-				<li><a href="#search" data-role="button" data-icon="search">search</a></li>
+				<li><a href="#watchlist" data-role="button" data-icon="search" onclick="populateWatchlist()">Watchlist</a></li>
 				<li><a href="#games" data-role="button" data-icon="user">games</a></li>
 			</ul>
 		</div><!-- navbar -->
@@ -89,14 +112,37 @@
 		<a href="#home" data-icon="home" data-iconpos="notext">Home</a>
 		<a href="#info" data-icon="info" data-iconpos="notext" data-rel="dialog" >Info</a>
 	</div><!-- header -->
-	
+
+	<div data-role="collapsible">
+		<h2>Search stocks</h2>
+		<ul data-role="listview" data-filter="true" id="searchStock2" data-filter-placeholder="Search stocks..." data-inset="true" data-filter-reveal="true">
+		</ul>
+	</div>
+
 	<!-- Content Part of Document-->
 	<div data-theme="a" data-role="content" id="postlist">	
 		<!-- Place in here the shit that you need to put in your page .. --!>
+		<!--<input type="search" name="searchBar" id="search-3" class="search" placeholder="Enter ASX Code" data-theme="b" onkeyup="handle(event, value)" /> -->
 		<!-- example .. stuff -->
 		<div id="pieChart" style="min-width: 310px; height: 250px; margin: 0 auto"></div>
+		<div data-role="fieldcontain">
+	    	<fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
+	     		<!-- <legend>Layout view:</legend> -->
+	         	<input type="radio" name="radio-view" id="pieView" value="list"  />
+	         	<label for="pieView">BreakDown</label>
+	         	<input type="radio" name="radio-view" id="historyView" value="grid"  />
+	         	<label for="historyView">History</label>
+	         	<input type="radio" name="radio-view" id="profitView" value="gallery"  />
+	         	<label for="profitView">Profit</label>
+	    	</fieldset>
+		</div>
 		<ul data-role="listview" data-filter="true" data-filter-placeholder="Filter my stocks..." data-inset="true">
 		</ul>
+
+    <ul id="myPortfolio" data-role="listview" data-inset="true">
+    </ul>
+
+		
 		<!-- TODO -fill me out ... --!> 
 	</div><!-- content -->
 	
@@ -105,9 +151,9 @@
 		<div data-role="navbar">
 			<ul>
 				<li><a href="#home" data-role="button" data-icon="home" >Home</a></li>
-				<li><a href="#" data-role="button" data-icon="plus" >Portfolio</a></li>
+				<li><a href="#" class="ui-btn-active ui-state-persist" data-role="button" data-icon="plus" onclick="populatePortfolio()">Portfolio</a></li>
 				<li><a href="#stockInfo" data-role="button" data-icon="shop" >StockInfo</a></li>
-				<li><a href="#search" data-role="button" data-icon="search">search</a></li>
+				<li><a href="#watchlist" data-role="button" data-icon="search" onclick="populateWatchlist()">Watchlist</a></li>
 				<li><a href="#games" data-role="button" data-icon="user">games</a></li>
 			</ul>
 		</div><!-- navbar -->
@@ -127,52 +173,91 @@
 		<a href="#info" data-icon="info" data-iconpos="notext" data-rel="dialog" >Info</a>
 	</div><!-- header -->
 	
+	<div data-role="collapsible">
+		<h2>Search stocks</h2>
+		<ul data-role="listview" data-filter="true" id="searchStock3" data-filter-placeholder="Search stocks..." data-inset="true" data-filter-reveal="true">
+		</ul>
+	</div>
+
 	<!-- Content Part of Document-->
 	<div data-theme="a" data-role="content" id="postlist">	
-		<input type="search" name="searchBar" id="search-3" class="search" value="Enter ASX Code" data-theme="b" onkeyup="handle(event)" />	
+
+		<!--<input type="search" name="searchBar" id="search-3" class="search" value="Enter ASX Code" data-theme="b" onkeyup="handle(event, value)" />	-->
+		<!-- 
+<div style="width: 300px; height: 200px; margin: 0 auto">
+			<div id="container-speed" style="width: 100px; height: 100px; float: left auto"></div>
+			<div id="container-rpm" style="width: 100px; height: 100px; float: left auto"></div>
+		</div>
+ -->
 		<table id="myTable">
-      	</table>
+    	</table>
 		<div id="stockChart" style="height: 300px; min-width: 310px"></div>
 		<div class="ui-body ui-body-b">
 			<fieldset class="ui-grid-a">
-				<a href="#buyDialog" data-rel="popup" data-position-to="window" data-transition="pop" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b">Buy</a>
-				<a href="#watchDialog" data-rel="popup" data-position-to="window" data-transition="pop" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b">Watch</a>
+				<a href="#buyDialog" id = "buyButton" data-rel="popup" data-position-to="window" data-transition="pop" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b">Buy</a>
+				<a href="#watchDialog" id ="watchButton" data-rel="popup" data-position-to="window" data-transition="pop" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b">Watch</a>
+				<a href="#sellDialog" id = "sellButton" data-rel="popup" data-position-to="window" data-transition="pop" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b ">Sell</a>
 			</fieldset>
 		</div>
 		
 		<div data-role="popup" id="buyDialog" data-overlay-theme="b" data-theme="b" data-dismissible="false" style="max-width:400px;">
-   	 		<div data-role="header" data-theme="a">
-    		<h1>Buy Stock</h1>
-    		</div>
-    		<div role="main" class="ui-content">
-    			<p> Price : 100 </p>
-    			<p> StockID : WOW.ax </p>
-    			<p> stockName : Woolworths </p>
-        		<form>
-        			<div style="padding:10px 20px;">
-            			<div data-role="fieldcontain">
-							<label for="slider">Qty:</label>
-			 				<input type="range" name="slider" id="slider" value="50" min="0" max="1000" data-highlight="true"  />
-						</div>
-       				 </div>
-    			</form>
-    			<p> Cost : Qty x cost </p>
-        		<a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" data-rel="back">Cancel</a>
-        		<a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" id = "buyStock" data-rel="back" data-transition="flow">Buy</a>
-    		</div>
+ 	 		<div data-role="header" data-theme="a">
+  		  <h1>Buy Stock</h1>
+  		</div>
+  		<div role="main" class="ui-content">
+  			<div class="price"> <p> Price : 100 </p> </div>
+  			<div class ="stockID"> <p> StockID : WOW.ax </p> </div>
+  			<div class = "stockName"> <p> stockName : Woolworths </p></div>
+      		<form>
+      			<div style="padding:10px 20px;">
+        			 <div data-role="fieldcontain" id="pageSlider" class = "pageSlider">
+					      <label for="slider">Qty:</label>
+	 				      <input type="range" name="slider" class = "slider" id="slider" value="0" min="0" max="1000" data-highlight="true"  />
+				     </div>
+     		    </div>
+  			  </form>
+  			<div class = "cost"> <p> Cost : $0.00 </p></div>
+    		<a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" data-rel="back">Cancel</a>
+    		<a href="#" id ="buyStock" class="buyStock ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" data-rel="back" data-transition="flow">Buy</a>
+  		</div>
 		</div>
 		
 		<div data-role="popup" id="watchDialog" data-overlay-theme="b" data-theme="b" data-dismissible="false" style="max-width:400px;">
-   	 		<div data-role="header" data-theme="a">
+   	 	<div data-role="header" data-theme="a">
     		<h1>Watch Stock</h1>
-    		</div>
-    		<div role="main" class="ui-content">
-    			<p> Price : 100 </p>
-    			<p> StockID : WOW.ax </p>
-    			<p> stockName : Woolworths </p>
-        		<a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" data-rel="back">Cancel</a>
-        		<a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" id="watchStock" data-rel="back" data-transition="flow">Watch</a>
-    		</div>
+    	</div>
+    	<div role="main" class="ui-content">
+  			<div class="price"> <p> Price : 100 </p> </div>
+  			<div class ="stockID"> <p> StockID : WOW.ax </p> </div>
+  			<div class = "stockName"> <p> stockName : Woolworths </p></div>
+  			<input type="number" id="targetPrice" placeholder="Target Price" />    <!-- default value should be changed to currentPrice + someAmount. 
+  			                                                                              Also need to check that value is valid -->
+    		<a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" data-rel="back">Cancel</a>
+    		<a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" id="watchStock" data-rel="back" data-transition="flow">Watch</a>
+    	</div>
+		</div>
+		
+		<div data-role="popup" id="sellDialog" data-overlay-theme="b" data-theme="b" data-dismissible="false" style="max-width:400px;">
+ 	 		<div data-role="header" data-theme="a">
+  		  <h1>Sell Stock</h1>
+  		</div>
+  		<div role="main" class="ui-content">
+  			<div class="price"> <p> Price : 100 </p> </div>
+  			<div class ="stockID"> <p> StockID : WOW.ax </p> </div>
+  			<div class = "stockName"> <p> stockName : Woolworths </p></div>
+  			<div class = "stockCurrQty"> <p> Current Stock Qty: </p></div>
+      		<form>
+      			<div style="padding:10px 20px;">
+        			 <div data-role="fieldcontain" class = "pageSlider" id="sellSlider">
+					      <label for="slider">Sell Qty:</label>
+	 				      <input type="range" name="sellSliderVal" id="sellSliderVal" class = "slider" value="0" min="0" max="1000" data-highlight="true"  />
+				     </div>
+     		    </div>
+  			  </form>
+  			<div class = "sellCost"> <p> Money : $0.00 </p></div>
+    		<a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" data-rel="back">Cancel</a>
+    		<a href="#" id ="sellStock" class="sellStock ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" data-rel="back" data-transition="flow">Sell</a>
+  		</div>
 		</div>
 	</div><!-- content -->
 	
@@ -181,9 +266,9 @@
 		<div data-role="navbar">
 			<ul>
 				<li><a href="#home" data-role="button" data-icon="home" >Home</a></li>
-				<li><a href="#portfolio" data-role="button" data-icon="plus" >Portfolio</a></li>
-				<li><a href="#" data-role="button" data-icon="shop" >StockInfo</a></li>
-				<li><a href="#search" data-role="button" data-icon="search">search</a></li>
+				<li><a href="#portfolio" data-role="button" data-icon="plus" onclick="populatePortfolio()">Portfolio</a></li>
+				<li><a href="#" class="ui-btn-active ui-state-persist" data-role="button" data-icon="shop" >StockInfo</a></li>
+				<li><a href="#watchlist" data-role="button" data-icon="search" onclick="populateWatchlist()">Watchlist</a></li>
 				<li><a href="#games" data-role="button" data-icon="user">games</a></li>
 			</ul>
 		</div><!-- navbar -->
@@ -191,23 +276,73 @@
 </div> <!-- End of stockInfoPage -->
 
 <!----------------------------------------
-         Start of the search Page 
+         Start of the Watchlist Page 
  ----------------------------------------!>		
-<div data-role="page" id="search">
+<div data-role="page" id="watchlist">
 	
 	<!-- Header of the Document -->
 	<div data-role="header" data-theme="a" data-position="fixed" data-id="vs_header">
-		<h1>Search</h1>
+		<h1>Watchlist</h1>
 		<a href="#home" data-icon="home" data-iconpos="notext">Home</a>
 		<a href="#info" data-icon="info" data-iconpos="notext" data-rel="dialog" >Info</a>
 	</div><!-- header -->
 	
+	<div data-role="collapsible">
+		<h2>Search stocks</h2>
+		<ul data-role="listview" data-filter="true" id="searchStock3" data-filter-placeholder="Search stocks..." data-inset="true" data-filter-reveal="true">
+		</ul>
+	</div>
+	
 	<!-- Content Part of Document-->
 	<div data-theme="a" data-role="content" id="postlist">	
+
+		<!--<input type="search" name="searchBar" id="nameSearch" class="search-3" value="Enter ASX Code" data-theme="b" onkeyup="handleNameSearch(event)" /> -->
+
+		<table id="searchTable">
+      	</table>
+
 		<!-- Place in here the shit that you need to put in your page .. --!>
-		<input type="search" name="searchBar" id="search-3" class="search-3" value="Enter ASX Code" data-theme="b" onkeyup="handle(event)" />
+
+		<!--<input type="search" name="searchbar" id="search-3" class="search" placeholder="Enter ASX Code" data-theme="b" onkeyup="handle(event, value)" /> -->
+
+    <ul id="myWatchlist" data-role="listview" data-inset="true">
+    </ul>
+
+
+    <div data-role="popup" id="watchlistDialog" data-overlay-theme="b" data-theme="b" data-dismissible="false" style="max-width:400px;">
+ 	 		<div data-role="header" data-theme="a">
+  		  <h1>Watched Stock</h1>
+  		</div>
+  		<div role="main" class="ui-content">
+  			<div class="price"> <p> Price : 100 </p> </div>
+  			<div class ="stockID"> <p> StockID : WOW.ax </p> </div>
+  			<div class = "stockName"> <p> stockName : Woolworths </p></div>
+      		<form>
+      			<div style="padding:10px 20px;">
+        			<div data-role="fieldcontain" id="pageSlider2" class = "pageSlider">
+					      <label for="slider">Qty:</label>
+	 				      <input type="range" name="slider" id="slider2" class="slider" value="0" min="0" max="1000" data-highlight="true"  />
+				     </div>
+     		    </div>
+  			  </form>
+  			<div class = "cost"> <p> Cost : $0.00 </p></div>
+    		<p>
+    		  <a href="#" id = "buyStock2" class="buyStock ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" data-rel="back" data-transition="flow">Buy</a>
+        </p>
+        <p>
+          <input type="number" id="modifyTargetPrice" placeholder="Target Price" />
+    		  <a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" id="setTargetPrice" data-rel="back" data-transition="flow">Set Target Price</a>
+        </p>
+        <p>
+    		  <a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" id="unwatchStock" data-rel="back" data-transition="flow">Unwatch</a>
+    		  <a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" data-rel="back">Cancel</a>
+    		</p>
+  		</div>
+    </div>
+
 		<table id="myTable">
       	</table>
+
 		<!-- TODO -fill me out ... --!> 
 	</div><!-- content -->
 	
@@ -216,9 +351,9 @@
 		<div data-role="navbar">
 			<ul>
 				<li><a href="#home" data-role="button" data-icon="home" >Home</a></li>
-				<li><a href="#portfolio" data-role="button" data-icon="plus" >Portfolio</a></li>
+				<li><a href="#portfolio" data-role="button" data-icon="plus" onclick="populatePortfolio()">Portfolio</a></li>
 				<li><a href="#stockInfo" data-role="button" data-icon="shop" >StockInfo</a></li>
-				<li><a href="#" data-role="button" data-icon="search">search</a></li>
+				<li><a href="#" class="ui-btn-active ui-state-persist" data-role="button" data-icon="search" onclick="populateWatchlist()">Watchlist</a></li>
 				<li><a href="#games" data-role="button" data-icon="user">games</a></li>
 			</ul>
 		</div><!-- navbar -->
@@ -249,10 +384,10 @@
 		<div data-role="navbar">
 			<ul>
 				<li><a href="#home" data-role="button" data-icon="home" >Home</a></li>
-				<li><a href="#portfolio" data-role="button" data-icon="plus" >Portfolio</a></li>
+				<li><a href="#portfolio" data-role="button" data-icon="plus" onclick="populatePortfolio()">Portfolio</a></li>
 				<li><a href="#stockInfo" data-role="button" data-icon="shop" >StockInfo</a></li>
-				<li><a href="#search" data-role="button" data-icon="search">search</a></li>
-				<li><a href="#" data-role="button" data-icon="user">games</a></li>
+				<li><a href="#watchlist" data-role="button" data-icon="search" onclick="populateWatchlist()">Watchlist</a></li>
+				<li><a href="#" class="ui-btn-active ui-state-persist" data-role="button" data-icon="user">games</a></li>
 			</ul>
 		</div><!-- navbar -->
 	</div><!-- footer -->	
@@ -274,27 +409,26 @@
 	<!-- Content Part of Document-->
 	<div data-theme="a" data-role="content" id="postlist">	
 		<h4>Signup</h4>
+		
+	  <form  id="commentForm" method="get" action="">
 		<div data-role="fieldcontain">
     		<label for="name">Username:</label>
-   	 		<input type="text" name="name" id="username" value=""  />
+   	 		<input type="text" name="name" id="name" value=""  data-mini="true" required />
 		</div>	
 		<div data-role="fieldcontain">
 	         <label for="password">Password:</label>
-	         <input type="password" name="password" id="password" value="" />
+	         <input type="password" name="password" id="password" value="" data-mini="true" required/>
 		</div>
 		<div data-role="fieldcontain">
-    		<label for="name">First Name:</label>
-   	 		<input type="text" name="name" id="firstname" value=""  />
-		</div>
-		<div data-role="fieldcontain">
-    		<label for="name">Last Name:</label>
-   	 		<input type="text" name="name" id="lastname" value=""  />
+	         <label for="password">Confirm Password:</label>
+	         <input type="password" name="confirm_password" id="confirm_password" value="" data-mini="true" required/>
 		</div>
 		<div data-role="fieldcontain">
 	         <label for="email">Email:</label>
-	         <input type="email" name="email" id="email" value="" />
+	         <input type="email" name="email" id="email" value="" data-mini="true" required/>
 		</div>
 		<button type="submit" data-theme="a" id ="signupSubmit">Sign Up</button>
+	  </form>
 	</div><!-- content -->
 </div> <!-- End of LoginPage -->
 
