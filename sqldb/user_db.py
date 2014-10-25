@@ -349,6 +349,12 @@ def getLastState(name):
 	
 
 #need function to put users into gamestable
+if __name__ == "__main__":
+	os.remove('stock_db.db')
+	createDB()
+	insertUser('bob', 'asdf', 'quet')
+	insertUser('jane', 'asdf', 'qiet')
+	insertUser('mark', 'asdf', 'asdf')
 
 def testDB():
 	os.remove('stock_db.db')
@@ -383,4 +389,4 @@ def testDB():
 	print getLastState('bob')
 
 
-testDB()
+
