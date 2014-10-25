@@ -166,13 +166,20 @@ function createUserFromData(userName,firstName,secondName,email,password){
 	
 	// 3. Get the window user...
 	window.user=user;
+	window.user.loggedIn=true;
 	
 	// 4. Let the server know that we have created a new user...
 	var output = user.userName + "," + user.email + "," + user.password;
 	
 	$.getJSON(DEVSERVER_URL +"/addUser/"  + output, function(data) {
-	
-        	console.log("User added successfully!");
+			if (data == "no") {
+				console.log("User not added successfully");
+				alert("Error - the user already exists..please try again!");
+				$.mobile.changePage("#signup");
+			}
+			else {
+        		console.log("User added successfully!");
+        	}
     })
     .fail(function() {
     	console.log("Can't reach server ...fuck!");
@@ -370,7 +377,7 @@ function attachUserMethods(userObject) {
 		$.ajax({
         	url: DEVSERVER_URL + "/updateUser",
         	type: "POST",
-        	data: {user:JSON.stringify(temp),useName:temp.userName,password:temp.password},
+        	data: {user:JSON.stringify(temp),userName:temp.userName,password:temp.password},
         	beforeSend: function(x) {
           		if (x && x.overrideMimeType) {
             		x.overrideMimeType("application/j-son;charset=UTF-8");
@@ -444,7 +451,7 @@ function attachUserMethods(userObject) {
 	    $.ajax({
         url: DEVSERVER_URL + "/update",
         type: "POST",
-        data: {transaction: transactionData},
+        data: {transaction: transactionData,userName:this.userName,password:this.password},
         beforeSend: function(x) {
           if (x && x.overrideMimeType) {
             x.overrideMimeType("application/j-son;charset=UTF-8");
