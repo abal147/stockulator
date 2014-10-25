@@ -31,6 +31,11 @@ def get_friends(user=''):
 	response.content_type = 'application/json'
 	return dumps(user_db.getFriends(user));
 
+@app.route('/getrequests/<user>')
+def get_friends(user=''):
+	response.content_type = 'application/json'
+	return dumps(user_db.getRequest(user))
+
 @app.route('/reqfriend/<user>/<friend>')
 def request_friend(user='', friend=''):
 	user_db.insertRequest(user, friend)
