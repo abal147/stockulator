@@ -271,12 +271,15 @@ def getFriends(name):
 	db.close()
 	return friendlist
 
-def getNonFriends(name):
+def getNonFriends(name, searchstr):
 	db = sqlite3.connect('stock_db.db')
 	cursor = db.cursor()
 	userID = getUserID(name)
 	cursor.execute(
-		'''SELECT name FROM users WHERE userID NOT IN (SELECT friendID FROM friends WHERE userID = (?))''', (userID,))
+		'''SELECT name FROM users 
+			WHERE userID NOT IN (SELECT friendID FROM friends WHERE userID = (?)) 
+				AND userID <> (?) 
+				AND name LIKE (?)''', (userID, userID, '%' + searchstr + '%'))
 	friendlist = []
 	for row in cursor:
 		friendlist.append(str(row[0]))
@@ -352,9 +355,9 @@ def getLastState(name):
 if __name__ == "__main__":
 	os.remove('stock_db.db')
 	createDB()
-	insertUser('bob', 'asdf', 'quet')
-	insertUser('jane', 'asdf', 'qiet')
-	insertUser('mark', 'asdf', 'asdf')
+	insertUser('bob', 'asdf', 'asdf', 'asdf', 'quet')
+	insertUser('jane', 'asdf', 'asdf', 'asdf', 'qiet')
+	insertUser('mark', 'asdf', 'asdf', 'asdf', 'asdf')
 
 def testDB():
 	os.remove('stock_db.db')
@@ -382,11 +385,12 @@ def testDB():
 	rejectRequest('mark', 'bob')
 	print 'these are janes friends'
 	print getFriends('jane')
+	print getNonFriends('bob', 'ma')
 	print 'jane chooses mark and deletes bob'
 	deleteFriend('jane', 'bob')
 	print getAllUsers()
 	storeLastState('bob', 'asfdasdfadsfs')
 	print getLastState('bob')
 
-
+testDB()
 
