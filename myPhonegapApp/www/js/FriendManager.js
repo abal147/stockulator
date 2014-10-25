@@ -24,8 +24,15 @@ $(document).on("click", "#friendButton", function(){
 });
 
 $(document).on("click", "#friendLink", function(){
-	var command = $(this).attr("value");
-	console.log(command);
+	var friend = $(this).attr("value");
+	console.log(friend);
+
+	$.getJSON(AARONSERVER_URL + "/getportfolio/" + friend
+		, function(portfolio) {
+			console.log(portfolio);
+		}
+
+	);
 });
 
 function setupFriends() {
@@ -34,7 +41,7 @@ function setupFriends() {
 	if (window.user == undefined) {
 		console.log("ERROR: USER NOT DEFINED");
 		var object = new Object();
-		object.userName = "mark";
+		object.userName = "bob";
 		window.user = object;
 		//return
 	}
@@ -62,7 +69,7 @@ function setupFriends() {
 			        $ul.listview( "refresh" );
 
 			        for (var i = 0; i < data.length; ++i) {
-			        	li += '<li value="' + data[i] + '">' + data[i] + "</li>";
+			        	li += '<li value="' + data[i] + '" data-icon="plus"><a>' + data[i] + "</a></li>";
 			        }
 			        //console.log(li);
 			        $ul.append(li);
