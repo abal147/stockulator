@@ -35,13 +35,18 @@ $(document).on("click", "#friendLink", function(){
 	);
 });
 
+$(document).on("click", "#deleteFriend", function() {
+	var friend = $(this).attr("value");
+	console.log("Deleting friend: " + friend);
+});
+
 function setupFriends() {
 	console.log("FriendManager.js: Setting up friends");
 
 	if (window.user == undefined) {
 		console.log("ERROR: USER NOT DEFINED");
 		var object = new Object();
-		object.userName = "bob";
+		object.userName = "mark";
 		window.user = object;
 		//return
 	}
@@ -138,7 +143,7 @@ function populateFriends() {
 			} else {
 				for (var i = 0; i < friends.length; ++i) {
 					var current = "";
-					current += '<li id="friendLink" value="' + friends[i] + '">' + friends[i] + '</li>';
+					current += '<li><a id="friendLink" value="' + friends[i] + '">' + friends[i] + '</a><a id="deleteFriend" value="' + friends[i] + '"></a></li>';
 
 					friendHTML += current;
 				}
