@@ -9,7 +9,7 @@ function makeRequest(code){
   	//console.log("Data is:\n" + JSON.stringify(data));        
 
   	var table = document.getElementById("myTable");
-
+   
 	  //Clean out the rows from a previous search if any
     var rowCount = table.rows.length;
     while(rowCount > 0) {
@@ -23,16 +23,12 @@ function makeRequest(code){
    
     setCurrentStockObject (data);
     
-              
-    for(var i = 0; i < rows.length; ++i) {
-      var currRow = table.insertRow();
-
-      //console.log("row is: " + rows[i]);
-      var data = document.createElement("TD");
-      var text = document.createTextNode(rows[i]);
-      data.appendChild(text);
-      currRow.appendChild(data);           
-    }
+    $.each(data, function(index, item) {
+      tr = $('<tr>');
+      tr.append('<td>' + index + '</td>');
+      tr.append('<td>' + item + '</td>');
+      $("#myTable").append(tr);
+    })
   });
 }  
 
