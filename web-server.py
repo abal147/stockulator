@@ -31,6 +31,16 @@ def get_friends(user=''):
 	response.content_type = 'application/json'
 	return dumps(user_db.getFriends(user));
 
+@app.route('/findfriends/<user>/<search>')
+def find_friends(user='',search=''):
+	response.content_type = 'application/json'
+	return dumps(user_db.getNonFriends(user, search))
+
+@app.route('/getrequests/<user>')
+def get_friends(user=''):
+	response.content_type = 'application/json'
+	return dumps(user_db.getRequest(user))
+
 @app.route('/reqfriend/<user>/<friend>')
 def request_friend(user='', friend=''):
 	user_db.insertRequest(user, friend)
@@ -39,15 +49,20 @@ def request_friend(user='', friend=''):
 
 @app.route('/acceptfriend/<user>/<friend>')
 def accept_friend(user='', friend=''):
-	user_db.acceptRequest(user, friend)
+	user_db.acceptRequest(friend, user)
 	response.content_type = 'application/json'
 	return dumps('')
 
 @app.route('/rejectfriend/<user>/<friend>')
 def reject_friend(user='', friend=''):
-	user_db.rejectRequest(user, friend)
+	user_db.rejectRequest(friend, user)
 	response.content_type = 'application/json'
 	return dumps('')
+
+@app.route('/getportfolio/<user>')
+def get_portfolio(user=''):
+	response.content_type = 'application/json'
+	return user_db.getPortfolio(user)
 
 @app.route('/isusernew/<user>')
 def checkUser(user=""):
