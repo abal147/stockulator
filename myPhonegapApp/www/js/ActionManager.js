@@ -273,11 +273,7 @@ $(document).ready (function(){
 	$('#ticker').rssfeed('https://au.finance.yahoo.com/news/category-stocks/?format=rss',{}, function(e) {
 		$(e).find('div.rssBody').vTicker({showItems: 5});
 	});
-
-	plotDataIndicie("^AORD", "ALL ORDINARIES",60,"#indicie1");
-	plotDataIndicie("^AXDJ", "S&P/ASX 200 Consumer Discretionary Index" ,60,"#indicie2");
-	plotDataIndicie("^AXNJ", "S&P/ASX 200 Industrials Index " ,60,"#indicie3");
-
+	
 	$("#buyStock").click(function() {
 		buyWatchStock(getCurrentStock(),1,$("#slider").val());
 		// Create the user
