@@ -55,10 +55,11 @@ function setupFriends() {
 	        value = $input.val(),
 	        html = "";
 	    $ul.html("");
-	    console.log("SearchValue: " + value);
+	    console.log("Friends: " + value);
 	    localStorage.setItem("lastFriendSearch", value);
 
 	    if (value && value.length > 1) {
+	    	console.log(DEVSERVER_URL + "/findfriends/" + window.user.userName + "/" + value);
 	        $.getJSON(DEVSERVER_URL + "/findfriends/" + window.user.userName + "/" + value
 	        	, function(data) {
 
