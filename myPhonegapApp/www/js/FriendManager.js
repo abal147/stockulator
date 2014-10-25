@@ -27,6 +27,11 @@ $(document).on("click", "#friendLink", function(){
 	var friend = $(this).attr("value");
 	console.log(friend);
 
+	$("#friendList").popup("close");
+	$('#friendFolio').popup("open");
+
+	$('#friendFolioHeader').text(friend + "'s Portfolio");
+
 	$.getJSON(DEVSERVER_URL + "/getportfolio/" + friend
 		, function(portfolio) {
 			console.log(portfolio);
