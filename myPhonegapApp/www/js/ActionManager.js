@@ -7,19 +7,13 @@
 var WATCH_STOCK = 0;
 var BUY_STOCK = 1;
 var MODIFY_STOCK = 2;
+
 var DEVSERVER_URL = "http://ec2-54-79-50-63.ap-southeast-2.compute.amazonaws.com:8080";
 var AARONSERVER_URL = "http://ec2-54-66-137-0.ap-southeast-2.compute.amazonaws.com:8080";
 //var DEVSERVER_URL = "http://0.0.0.0:8080";
 
 function handle(e, code){
  	if(e.keyCode === 13){
- 	// TODO - change this to focus etc...
- 	// Also, change to be more of the jquery style etc...
- 		// code = $("#search-3").val();
-// 		console.log("Handler: Code is:" + code );
-// 		setCurrentStock($("#search-3").val());
-// 		plotData(code,300); // lets plot data from the last 300 days for the code...
-// 		makeRequest(code); // call eddies script to make the request..
 		console.log("Code is:" + code);
 		setCurrentStock(code);
 		window.location.href = "#stockInfo";    //redirects to stockInfo page
@@ -30,22 +24,41 @@ function handle(e, code){
 }
 
 function changeButtons (stockName) {
-	if (stockName in window.user.ownedStocks) { // Check that this is correct
+	try {
+		if (stockName in window.user.ownedStocks) { // Check that this is correct
 			// Stock is defined....if it is 
 			console.log("Stock is already owned");
 			$('#sellButton').removeClass('ui-disabled');
 			$('#watchButton').addClass('ui-disabled');
-	}
-	else if (stockName in window.user.watchedStocks) {
+		}
+		else if (stockName in window.user.watchedStocks) {
 			console.log("Stock is watched");
 			$('#watchButton').addClass('ui-disabled');
 			$('#sellButton').addClass('ui-disabled');
-	}
-	else {
+		}
+		else {
 			console.log("Stock is neither watched nor owned");
 			$('#sellButton').addClass('ui-disabled');
 			$('#watchButton').removeClass('ui-disabled');	
+		}
 	}
+	catch (err) {
+		console.log("error - unable to update the buttons");
+	}
+}
+
+function initUser(userObj) {
+// Function will completely initialise a user object for use
+	  	window.user=userObj;
+	  	window.user.loggedIn=true;
+  		attachUserMethods(window.user);
+  		for (var index in window.user.ownedStocks) {
+			attachStockMethods(window.user.ownedStocks[index]); // attach the stock methods..
+		}
+		for (var index in window.user.watchedStocks) {
+			attachStockMethods(window.user.watchedStocks[index]); // attach the stock methods..
+		}
+  		window.user.save();
 }
 
 function refreshStocks() {
@@ -54,11 +67,14 @@ function refreshStocks() {
 		// Refresh the stock pie chart breakdown with bought data...
 		plotPieChart('Stock Breakdown',window.user.getStocks(1));
 
-    // Refresh watchlist
-    populateWatchlist();
+    	// Refresh watchlist
+    	populateWatchlist();
 
-    // Refresh portfolio
-    populatePortfolio();
+    	// Refresh portfolio
+    	populatePortfolio();
+    
+    	// Make sure that the buttons have changed...
+    	changeButtons();
 	
 		window.user.save();
 	}
@@ -114,33 +130,57 @@ function buyWatchStock(stockID, state,qty){
  
 }
 
-
-// User name validation ... etc
-//Create user if the data is valid...
-$.validator.setDefaults({
-		submitHandler: function() {
-			alert("User Created Successfully!"); // TODO - change to jquery alert...
-			console.log("Signup submit clicked");
-			// Lets show a loading widget
-			$.mobile.loading( 'show', {
-				text: 'Loading Data',
-				textVisible: true,
-				theme: "a",
-				html: ""
-			});
-			// TODO - check that values input are consistent o correct
-			// highlight if wrong ...
-		
-			// Create the user
-			var out = createUserFromData($('#name').val(),"undefined","undefined",$('#email').val(),$('#password').val());
-			$.mobile.loading( "hide" );
-		
-			// If successful then return to main page...
-			if (out ==1 ) {
-				$.mobile.changePage("#home");
-			}
-		}
-});
+function checkLogin() {
+	console.log("Login submit has been clicked");
+  	var userStored=false;
+  	try {
+  		var temp=store.get('user');
+  		if (temp.userName == $('#nameLogin').val() && temp.password == $('#passwordLogin').val() ) {
+  			initUser(temp);
+  			console.log("User is stored!");
+  			$.mobile.changePage("#home");
+  			userStored=true;
+  		}
+  		else {
+  			console.log("Entered data is incorrect");
+  		 	$("#loginError").replaceWith("<div id = \"loginError\"> <p> Username or Password is incorrect ! </p></div> " );
+  			$.mobile.changePage("#login");
+  		}
+  	}
+  	catch (error) {
+  		console.log("Error is" + error);
+  		console.log("User object is not defined");
+  		$.ajaxSetup({
+			async:false
+		}); // user object is not defiend, we want the login to be asynchronous...
+  	}
+  	
+  	// update the user object...
+	$.getJSON(DEVSERVER_URL + "/login/" + $('#nameLogin').val() + "/" + $('#passwordLogin').val(), function(data) {
+        console.log("Recieved user object is");
+        console.log(data);
+        // Update the user object....
+        //initUser(data);
+        $.ajaxSetup({
+			async:true
+		});
+		if (!userStored) {
+        	$.mobile.changePage("#home");
+        }
+    })
+    .fail(function() {
+    	console.log("Can't reach server ...!");
+    	$("#loginError").replaceWith("<div id = \"loginError\"> <p> Unable to Contact the Server! </p></div> " );
+    	$.ajaxSetup({
+			async:true
+		});
+    });
+    
+    // make sure all ajax calls from here on in are asynchronous
+    $.ajaxSetup({
+		async:true
+	});
+}
 
 // Custom validation method checks that user does not already exist...
 jQuery.validator.addMethod("isUserNew",function(value) {
@@ -154,8 +194,6 @@ jQuery.validator.addMethod("isUserNew",function(value) {
 		async:false
 	});
 	
-	// TODO - change to correct server address..
-	//$.getJSON("http://0.0.0.0:8080/isusernew/" + $('#name').val(), function(data) {
 	$.getJSON(DEVSERVER_URL + "/isusernew/" + $('#name').val(), function(data) {
         if (data ==="yes") {
         	console.log("User is new!");
@@ -169,7 +207,8 @@ jQuery.validator.addMethod("isUserNew",function(value) {
         }
     })
     .fail(function() {
-    	console.log("Can't reach server ...fuck!");
+    	console.log("Can't reach server ...!");
+    	alert("Pfff , server appears to be dead ... try again please");
     	//retval=false;
     	retval=true;
     	// TODO - remove this to enable username validity checking
@@ -188,6 +227,10 @@ jQuery.validator.addMethod("isUserNew",function(value) {
 	return retval;
 },"Username already exists!");
 
+$.validator.addMethod("loginRegex", function(value, element) {
+        return this.optional(element) || /^[a-z0-9\s]+$/i.test(value);
+    }, "Must contain only letters or numbers");
+    
 jQuery.validator.classRuleSettings.isUserNew = {isUserNew : true} ; // Not sure why I have to do this...
 // End of user validation ....
 
@@ -195,8 +238,6 @@ jQuery.validator.classRuleSettings.isUserNew = {isUserNew : true} ; // Not sure 
 // Main Document Manipulation Script
 // This script will be run by all documents to perform manipulation of the page..
 $(document).ready (function(){
-
-
 
 	console.log("Document Manipulation Script has been run");
 	
@@ -239,10 +280,6 @@ $(document).ready (function(){
 		// Create the user
 		$.mobile.loading( "hide" );
 		
-		// If successful then return to main page...
-		if (out ==1 ) {
-			$.mobile.changePage("#home");
-		}
 	});
 	
 	$("#buyStock2").click(function() {
@@ -250,10 +287,11 @@ $(document).ready (function(){
 		// Create the user
 		$.mobile.loading( "hide" );
 		
-		// If successful then return to main page...
-		if (out ==1 ) {
-			$.mobile.changePage("#home");
-		}
+	});
+	
+	$('.logout').click(function() {
+		window.user.loggedIn=false;
+		window.user.save();
 	});
 	
 	$(".sellStock").click(function() {
@@ -291,20 +329,57 @@ $(document).ready (function(){
 		buyWatchStock(getCurrentStock(), WATCH_STOCK);
 	});
 	
+	$("#loginForm").validate({
+	
+		submitHandler: function() {
+			checkLogin();
+		},
+		success: function(label) {
+            label
+            .text('OK!').addClass('valid')
+            .closest('.form-element').addClass('success');
+        },
+    });
+	
 	$( "#commentForm" ).validate({
+    	submitHandler: function() {
+			alert("User Created Successfully!"); // TODO - change to jquery alert...
+			console.log("Signup submit clicked");
+			// Lets show a loading widget
+			$.mobile.loading( 'show', {
+				text: 'Loading Data',
+				textVisible: true,
+				theme: "a",
+				html: ""
+			});
+			// TODO - check that values input are consistent o correct
+			// highlight if wrong ...
+		
+			// Create the user
+			var out = createUserFromData($('#name').val(),"undefined","undefined",$('#email').val(),$('#password').val());
+			$.mobile.loading( "hide" );
+		
+			// If successful then return to main page...
+			if (out ==1 ) {
+				$.mobile.changePage("#home");
+			}
+		},
     	rules: {
 
 				name: {
 					required: true,
 					minlength: 5 ,
+					loginRegex: true,
 					isUserNew : true
 				},
 				password: {
 					required: true,
+					loginRegex: true,
 					minlength: 5
 				},
 				confirm_password: {
 					required: true,
+					loginRegex:true,
 					minlength: 5,
 					equalTo: "#password"
 				},
@@ -315,7 +390,7 @@ $(document).ready (function(){
 		},
 		highlight: function(label) {
             $(label).closest('.form-element').addClass('error')
-            .closest('.form-element').removeClass('success');;
+            .closest('.form-element').removeClass('success');
         },
         success: function(label) {
             label
@@ -345,9 +420,6 @@ $(document).ready (function(){
     	focusInvalid: false
 	});
 	
-
-	
-
 	$("#historyView").click(function(){
 		plotPortHistory();
 	});
@@ -401,8 +473,7 @@ $(document).ready (function(){
     //console.log("Current stock is:" + getCurrentStock());
     //console.log("Event id is: " + target.id);
   });
-
-
+  
   //Set a 10 second interval for refreshing current stock prices in user's portfolio
   window.user.upDate(); //Not sure why initial call doesn't refresh watchlist/portfolio
   setInterval(function() {window.user.upDate()}, 10000);
@@ -412,12 +483,6 @@ $(document).ready (function(){
  
 
 });
-
-
-
-//Clear Text Box : When text box is clicked...clear it
-// TODO
-//function setupSearch(code = "#searchStock") { // this is wrong
 
 function setupSearch(code) {
 console.log("________________________________________________________________");

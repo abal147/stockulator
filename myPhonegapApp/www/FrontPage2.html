@@ -64,6 +64,7 @@
 		<Br>  </Br>
 		<h1>Home</h1>
 		<a href="#home" data-icon="home" data-iconpos="notext">Home</a>
+		<a href="#login" class ="logout" data-iconpos="notext" data-rel="dialog" >Logout</a>
 		<a href="#signup" data-icon="info" data-iconpos="notext" data-rel="dialog" >Info</a>
 	</div><!-- header -->
 
@@ -111,6 +112,7 @@
 	<div data-role="header" data-theme="a" data-position="fixed" data-id="vs_header">
 		<h1>Portfolio</h1>
 		<a href="#home" data-icon="home" data-iconpos="notext">Home</a>
+		<a href="#login" class ="logout" data-iconpos="notext" data-rel="dialog" >Logout</a>
 		<a href="#info" data-icon="info" data-iconpos="notext" data-rel="dialog" >Info</a>
 	</div><!-- header -->
 
@@ -171,6 +173,7 @@
 	<div data-role="header" data-theme="a" data-position="fixed" data-id="vs_header">
 		<h1>Stock Info</h1>
 		<a href="#home" data-icon="home" data-iconpos="notext">Home</a>
+		<a href="#login" class ="logout" data-iconpos="notext" data-rel="dialog" >Logout</a>
 		<a href="#info" data-icon="info" data-iconpos="notext" data-rel="dialog" >Info</a>
 	</div><!-- header -->
 	
@@ -285,6 +288,7 @@
 	<div data-role="header" data-theme="a" data-position="fixed" data-id="vs_header">
 		<h1>Watchlist</h1>
 		<a href="#home" data-icon="home" data-iconpos="notext">Home</a>
+		<a href="#login" class ="logout" data-iconpos="notext" data-rel="dialog" >Logout</a>
 		<a href="#info" data-icon="info" data-iconpos="notext" data-rel="dialog" >Info</a>
 	</div><!-- header -->
 	
@@ -371,6 +375,7 @@
 	<div data-role="header" data-theme="a" data-position="fixed" data-id="vs_header">
 		<h1>Friends</h1>
 		<a href="#home" data-icon="home" data-iconpos="notext">Home</a>
+		<a href="#login" class ="logout" data-iconpos="notext" data-rel="dialog" >Logout</a>
 		<a href="#info" data-icon="info" data-iconpos="notext" data-rel="dialog" >Info</a>
 	</div><!-- header -->
 	
@@ -438,6 +443,7 @@
 		<br>
 		<h1>Stockulator</h1>
 		<a href="#home" data-icon="home" data-iconpos="notext">Home</a>
+		<a href="#login" class ="logout" data-iconpos="notext" data-rel="dialog" >Logout</a>
 		<a href="#info" data-icon="info" data-iconpos="notext" data-rel="dialog" >Info</a>
 	</div><!-- header -->
 	
@@ -464,6 +470,41 @@
 		</div>
 		<button type="submit" data-theme="a" id ="signupSubmit">Sign Up</button>
 	  </form>
+	  	<a href="#login" > Already a user ? Login </a>
+	</div><!-- content -->
+</div> <!-- End of LoginPage -->
+
+<!----------------------------------------
+         Start of the login Page 
+ ----------------------------------------!>	
+<div data-role="page" id="login">
+	
+	<!-- Header of the Document -->
+	<div data-role="header" data-theme="a" data-position="fixed" data-id="vs_header">
+		<br>
+		<h1>Stockulator</h1>
+		<a href="#home" data-icon="home" data-iconpos="notext">Home</a>
+		<a href="#login" class ="logout" data-iconpos="notext" data-rel="dialog" >Logout</a>
+		<a href="#info" data-icon="info" data-iconpos="notext" data-rel="dialog" >Info</a>
+	</div><!-- header -->
+	
+	<!-- Content Part of Document-->
+	<div data-theme="a" data-role="content" id="postlist">	
+		<h4>Login</h4>
+		
+	  <form  id="loginForm" method="get" action="">
+		<div data-role="fieldcontain">
+    		<label for="name">Username or Email:</label>
+   	 		<input type="text" name="name" id="nameLogin" required value=""  data-mini="true" required />
+		</div>	
+		<div data-role="fieldcontain">
+	         <label for="password">Password:</label>
+	         <input type="password" name="password" required id="passwordLogin" value="" data-mini="true" required/>
+		</div>
+		<button type="submit" data-theme="a" id ="loginSubmit">Log In</button>
+	  </form>
+	  	<a href="#signup" > Not a user ? Signup </a>
+	  <div id="loginError"></div> 
 	</div><!-- content -->
 </div> <!-- End of LoginPage -->
 

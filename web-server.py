@@ -1,8 +1,10 @@
-from bottle import Bottle, run, response
-from json import dumps
+from bottle import Bottle, run, response , request
+from json import dumps,load
 from server import dataScraper, historical, metric, ASXcodes
 from sqldb import user_db
+import re
 
+testGlobUser = "none" # remove me later, just to test exactly how the user object looks...
 app = Bottle()
 
 @app.hook('after_request')
@@ -85,13 +87,40 @@ def get_data(code=""):
 @app.post('/update', methods='POST')
 def insertTransaction():
    transaction=request.forms['transaction']
-   
-
+   # TODO - call the database shit....
    #return scriptName.functionName(transaction)
    #technically don't even need to return if not debugging
 
    #eg.
-   return updateUserObject.updateUserObject(transaction)
+   # return updateUserObject.updateUserObject(transaction)
+
+@app.route('/login/<userName>/<password>')
+def login (userName,password):
+	#1. clean the data
+	user = re.sub(r'\W+','',userName)
+	pwd = re.sub(r'\W+','',password);
+	# 2. Check user data is correct in user database
+	#TODO .......
+	print "Reponse to a valid login"
+	print testGlobUser
+	# 3. If valid send user object that is stored, if invalid then No
+	
+	response.content_type = 'application/json'
+	return dumps(testGlobUser)
+
+@app.post('/updateUser',methods='POST')
+def updateUser():	
+	# Shall update the user Object of a user....
+	# TODO - fill in inserting/updating the table of the database...
+	user=request.forms['user'] # NB: possible security fflaw as we are just accepting that the string is okay...
+	username = re.sub(r'\W+','',request.forms['userName']);
+	pwd = re.sub(r'\W+','',request.forms['password']);
+	
+	print "Lindsay Post Data is ..."
+
+	result="good"
+	response.content_type = 'application/json'
+	return dumps(result)
 
 @app.route('/addUser/<userData>')
 def addUser(userData=""):

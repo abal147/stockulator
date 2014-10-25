@@ -170,7 +170,6 @@ function createUserFromData(userName,firstName,secondName,email,password){
 	// 4. Let the server know that we have created a new user...
 	var output = user.userName + "," + user.email + "," + user.password;
 	
-	//$.getJSON("http://0.0.0.0:8080/addUser/" + output, function(data) {
 	$.getJSON(DEVSERVER_URL +"/addUser/"  + output, function(data) {
 	
         	console.log("User added successfully!");
@@ -194,7 +193,7 @@ function sellStock(stockID,quantity,price) {
 		}
 		else {
 			// lets just assume they want to sell everything
-			console.log("Fuck it ,... lets sell it all");
+			console.log("lets sell it all");
 			addStockToUser(stockID,stockID,-quantity,price,0,1);
 			
 			// Move stock from ownedList to sold list
@@ -271,6 +270,23 @@ function deleteStock(stockID) {
   refreshStocks();
   window.user.save();
 }
+
+function pullUserObject (userName,password) {
+	// Get user object from server and store here...
+	$.getJSON(DEVSERVER_URL +"/login/"  + userName + "/" + password, function(data) {
+	
+        	console.log("User Object from server is:");
+        	console.log(data);
+        	
+        	// Set the user object to be this and continue as normal....
+        	
+    })
+    .fail(function() {
+    	console.log("Can't reach server ... when retrieveing user object!");
+    	retval=false;
+    });
+
+}
 // ------------------------------------------------------------ 
 
 
@@ -285,7 +301,6 @@ function deleteStock(stockID) {
 
 function attachUserMethods(userObject) {
 // This function will attach appropriate methods to the user...
-
 
 	userObject.upDate = function() {
 		// console.log('Update our user');
@@ -340,13 +355,41 @@ function attachUserMethods(userObject) {
 //         }
 //       }   
 //   	});  	
-//     refreshStocks();
+     //refreshStocks();
 	}
 
 	
 	userObject.save = function(){ // function used to save this object to memory...
 		console.log('Save our user');
+		
+		// 1. Store Locally...
 		store.set('user',this);
+		var temp= store.get('user');
+
+		// 2. Write the user object to the server
+		$.ajax({
+        	url: DEVSERVER_URL + "/updateUser",
+        	type: "POST",
+        	data: {user:JSON.stringify(temp),useName:temp.userName,password:temp.password},
+        	beforeSend: function(x) {
+          		if (x && x.overrideMimeType) {
+            		x.overrideMimeType("application/j-son;charset=UTF-8");
+          		}
+        	},
+        	success: function(result) {
+          		console.log("Success! User data successfully sent to server" + result);
+        	}
+      	});
+		
+		// $.getJSON(DEVSERVER_URL +"/updateUser/"  + this.userName + "/" + this.password + "/" + JSON.stringify(this), function(data) {
+// 	
+//         	console.log("User added successfully!");
+//     	})
+//     	.fail(function() {
+//     		console.log("Can't reach server ...!");
+//     		retval=false;
+//     	});
+		
 	// TODO perhaps figure out how this can be triggered everytime a change occurs to this object...?
 	}
 	userObject.addStock = function (stockObject,state) {
@@ -390,8 +433,6 @@ function attachUserMethods(userObject) {
 	userObject.updateServer = function(stockID, quantity, price, state){
 	// This function updates the server when transactions are made
 
-	  console.log("user object to be sent is: " + JSON.stringify(this));
-
     if(state == BUY_STOCK) {
       //The commented one is plain object format
 	    //var transactionData = '{"username:"' + this.userName + '", "stockID:"' + stockID 
@@ -399,8 +440,7 @@ function attachUserMethods(userObject) {
 
       //This one is just string format delimited by commas
       var transactionData = this.userName + ", " + stockID + ", " + price + ", " + quantity;
-
-          
+      
 	    $.ajax({
         url: DEVSERVER_URL + "/update",
         type: "POST",
@@ -492,6 +532,7 @@ function userObj (userName,firstName,lastName,email,password) {
 	this.ownedStocks = {}; // associative array of owned stock objects
 	this.watchedStocks = {}; // associative array of watching stocks
 	this.soldStocks = {}; // store the sold stocks here for reference....
+	this.loggedIn=true; // boolean to store whether a user is logged in or not
 	attachUserMethods(this); // attach the user methods to this object..
 }
 
@@ -553,28 +594,33 @@ $(function() {
 	// 1. Check to see if the user is defined for this application... if not then
 	try {
 		// 2. Load Stored user data
-		window.user = store.get('user');
+		var help = store.get('user');
 		
-		// 3. plot the pie chart
-		//plotPieChart("Breakdown",window.user.ownedStocks);
-		
-		// a. Attach user methods to user Object
-		attachUserMethods(window.user);
-		
-		// b. Attach Stock Methods to the stock Objects ..
-		for (var index in window.user.ownedStocks) {
-			attachStockMethods(window.user.ownedStocks[index]); // attach the stock methods..
+		// 3. Check that the user is logged in
+		if (!help.loggedIn) {
+			store.remove('currStock');
+			$.mobile.changePage("#login"); // lets switch to the login page....
 		}
-		for (var index in window.user.watchedStocks) {
-			attachStockMethods(window.user.watchedStocks[index]); // attach the stock methods..
-		}
-		console.log("User object is :");
-		console.log(window.user);
+		else {
+			window.user = store.get('user');
+			// a. Attach user methods to user Object
+			attachUserMethods(window.user);
 		
-		if (window.user == null) {
-			throw "undefined user";
-		} 
-		plotPieChart("Breakdown",window.user.ownedStocks);
+			// b. Attach Stock Methods to the stock Objects ..
+			for (var index in window.user.ownedStocks) {
+				attachStockMethods(window.user.ownedStocks[index]); // attach the stock methods..
+			}
+			for (var index in window.user.watchedStocks) {
+				attachStockMethods(window.user.watchedStocks[index]); // attach the stock methods..
+			}
+			console.log("User object is :");
+			console.log(window.user);
+		
+			if (window.user == null) {
+				throw "undefined user";
+			} 
+			plotPieChart("Breakdown",window.user.ownedStocks);
+		}
 		// 3. Begin Update Process ...
 			// TODO - call the server and update our user object...
 			// Edward......
@@ -584,15 +630,11 @@ $(function() {
 		console.log("Change page!");
 		//if (err.match("undefined user")) {
 			// Error is from undefined user - switch to new user div...
+		store.clear();
 		$.mobile.changePage("#signup"); // lets switch to the signup page...
-		//}
-		//else {
-			// not entirely sure what has gone wrong
-		//	console.log("Well that's fucked ! Error is not known (yet)");
-		//}
 	}
 	
-    refreshASXCodes();
+   refreshASXCodes();
     
     var codes = ["#searchStock", "#searchStock2", "#searchStock3"];
 
