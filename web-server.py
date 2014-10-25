@@ -20,6 +20,12 @@ def enable_cors():
 def hello():
     return "Hello World!"
 
+@app.route('/rmfriendo/<user>/<friend>')
+def rmfriend(user='',friend=''):
+	user_db.deleteFriend(user, friend)
+	response.content_type = 'application/json'
+	return dumps('')
+
 @app.route('/asxcodes')
 def get_codes():
 	result = ASXcodes.requestCodes()
