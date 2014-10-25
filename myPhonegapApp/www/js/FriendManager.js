@@ -32,6 +32,8 @@ $(document).on("click", "#friendLink", function(){
 
 	$('#friendFolioHeader').text(friend + "'s Portfolio");
 
+	
+
 	$.getJSON(DEVSERVER_URL + "/getportfolio/" + friend
 		, function(portfolio) {
 			console.log(portfolio);
@@ -42,7 +44,20 @@ $(document).on("click", "#friendLink", function(){
 
 $(document).on("click", "#deleteFriend", function() {
 	var friend = $(this).attr("value");
-	console.log("Deleting friend: " + friend);
+
+	localStorage.setItem('pendingDelete', friend);
+
+	$('#confirmDelete').popup('open');
+
+	$('#confirmDeleteMessage').text('Unfriend ' + friend + '?');
+});
+
+$(document).on("click", '#deleteFriendConfirm', function() {
+	var friend = localStorage.getItem('pendingDelete');
+
+	populateFriends();
+
+	console.log(friend + " got rekt");
 });
 
 function setupFriends() {
@@ -126,10 +141,6 @@ function setupFriends() {
 function populateFriends() {
 	var friends = ['aaron', 'eddy', 'jess', 'lindsay', 'thomas'];
 	//friends = [];
-
-	var serverURL = "http://ec2-54-66-137-0.ap-southeast-2.compute.amazonaws.com:8080";//getfriends/bob";
-
-	console.log(serverURL + "/" + window.user.userName);
 
 	$.getJSON(DEVSERVER_URL + "/getfriends/" + window.user.userName
 		, function(friends) {
