@@ -39,13 +39,40 @@ body {
 
 
 
+/*AARONS STYLES*/
 
+.ui-popup .ui-content {
+    height: 300px !important;
+}
 
+.friendlistview {
+    margin: 0 !important;
+    max-height: 100%;
+    overflow-y: scroll;
+}
 
+.ui-grid-a>.ui-block-a{
+	width:80%;
+}
 
+.ui-grid-a>.ui-block-b {
+	width:20%;
+	right: 0;
+}
 
+#friendRequests-popup{
+    min-width: 80% !important;
+}
 
+#friendList-popup{
+	min-width: 80% !important;
+}
 
+#friendButton{
+	right:0;
+}
+
+/*********************************/
 
 
 /* Globals */
