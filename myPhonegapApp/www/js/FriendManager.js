@@ -15,7 +15,7 @@ $(document).on("click", "#friendButton", function(){
 	var suffix = "/" + serverCommand + "/" + window.user.userName + "/" + commands[1];
 	console.log(suffix);
 
-	$.getJSON(AARONSERVER_URL + suffix,
+	$.getJSON(DEVSERVER_URL + suffix,
 		function (data) {}
 	);
 
@@ -27,7 +27,7 @@ $(document).on("click", "#friendLink", function(){
 	var friend = $(this).attr("value");
 	console.log(friend);
 
-	$.getJSON(AARONSERVER_URL + "/getportfolio/" + friend
+	$.getJSON(DEVSERVER_URL + "/getportfolio/" + friend
 		, function(portfolio) {
 			console.log(portfolio);
 		}
@@ -59,7 +59,7 @@ function setupFriends() {
 	    localStorage.setItem("lastFriendSearch", value);
 
 	    if (value && value.length > 1) {
-	        $.getJSON(AARONSERVER_URL + "/findfriends/" + window.user.userName + "/" + value
+	        $.getJSON(DEVSERVER_URL + "/findfriends/" + window.user.userName + "/" + value
 	        	, function(data) {
 
 	        		console.log(data);
@@ -85,7 +85,7 @@ function setupFriends() {
 
 		friend = $(this).attr("value");
 
-		$.getJSON(AARONSERVER_URL + "/reqfriend/" + window.user.userName + "/" + friend
+		$.getJSON(DEVSERVER_URL + "/reqfriend/" + window.user.userName + "/" + friend
 			, function(data) {}
 
 		);
@@ -104,7 +104,7 @@ function setupFriends() {
 
 	    console.log("Clicked user: " + source);
 
-	    $.getJSON(AARONSERVER_URL + "/reqfriend/" + window.user.userName + "/" + source
+	    $.getJSON(DEVSERVER_URL + "/reqfriend/" + window.user.userName + "/" + source
 	    	, function(data) {}
 	    );
 	});
@@ -120,7 +120,7 @@ function populateFriends() {
 
 	console.log(serverURL + "/" + window.user.userName);
 
-	$.getJSON(AARONSERVER_URL + "/getfriends/" + window.user.userName
+	$.getJSON(DEVSERVER_URL + "/getfriends/" + window.user.userName
 		, function(friends) {
 
 			var list = $("#myFriends");
@@ -154,7 +154,7 @@ function populateFriends() {
 
 function populateRequests() {
 
-	$.getJSON(AARONSERVER_URL + "/getrequests/" + window.user.userName
+	$.getJSON(DEVSERVER_URL + "/getrequests/" + window.user.userName
 		, function(requests) {
 
 		var list = $("#requestList");
