@@ -64,6 +64,12 @@ def get_portfolio(user=''):
 	response.content_type = 'application/json'
 	return user_db.getPortfolio(user)
 
+@app.route('/deletefriend/<user>/<friend>')
+def delete_friend(user='', friend='')
+	response.content_type = 'application/json'
+	user_db.deleteFriend(name, friend)
+	return dumps('')
+
 @app.route('/isusernew/<user>')
 def checkUser(user=""):
 	# Check to see if username exists ...
