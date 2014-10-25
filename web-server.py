@@ -31,6 +31,11 @@ def get_friends(user=''):
 	response.content_type = 'application/json'
 	return dumps(user_db.getFriends(user));
 
+@app.route('/findfriends/<user>/<search>')
+def find_friends(user=''):
+	response.content_type = 'application/json'
+	return dumps(user_db.getNonFriends(user, search))
+
 @app.route('/getrequests/<user>')
 def get_friends(user=''):
 	response.content_type = 'application/json'
