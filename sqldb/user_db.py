@@ -275,9 +275,9 @@ def getNonFriends(name, searchstr):
 	userID = getUserID(name)
 	cursor.execute(
 		'''SELECT name FROM users 
-			WHERE userID NOT IN (SELECT friendID FROM friends WHERE userID = (?)) 
+			WHERE userID NOT IN (SELECT friendID FROM friends WHERE userID = (?) AND friendID = (?)) 
 				AND userID <> (?) 
-				AND name LIKE (?)''', (userID, userID, '%' + searchstr + '%'))
+				AND name LIKE (?)''', (userID, userID, userID, '%' + searchstr + '%'))
 	friendlist = []
 	for row in cursor:
 		friendlist.append(str(row[0]))
