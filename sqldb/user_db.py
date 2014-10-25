@@ -9,6 +9,8 @@ def createDB():
 	CREATE TABLE users
 	(
 		name TEXT,
+		firstname TEXT,
+		lastname TEXT,
 		userID INTEGER PRIMARY KEY,
 		email TEXT unqiue,
 		password TEXT,
@@ -35,12 +37,28 @@ def createDB():
 		accepted INT
 	)
 	''')
+	#watch stocks
+	cursor.execute('''
+	CREATE TABLE watchlist
+	(
+		userID INT,
+		stockID TEXT
+	)
+	''')
+	#string to store on signin
+	cursor.execute('''
+	CREATE TABLE signin
+	(
+		userID INT,
+		lastState TEXT
+	)
+	''')
 	db.commit()
 	db.close()
 
 #returns true if new user is inserted otherwise if users is not new, returns false
 #userID is automatically generated
-def insertUser(name, email, password):
+def insertUser(name, firstname, lastname,  email, password):
 	#check if email is unqiue
 	db = sqlite3.connect('stock_db.db')
 	cursor = db.cursor()
@@ -48,7 +66,7 @@ def insertUser(name, email, password):
 		return 0	
 	defaultBalance = 10000
 	cursor.execute('''
-	INSERT INTO users (name, email, password, balance) values (?,?,?,?)''', (name, email, password, defaultBalance))
+	INSERT INTO users (name, firstname, lastname, email, password, balance) values (?,?,?,?,?,?)''', (name, firstname, lastname, email, password, defaultBalance))
 	db.commit()
 	db.close()
 	return 1
@@ -109,6 +127,8 @@ def insertTrans(inputstr):
 	userID = getUserID(inputs[0])
 	cursor.execute(
 		'''INSERT INTO transactions (userID, stockID, price, numStocks, unixDate) values (?,?,?,?,?)''', (userID, inputs[1], inputs[2], inputs[3], int(time.time())))
+	#if its a buy operation, need to remove from the watchlist
+	
 	db.commit()
 	db.close()
 	return 'transaction inserted for:' + inputstr
@@ -251,6 +271,21 @@ def getFriends(name):
 	db.close()
 	return friendlist
 
+def getNonFriends(name, searchstr):
+	db = sqlite3.connect('stock_db.db')
+	cursor = db.cursor()
+	userID = getUserID(name)
+	cursor.execute(
+		'''SELECT name FROM users 
+			WHERE userID NOT IN (SELECT friendID FROM friends WHERE userID = (?)) 
+				AND userID <> (?) 
+				AND name LIKE (?)''', (userID, userID, '%' + searchstr + '%'))
+	friendlist = []
+	for row in cursor:
+		friendlist.append(str(row[0]))
+	db.close()
+	return friendlist
+
 def printFriends():
 	db = sqlite3.connect('stock_db.db')
 	cursor = db.cursor()
@@ -260,13 +295,76 @@ def printFriends():
 	db.close()
 	return
 
+
+def insertWatch(name, stockID):
+	db = sqlite3.connect('stock_db.db')
+	cursor = db.cursor()
+	userID = getUserID(name)
+	cursor.execute(
+		'''SELECT stockID FROM watchlist WHERE userID = (?)''', (userID,))
+	db.commit()
+	db.close()
+	return
+
+def removeWatch(name, stockID):
+	db = sqlite3.connect('stock_db.db')
+	cursor = db.cursor()
+	userID = getUserID(name)
+	cursor.execute(
+		'''DELETE FROM watchlist WHERE userID = (?) AND stockID = (?)''', (userID, stockID))
+	db.commit()
+	db.close()
+	return
+
+def getWatchList(name):
+	db = sqlite3.connect('stock_db.db')
+	cursor = db.cursor()
+	userID = getUserID(name)
+	cursor.execute(
+		'''SELECT stockID FROM watchlist WHERE userID = (?)''', (userID,))
+	watchlist = []
+	for row in cursor:
+		watchlist.append(str(row[0]))
+	db.close()
+	return watchlist
+
+def storeLastState(name, lastState):
+	db = sqlite3.connect('stock_db.db')
+	cursor = db.cursor()
+	userID = getUserID(name)
+	cursor.execute(
+		'''DELETE FROM signin WHERE userID = (?)''', (userID,))
+	cursor.execute(
+		'''INSERT INTO signin (userID, lastState) VALUES (?,?)''', (userID, lastState))
+	db.commit()
+	db.close()
+	return
+
+def getLastState(name):
+	db = sqlite3.connect('stock_db.db')
+	cursor = db.cursor()
+	userID = getUserID(name)
+	cursor.execute(
+		'''SELECT lastState FROM signin WHERE userID = (?)''', (userID,))
+	state = cursor.fetchone()[0]
+	db.close()
+	return state
+	
+
 #need function to put users into gamestable
 if __name__ == "__main__":
 	os.remove('stock_db.db')
 	createDB()
-	insertUser('bob', 'asdf', 'quet')
-	insertUser('jane', 'asdf', 'qiet')
-	insertUser('mark', 'asdf', 'asdf')
+	insertUser('bob', 'asdf', 'asdf', 'asdf', 'quet')
+	insertUser('jane', 'asdf', 'asdf', 'asdf', 'qiet')
+	insertUser('mark', 'asdf', 'asdf', 'asdf', 'asdf')
+
+def testDB():
+	os.remove('stock_db.db')
+	createDB()
+	insertUser('bob', 'bob', 'asd', 'asdf', 'quet')
+	insertUser('jane', 'jane', 'asdf', 'asdf', 'qiet')
+	insertUser('mark', 'mark', 'asdf', 'asdf', 'asdf')
 
 	insertTrans('bob,wow.ax,40,1')
 	print getCurrBalance('bob')
@@ -287,6 +385,12 @@ if __name__ == "__main__":
 	rejectRequest('mark', 'bob')
 	print 'these are janes friends'
 	print getFriends('jane')
+	print getNonFriends('bob', 'ma')
 	print 'jane chooses mark and deletes bob'
 	deleteFriend('jane', 'bob')
 	print getAllUsers()
+	storeLastState('bob', 'asfdasdfadsfs')
+	print getLastState('bob')
+
+testDB()
+
