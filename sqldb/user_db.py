@@ -9,8 +9,6 @@ def createDB():
 	CREATE TABLE users
 	(
 		name TEXT,
-		firstname TEXT,
-		lastname TEXT,
 		userID INTEGER PRIMARY KEY,
 		email TEXT unqiue,
 		password TEXT,
@@ -58,7 +56,7 @@ def createDB():
 
 #returns true if new user is inserted otherwise if users is not new, returns false
 #userID is automatically generated
-def insertUser(name, firstname, lastname,  email, password):
+def insertUser(name, email, password):
 	#check if email is unqiue
 	db = sqlite3.connect('stock_db.db')
 	cursor = db.cursor()
@@ -66,7 +64,7 @@ def insertUser(name, firstname, lastname,  email, password):
 		return 0	
 	defaultBalance = 10000
 	cursor.execute('''
-	INSERT INTO users (name, firstname, lastname, email, password, balance) values (?,?,?,?,?,?)''', (name, firstname, lastname, email, password, defaultBalance))
+	INSERT INTO users (name, email, password, balance) values (?,?,?,?)''', (name, email, password, defaultBalance))
 	db.commit()
 	db.close()
 	return 1
@@ -351,20 +349,13 @@ def getLastState(name):
 	return state
 	
 
-#need function to put users into gamestable
-if __name__ == "__main__":
-	os.remove('stock_db.db')
-	createDB()
-	insertUser('bob', 'asdf', 'asdf', 'asdf', 'quet')
-	insertUser('jane', 'asdf', 'asdf', 'asdf', 'qiet')
-	insertUser('mark', 'asdf', 'asdf', 'asdf', 'asdf')
 
 def testDB():
 	os.remove('stock_db.db')
 	createDB()
-	insertUser('bob', 'bob', 'asd', 'asdf', 'quet')
-	insertUser('jane', 'jane', 'asdf', 'asdf', 'qiet')
-	insertUser('mark', 'mark', 'asdf', 'asdf', 'asdf')
+	insertUser('bob', 'asdf', 'quet')
+	insertUser('jane', 'asdf', 'qiet')
+	insertUser('mark', 'asdf', 'asdf')
 
 	insertTrans('bob,wow.ax,40,1')
 	print getCurrBalance('bob')
@@ -392,5 +383,6 @@ def testDB():
 	storeLastState('bob', 'asfdasdfadsfs')
 	print getLastState('bob')
 
-testDB()
+if __name__ == "__main__":
+	testDB()
 
