@@ -63,16 +63,12 @@
 	<div data-role="header" data-theme="a" data-position="fixed" data-id="vs_header">
 		<Br>  </Br>
 		<h1>Home</h1>
-		<a href="#home" data-icon="home" data-iconpos="notext">Home</a>
-		<a href="#signup" data-icon="info" data-iconpos="notext" data-rel="dialog" >Info</a>
+		<a href="#home" data-icon="home" data-iconpos="notext" class="navbutton">Home</a>
+		<a href="#signup" data-icon="info" data-iconpos="notext" data-rel="dialog" class="navbutton">Info</a>
 	</div><!-- header -->
 
-	<div data-role="collapsible">
-		<h2>Search stocks</h2>
 		<ul data-role="listview" data-filter="true" id="searchStock" data-filter-placeholder="Search stocks..." data-inset="true" data-filter-reveal="true">
 		</ul>
-	</div>
-
 
 	<!-- Content Part of Document-->	
 	<div data-theme="a" data-role="content" id="postlist">
@@ -91,11 +87,11 @@
 	<div data-role="footer" data-position="fixed" data-theme="a" data-id="vs_footer">
 		<div data-role="navbar">
 			<ul>
-				<li><a href="#" class="ui-btn-active ui-state-persist" data-icon="home" >Home</a></li>
-				<li><a href="#portfolio" data-role="button" data-icon="plus" onclick="populatePortfolio()">Portfolio</a></li>
-				<li><a href="#stockInfo" data-role="button" data-icon="shop" >StockInfo</a></li>
-				<li><a href="#watchlist" data-role="button" data-icon="search" onclick="populateWatchlist()">Watchlist</a></li>
-				<li><a href="#games" data-role="button" data-icon="user">Friends</a></li>
+				<li><a href="#" class="ui-btn-active ui-state-persist navbutton" data-icon="home">Home</a></li>
+				<li><a href="#portfolio" data-role="button" data-icon="plus" onclick="populatePortfolio()" class="navbutton">Portfolio</a></li>
+				<li><a href="#stockInfo" data-role="button" data-icon="shop" class="navbutton">StockInfo</a></li>
+				<li><a href="#watchlist" data-role="button" data-icon="search" onclick="populateWatchlist()" class="navbutton">Watchlist</a></li>
+				<li><a href="#games" data-role="button" data-icon="user" class="navbutton">Friends</a></li>
 			</ul>
 		</div><!-- navbar -->
 	</div><!-- footer -->
@@ -110,15 +106,12 @@
 	<!-- Header of the Document -->
 	<div data-role="header" data-theme="a" data-position="fixed" data-id="vs_header">
 		<h1>Portfolio</h1>
-		<a href="#home" data-icon="home" data-iconpos="notext">Home</a>
-		<a href="#info" data-icon="info" data-iconpos="notext" data-rel="dialog" >Info</a>
+		<a href="#home" data-icon="home" data-iconpos="notext" class="navbutton">Home</a>
+		<a href="#info" data-icon="info" data-iconpos="notext" data-rel="dialog" class="navbutton">Info</a>
 	</div><!-- header -->
 
-	<div data-role="collapsible">
-		<h2>Search stocks</h2>
 		<ul data-role="listview" data-filter="true" id="searchStock2" data-filter-placeholder="Search stocks..." data-inset="true" data-filter-reveal="true">
 		</ul>
-	</div>
 
 	<!-- Content Part of Document-->
 	<div data-theme="a" data-role="content" id="postlist">	
@@ -151,11 +144,11 @@
 	<div data-role="footer" data-position="fixed" data-theme="a" data-id="vs_footer">
 		<div data-role="navbar">
 			<ul>
-				<li><a href="#home" data-role="button" data-icon="home" >Home</a></li>
-				<li><a href="#" class="ui-btn-active ui-state-persist" data-role="button" data-icon="plus" onclick="populatePortfolio()">Portfolio</a></li>
-				<li><a href="#stockInfo" data-role="button" data-icon="shop" >StockInfo</a></li>
-				<li><a href="#watchlist" data-role="button" data-icon="search" onclick="populateWatchlist()">Watchlist</a></li>
-				<li><a href="#games" data-role="button" data-icon="user">Friends</a></li>
+				<li><a href="#home" data-role="button" data-icon="home" class="navbutton">Home</a></li>
+				<li><a href="#" class="ui-btn-active ui-state-persist navbutton" data-role="button" data-icon="plus" onclick="populatePortfolio()">Portfolio</a></li>
+				<li><a href="#stockInfo" data-role="button" data-icon="shop" class="navbutton">StockInfo</a></li>
+				<li><a href="#watchlist" data-role="button" data-icon="search" onclick="populateWatchlist()" class="navbutton">Watchlist</a></li>
+				<li><a href="#games" data-role="button" data-icon="user" class="navbutton">Friends</a></li>
 			</ul>
 		</div><!-- navbar -->
 	</div><!-- footer -->
@@ -170,15 +163,12 @@
 	<!-- Header of the Document -->
 	<div data-role="header" data-theme="a" data-position="fixed" data-id="vs_header">
 		<h1>Stock Info</h1>
-		<a href="#home" data-icon="home" data-iconpos="notext">Home</a>
-		<a href="#info" data-icon="info" data-iconpos="notext" data-rel="dialog" >Info</a>
+		<a href="#home" data-icon="home" data-iconpos="notext" class="navbutton">Home</a>
+		<a href="#info" data-icon="info" data-iconpos="notext" data-rel="dialog" class="navbutton">Info</a>
 	</div><!-- header -->
-	
-	<div data-role="collapsible">
-		<h2>Search stocks</h2>
+
 		<ul data-role="listview" data-filter="true" id="searchStock3" data-filter-placeholder="Search stocks..." data-inset="true" data-filter-reveal="true">
 		</ul>
-	</div>
 
 	<!-- Content Part of Document-->
 	<div data-theme="a" data-role="content" id="postlist">	
@@ -266,11 +256,11 @@
 	<div data-role="footer" data-position="fixed" data-theme="a" data-id="vs_footer">
 		<div data-role="navbar">
 			<ul>
-				<li><a href="#home" data-role="button" data-icon="home" >Home</a></li>
-				<li><a href="#portfolio" data-role="button" data-icon="plus" onclick="populatePortfolio()">Portfolio</a></li>
-				<li><a href="#" class="ui-btn-active ui-state-persist" data-role="button" data-icon="shop" >StockInfo</a></li>
-				<li><a href="#watchlist" data-role="button" data-icon="search" onclick="populateWatchlist()">Watchlist</a></li>
-				<li><a href="#games" data-role="button" data-icon="user">Friends</a></li>
+				<li><a href="#home" data-role="button" data-icon="home" class="navbutton">Home</a></li>
+				<li><a href="#portfolio" data-role="button" data-icon="plus" onclick="populatePortfolio()" class="navbutton">Portfolio</a></li>
+				<li><a href="#" class="ui-btn-active ui-state-persist navbutton" data-role="button" data-icon="shop" >StockInfo</a></li>
+				<li><a href="#watchlist" data-role="button" data-icon="search" onclick="populateWatchlist()" class="navbutton">Watchlist</a></li>
+				<li><a href="#games" data-role="button" data-icon="user" class="navbutton">Friends</a></li>
 			</ul>
 		</div><!-- navbar -->
 	</div><!-- footer -->	
@@ -284,27 +274,18 @@
 	<!-- Header of the Document -->
 	<div data-role="header" data-theme="a" data-position="fixed" data-id="vs_header">
 		<h1>Watchlist</h1>
-		<a href="#home" data-icon="home" data-iconpos="notext">Home</a>
-		<a href="#info" data-icon="info" data-iconpos="notext" data-rel="dialog" >Info</a>
+		<a href="#home" data-icon="home" data-iconpos="notext" class="navbutton">Home</a>
+		<a href="#info" data-icon="info" data-iconpos="notext" data-rel="dialog" class="navbutton">Info</a>
 	</div><!-- header -->
 	
-	<div data-role="collapsible">
-		<h2>Search stocks</h2>
-		<ul data-role="listview" data-filter="true" id="searchStock3" data-filter-placeholder="Search stocks..." data-inset="true" data-filter-reveal="true">
+		<ul data-role="listview" data-filter="true" id="searchStock4" data-filter-placeholder="Search stocks..." data-inset="true" data-filter-reveal="true">
 		</ul>
-	</div>
 	
 	<!-- Content Part of Document-->
 	<div data-theme="a" data-role="content" id="postlist">	
 
-		<!--<input type="search" name="searchBar" id="nameSearch" class="search-3" value="Enter ASX Code" data-theme="b" onkeyup="handleNameSearch(event)" /> -->
+		<!-- Place in here the shit that you need to put in your page .. -->
 
-		<table id="searchTable">
-      	</table>
-
-		<!-- Place in here the shit that you need to put in your page .. --!>
-
-		<!--<input type="search" name="searchbar" id="search-3" class="search" placeholder="Enter ASX Code" data-theme="b" onkeyup="handle(event, value)" /> -->
 
     <ul id="myWatchlist" data-role="listview" data-inset="true">
     </ul>
@@ -351,11 +332,11 @@
 	<div data-role="footer" data-position="fixed" data-theme="a" data-id="vs_footer">
 		<div data-role="navbar">
 			<ul>
-				<li><a href="#home" data-role="button" data-icon="home" >Home</a></li>
-				<li><a href="#portfolio" data-role="button" data-icon="plus" onclick="populatePortfolio()">Portfolio</a></li>
-				<li><a href="#stockInfo" data-role="button" data-icon="shop" >StockInfo</a></li>
-				<li><a href="#" class="ui-btn-active ui-state-persist" data-role="button" data-icon="search" onclick="populateWatchlist()">Watchlist</a></li>
-				<li><a href="#games" data-role="button" data-icon="user">Friends</a></li>
+				<li><a href="#home" data-role="button" data-icon="home" class="navbutton">Home</a></li>
+				<li><a href="#portfolio" data-role="button" data-icon="plus" onclick="populatePortfolio()" class="navbutton">Portfolio</a></li>
+				<li><a href="#stockInfo" data-role="button" data-icon="shop" class="navbutton">StockInfo</a></li>
+				<li><a href="#" class="ui-btn-active ui-state-persist navbutton" data-role="button" data-icon="search" onclick="populateWatchlist()">Watchlist</a></li>
+				<li><a href="#games" data-role="button" data-icon="user" class="navbutton">Friends</a></li>
 			</ul>
 		</div><!-- navbar -->
 	</div><!-- footer -->	
@@ -370,8 +351,8 @@
 	<!-- Header of the Document -->
 	<div data-role="header" data-theme="a" data-position="fixed" data-id="vs_header">
 		<h1>Friends</h1>
-		<a href="#home" data-icon="home" data-iconpos="notext">Home</a>
-		<a href="#info" data-icon="info" data-iconpos="notext" data-rel="dialog" >Info</a>
+		<a href="#home" data-icon="home" data-iconpos="notext" class="navbutton">Home</a>
+		<a href="#info" data-icon="info" data-iconpos="notext" data-rel="dialog" class="navbutton">Info</a>
 	</div><!-- header -->
 	
 	<!-- Content Part of Document-->
@@ -418,11 +399,11 @@
 	<div data-role="footer" data-position="fixed" data-theme="a" data-id="vs_footer">
 		<div data-role="navbar">
 			<ul>
-				<li><a href="#home" data-role="button" data-icon="home" >Home</a></li>
-				<li><a href="#portfolio" data-role="button" data-icon="plus" onclick="populatePortfolio()">Portfolio</a></li>
-				<li><a href="#stockInfo" data-role="button" data-icon="shop" >StockInfo</a></li>
-				<li><a href="#watchlist" data-role="button" data-icon="search" onclick="populateWatchlist()">Watchlist</a></li>
-				<li><a href="#" class="ui-btn-active ui-state-persist" data-role="button" data-icon="user">Friends</a></li>
+				<li><a href="#home" data-role="button" data-icon="home" class="navbutton">Home</a></li>
+				<li><a href="#portfolio" data-role="button" data-icon="plus" onclick="populatePortfolio()" class="navbutton">Portfolio</a></li>
+				<li><a href="#stockInfo" data-role="button" data-icon="shop" class="navbutton">StockInfo</a></li>
+				<li><a href="#watchlist" data-role="button" data-icon="search" onclick="populateWatchlist()" class="navbutton">Watchlist</a></li>
+				<li><a href="#" class="ui-btn-active ui-state-persist navbutton" data-role="button" data-icon="user">Friends</a></li>
 			</ul>
 		</div><!-- navbar -->
 	</div><!-- footer -->	
@@ -437,8 +418,8 @@
 	<div data-role="header" data-theme="a" data-position="fixed" data-id="vs_header">
 		<br>
 		<h1>Stockulator</h1>
-		<a href="#home" data-icon="home" data-iconpos="notext">Home</a>
-		<a href="#info" data-icon="info" data-iconpos="notext" data-rel="dialog" >Info</a>
+		<a href="#home" data-icon="home" data-iconpos="notext" class="navbutton">Home</a>
+		<a href="#info" data-icon="info" data-iconpos="notext" data-rel="dialog" class="navbutton">Info</a>
 	</div><!-- header -->
 	
 	<!-- Content Part of Document-->
