@@ -413,6 +413,11 @@ $(document).ready (function(){
 
 });
 
+$(document).on("click", ".navbutton", function(event) {
+	console.log("Navbutton clicked");
+	$('input[data-type="search"]').val('');
+	$('input[data-type="search"]').trigger("keyup");
+});
 
 
 //Clear Text Box : When text box is clicked...clear it

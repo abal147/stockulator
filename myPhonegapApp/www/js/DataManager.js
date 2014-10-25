@@ -589,7 +589,7 @@ $(function() {
 	
     refreshASXCodes();
     
-    var codes = ["#searchStock", "#searchStock2", "#searchStock3"];
+    var codes = ["#searchStock", "#searchStock2", "#searchStock3", "#searchStock4"];
 
     for (var i = 0; i < codes.length; ++i) {
     	var code = codes[i];
