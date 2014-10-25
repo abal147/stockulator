@@ -8,7 +8,6 @@ var WATCH_STOCK = 0;
 var BUY_STOCK = 1;
 var MODIFY_STOCK = 2;
 var SELL_STOCK = 3;
-=======
 
 var DEVSERVER_URL = "http://ec2-54-79-50-63.ap-southeast-2.compute.amazonaws.com:8080";
 //var AARONSERVER_URL = "http://ec2-54-66-137-0.ap-southeast-2.compute.amazonaws.com:8080";
@@ -162,16 +161,16 @@ function checkLogin() {
   	
   	// update the user object...
 	$.getJSON(DEVSERVER_URL + "/login/" + $('#nameLogin').val() + "/" + $('#passwordLogin').val(), function(data) {
-        console.log("Recieved user object is");
+        console.log("Recieved user object is -- TODO - implement converting this to window.user object ....");
         console.log(data);
         // Update the user object....
         //initUser(data);
         $.ajaxSetup({
 			async:true
 		});
-		if (!userStored) {
-        	$.mobile.changePage("#home");
-        }
+		// if (!userStored) {
+//         	$.mobile.changePage("#home");
+//         }
     })
     .fail(function() {
     	console.log("Can't reach server ...!");
@@ -200,15 +199,14 @@ jQuery.validator.addMethod("isUserNew",function(value) {
 	});
 	
 	$.getJSON(DEVSERVER_URL + "/isusernew/" + $('#name').val(), function(data) {
-        if (data ==="yes") {
+        console.log("Data is for check name:" + data);
+        if (parseInt (data) ===1) {
         	console.log("User is new!");
         	retval=true;
         }
         else {
         	console.log("User is not new!");
-        	//retval=false;
-        	retval=true; // TODO - remove this to enable username validity checking
-        	// do this once the server is up to date
+        	retval=false;
         }
     })
     .fail(function() {
