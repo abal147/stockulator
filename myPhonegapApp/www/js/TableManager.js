@@ -18,31 +18,10 @@ function makeRequest(code){
     }
         
     //String formatting
-    var string = JSON.stringify(data);
-
-    //Check for invalid search query
-    if(string.indexOf("No such ticker symbol") > -1) {
-      var currRow = table.insertRow();
-      var data = document.createElement("TD");
-      var text = document.createTextNode("Invalid ASX Code: " + code);
-      data.appendChild(text);
-      currRow.appendChild(data);
-      return;
-    }
+   
         
-    string = string.replace(/{/g, "");
-    string = string.replace(/}/g, "");
-    string = string.replace(/"/g, "");
-    string = string.replace(/:/g, "  :  ");
-
-    //Insert rows into table
-    var rows = string.split(",");
-    
-    
-    // Save Rows in the current Stock Data
-    // Lindsay 
-    console.log("Set current stock object for lindsay");
-    setCurrentStockObject (rows[4].split(':')[1],rows[2].split(':')[1],rows[0].split(':')[1],rows[1].split(':')[1],rows[3].split(':')[1],rows[5].split(':')[1],rows[6].split(':')[1],rows[7].split(':')[1]);
+   
+    setCurrentStockObject (data);
     
               
     for(var i = 0; i < rows.length; ++i) {

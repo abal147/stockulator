@@ -106,19 +106,24 @@ function setCurrentStock (stockName) {
 }
 
 // This is horirble.... but fuck it
-function setCurrentStockObject (stockID,stockName,pegRatio,marketCap,peRatio,currentPrice,previousClose,earningShare) {
+function setCurrentStockObject(data) {
 	var myStockObj={};
 	
 	// Create a basic stock object and append to window
-	myStockObj.stockID=stockID;
-	myStockObj.stockName=stockName;
-	myStockObj.pegRatio=parseFloat (pegRatio);
-	myStockObj.marketCap=parseFloat(marketCap);
-	myStockObj.peRatio=parseFloat(peRatio);
-	myStockObj.currentPrice=parseFloat(currentPrice);
-	myStockObj.previousClose=parseFloat(previousClose);
-	myStockObj.earningShare=parseFloat(earningShare);
+	myStockObj.stockID=data.symbol;
+	myStockObj.stockName=data.Name;
+	myStockObj.pegRatio=parseFloat(data.PEGRatio);
+	myStockObj.marketCap=parseFloat(data.MarketCapitalization);
+	myStockObj.peRatio=parseFloat(data.PERatio);
+	myStockObj.currentPrice=parseFloat(data.AskRealtime);
+	myStockObj.currentBid=parseFloat(data.BidRealtime);
+	myStockObj.previousClose=parseFloat(data.PreviousClose);
+	myStockObj.earningShare=parseFloat(data.EarningsShare);
+	myStockObj.absChange=parseFloat(data.Change);
+	myStockObj.percentChange=parseFloat(data.PercentChange);
 	
+	console.log(myStockObj)
+	console.log(data)
 	window.myStockObj=myStockObj;
 	
 	// Save to localstorage to retrive later perhaps
@@ -325,7 +330,7 @@ function attachUserMethods(userObject) {
 //       if(data[0]) { //There is more than one stock queried so it has been wrapped in a key-index array
 //         var i = 0;
 //         for(stock in this.watchedStocks) {
-//           //console.log(">>>>>>>>" + data[i].AskRealtime);
+//           //console.log(">>>>>>>>" + data[i].AskRealtime);data.PEGRatio
 //           this.watchedStocks[stock].currentPrice = data[i].AskRealtime;
 //           i++;
 //         }  
