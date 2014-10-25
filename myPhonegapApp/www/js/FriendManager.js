@@ -6,8 +6,21 @@ $(document).on("click", "#friendButton", function(){
 	var command = $(this).attr("value");
 	console.log(command);
 	commands = command.split(";");
-	var suffix = "/" + commands[0] + "/" + JSON.parse(localStorage.getItem("user"))["userName"] + "/" + commands[1];
+	var serverCommand = "";
+	if (commands[0] == "add") {
+		serverCommand = "acceptfriend";
+	} else {
+		serverCommand = "rejectfriend";
+	}
+	var suffix = "/" + serverCommand + "/" + window.user.userName + "/" + commands[1];
 	console.log(suffix);
+
+	$.getJSON(AARONSERVER_URL + suffix,
+		function (data) {}
+	);
+
+	populateRequests();
+	populateFriends();
 });
 
 $(document).on("click", "#friendLink", function(){
@@ -17,6 +30,14 @@ $(document).on("click", "#friendLink", function(){
 
 function setupFriends() {
 	console.log("FriendManager.js: Setting up friends");
+
+	if (window.user == undefined) {
+		console.log("ERROR: USER NOT DEFINED");
+		var object = new Object();
+		object.userName = "mark";
+		window.user = object;
+		//return
+	}
 
 	populateRequests();
 	populateFriends();
@@ -28,28 +49,46 @@ function setupFriends() {
 	        html = "";
 	    $ul.html("");
 	    console.log("SearchValue: " + value);
-
-	    var li = "";
+	    localStorage.setItem("lastFriendSearch", value);
 
 	    if (value && value.length > 1) {
-	        $.getJSON(DEVSERVER_URL + "searchUsers/" + value, function(data) {
-		        $ul.html( "<li><div class='ui-loader'><span class='ui-icon ui-icon-loading'></span></div></li>" );
-		        $ul.listview( "refresh" );
+	        $.getJSON(AARONSERVER_URL + "/findfriends/" + window.user.userName + "/" + value
+	        	, function(data) {
 
-		        for (var i = 1; i < codes.length; ++i) {
-		            if (codes[i].toLowerCase().indexOf( value.toLowerCase() ) != -1) {
-		                var info = codes[i].split(",");
-		                li += '<li data-chapter="' + info[1] + '" data-filtertext="' + codes[i].replace(/\"/g, '') + '"><a href="#stockInfo">' + info[0].replace(/\"/g, '') + '</a></li>\n';
-		            }
-		        }
-		        //console.log(li);
-		        $ul.append(li);
-		        $ul.listview("refresh");
-		        $ul.trigger("updatelayout");
-	    	});
+	        		console.log(data);
+					var li = "";
+
+			        $ul.html( "<li><div class='ui-loader'><span class='ui-icon ui-icon-loading'></span></div></li>" );
+			        $ul.listview( "refresh" );
+
+			        for (var i = 0; i < data.length; ++i) {
+			        	li += '<li value="' + data[i] + '">' + data[i] + "</li>";
+			        }
+			        //console.log(li);
+			        $ul.append(li);
+			        $ul.listview("refresh");
+			        $ul.trigger("updatelayout");
+	    		}
+	    	);
 	    }
 	});
 
+	$("#findFriends").on('click', 'li', function() {
+		console.log($(this).attr("value"));
+
+		friend = $(this).attr("value");
+
+		$.getJSON(AARONSERVER_URL + "/reqfriend/" + window.user.userName + "/" + friend
+			, function(data) {}
+
+		);
+
+		$('input[data-type="search"]').val('');
+		$('input[data-type="search"]').trigger("keyup");
+		$('input[data-type="search"]').val(localStorage.getItem("lastFriendSearch"));
+		$('input[data-type="search"]').trigger("keyup");
+	});
+/*
 	$(document).on('click', '#findFriends li a', function (info) {
 	    var source = $("findFriends").closest("li").attr("data-chapter");
 		
@@ -57,8 +96,12 @@ function setupFriends() {
 	    $('input[data-type="search"]').trigger("keyup");
 
 	    console.log("Clicked user: " + source);
-	});
 
+	    $.getJSON(AARONSERVER_URL + "/reqfriend/" + window.user.userName + "/" + source
+	    	, function(data) {}
+	    );
+	});
+*/
 	console.log("FRIENDS ALL INSTANTIATED");
 }
 
@@ -66,22 +109,22 @@ function populateFriends() {
 	var friends = ['aaron', 'eddy', 'jess', 'lindsay', 'thomas'];
 	//friends = [];
 
-	var list = $("#myFriends");
+	var serverURL = "http://ec2-54-66-137-0.ap-southeast-2.compute.amazonaws.com:8080";//getfriends/bob";
 
-	list.listview();
-	//list.css("min-width", "100px")
+	console.log(serverURL + "/" + window.user.userName);
 
-	var friendHTML = "";
-	//var serverURL = "ec2-54-66-137-0.ap-southeast-2.compute.amazonaws.com:8080" + "/getfriends/" + JSON.parse(localStorage.getItem("user"))["userName"];
-	var serverURL = "ec2-54-66-137-0.ap-southeast-2.compute.amazonaws.com:8080/getfriends/jane";
+	$.getJSON(AARONSERVER_URL + "/getfriends/" + window.user.userName
+		, function(friends) {
 
-	console.log(serverURL);
+			var list = $("#myFriends");
 
-	$.getJSON(serverURL
-		, function(data) {
-			
-			console.log("lel" + data);
-			/*
+			list.listview();
+			list.empty();
+
+			var friendHTML = "";
+
+			//friends = data["data"];
+			//console.log(friends);
 			if (friends.length == 0) {
 				friendHTML = '<li>Oops! You have no friends!</li>';
 			} else {
@@ -92,46 +135,48 @@ function populateFriends() {
 					friendHTML += current;
 				}
 			}
-			*/
+			
+			list.append(friendHTML);
+			list.css('overflow-y', 'scroll');
+			list.listview("refresh");
 		}
 	);
 
-	
 
-	list.append(friendHTML);
-	list.css('overflow-y', 'scroll');
-	list.listview("refresh");
 }
 
 function populateRequests() {
-	var requests = ['aaron', 'eddy', 'jess', 'lindsay', 'thomas', 'stalker'];
-	//requests = [];
 
-	var list = $("#requestList");
-	var friendList = "";
+	$.getJSON(AARONSERVER_URL + "/getrequests/" + window.user.userName
+		, function(requests) {
 
-	list.listview();
-	//list.html();
+		var list = $("#requestList");
+		var friendList = "";
 
-	if (requests.length == 0) {
-		friendList = '<li>No friend requests!</li>'
-	} else {
-		for (var i = 0; i < requests.length; ++i) {
-			var current = "";
+		list.listview();
+		list.empty();
 
-			current += '<li><div class="ui-grid-a">';
-			current += '<div class="left-li ui-block-a"><h3>';
-			current += requests[i];
-			current += '</h3></div><div class ="right-li ui-block-b">';
-			current += '<a id="friendButton" value="add;' + requests[i] + '" class="ui-shadow ui-btn ui-corner-all ui-icon-check ui-btn-icon-notext ui-btn-inline">Button</a>';
-			current += '<a id="friendButton" value="delete;' + requests[i] + '" class="ui-shadow ui-btn ui-corner-all ui-icon-delete ui-btn-icon-notext ui-btn-inline">Button</a>';
-			current += '</div></div></li>';
+		if (requests.length == 0) {
+			friendList = '<li>No friend requests!</li>'
+		} else {
+			for (var i = 0; i < requests.length; ++i) {
+				var current = "";
 
-			friendList += current;
+				current += '<li><div class="ui-grid-a">';
+				current += '<div class="left-li ui-block-a"><h3>';
+				current += requests[i];
+				current += '</h3></div><div class ="right-li ui-block-b">';
+				current += '<a id="friendButton" value="add;' + requests[i] + '" class="ui-shadow ui-btn ui-corner-all ui-icon-check ui-btn-icon-notext ui-btn-inline">Button</a>';
+				current += '<a id="friendButton" value="delete;' + requests[i] + '" class="ui-shadow ui-btn ui-corner-all ui-icon-delete ui-btn-icon-notext ui-btn-inline">Button</a>';
+				current += '</div></div></li>';
+
+				friendList += current;
+			}
 		}
-	}
 
-	list.append(friendList);
-	list.css('overflow-y', 'scroll');
-	list.listview("refresh");
+		list.append(friendList);
+		list.css('overflow-y', 'scroll');
+		list.listview("refresh");
+
+	});
 }
