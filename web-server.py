@@ -65,9 +65,9 @@ def get_portfolio(user=''):
 	return user_db.getPortfolio(user)
 
 @app.route('/deletefriend/<user>/<friend>')
-def delete_friend(user='', friend='')
+def delete_friend(user='', friend=''):
 	response.content_type = 'application/json'
-	user_db.deleteFriend(name, friend)
+	user_db.deleteFriend(user, friend)
 	return dumps('')
 
 @app.route('/isusernew/<user>')
