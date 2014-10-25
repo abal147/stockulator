@@ -262,7 +262,7 @@ def getFriends(name):
 	userID = getUserID(name)
 	cursor.execute(
 		'''SELECT name FROM users WHERE userID IN 
-			(SELECT friendID FROM friends WHERE userID = (?))''', (userID,))
+			(SELECT friendID FROM friends WHERE userID = (?) AND accepted = 1)''', (userID,))
 	friendlist = []
 	for row in cursor:
 		friendlist.append(str(row[0]))
