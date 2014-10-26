@@ -274,6 +274,13 @@ $(document).ready (function(){
 		$(e).find('div.rssBody').vTicker({showItems: 5});
 	});
 	
+	makeRequestIndex("^AORD", "ALL ORDINARIES");
+	makeRequestIndex("^AXJO", "S&P/ASX 200");
+	
+	
+	
+	//$('#totalPort')
+	
 	$("#buyStock").click(function() {
 		buyWatchStock(getCurrentStock(),1,$("#slider").val());
 		// Create the user

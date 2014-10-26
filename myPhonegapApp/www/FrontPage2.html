@@ -75,9 +75,13 @@
 
 
 	<div data-theme="a" data-role="content" id="postlist">
+		<h1>Australian Market Indicies</h1>
+		<h2 id="indexes"></h2>
+		<h1>Portfolio</h1>
+		<!--<ul id="myPortfolioTotalHome" clas= "totalPortfolio" data-role="listview" data-inset="true"></ul>-->
+		<h2 id="myPortfolioTotalHome"></h2>
+		<h1>RSS Feed</h1>
 		<div id="ticker"></div>
-		<div id="indexes"></div>
-		<div id="totalPort"></div>
 	</div>
 
 	<!-- Page Footer -->
@@ -118,7 +122,7 @@
 		<!-- Place in here the shit that you need to put in your page .. --!>
 		<!--<input type="search" name="searchBar" id="search-3" class="search" placeholder="Enter ASX Code" data-theme="b" onkeyup="handle(event, value)" /> -->
 		<!-- example .. stuff -->
-		<div id="pieChart" style="min-width: 310px; height: 250px; margin: 0 auto"></div>
+		<div id="pieChart" class="myCharts" style="min-width: 310px; height: 250px; margin: 0 auto"></div>
 		<div data-role="fieldcontain">
 	    	<fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
 	     		<!-- <legend>Layout view:</legend> -->
@@ -130,10 +134,15 @@
 	         	<label for="profitView">Profit</label>
 	    	</fieldset>
 		</div>
-		<!--<ul data-role="listview" data-filter="true" data-filter-placeholder="Filter my stocks..." data-inset="true">
-		</ul>-->
 
+	
+	 <h3>Total Portfolio</h3>
+    <!--<ul id="myPortfolioTotal" clas= "totalPortfolio" data-role="listview" data-inset="true">-->
+    <h4 id="myPortfolioTotal"></h4>
+    </ul>
+    <h3>Individual Stocks</h3>
     <ul id="myPortfolio" data-role="listview" data-inset="true">
+
     </ul>
 
 		
@@ -186,8 +195,8 @@
 		</div>
  -->
 		<table id="myTable">
-    	</table>
-		<div id="stockChart" style="height: 300px; min-width: 310px"></div>
+    	</table>    <ul id="myPortfolioTotal" clas= "totalPortfolio" data-role="listview" data-inset="true">
+		<div id="stockChart" class="myCharts" style="height: 300px; min-width: 310px"></div>
 		<div class="ui-body ui-body-b">
 			<fieldset class="ui-grid-a">
 				<a href="#buyDialog" id = "buyButton" data-rel="popup" data-position-to="window" data-transition="pop" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b">Buy</a>
@@ -248,7 +257,7 @@
 					      <label for="slider">Sell Qty:</label>
 	 				      <input type="range" name="sellSliderVal" id="sellSliderVal" class = "slider" value="0" min="0" max="1000" data-highlight="true"  />
 				     </div>
-     		    </div>
+     		    </div>    var rowCount = table.rows.length;
   			  </form>
   			<div class = "sellCost"> <p> Money : $0.00 </p></div>
     		<a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" data-rel="back">Cancel</a>
