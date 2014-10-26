@@ -55,6 +55,7 @@ body {
    width:100%;
 }
 
+
 /*******************************/
 
 
@@ -538,6 +539,7 @@ html body .ui-group-theme-b a:active {
 /* Button up */
 .ui-page-theme-b .ui-btn,
 html .ui-bar-b .ui-btn,
+
 html .ui-body-b .ui-btn,
 html body .ui-group-theme-b .ui-btn,
 html head + body .ui-btn.ui-btn-b,

@@ -59,12 +59,12 @@ function populateWatchlist() {
     var stock = window.user.watchedStocks[key];
     var difference = stock.absChange;
     var text = stock.stockID + " Difference: " + difference + " " + stock.percentChange + "%"
-      + " Current Price: " + stock.currentPrice + " Target Price: " + stock.targetPrice;
+      + " Current Price: " + stock.currentPrice + " Upper TP: " + stock.upperTargetPrice + " Lower TP: " + stock.lowerTargetPrice;
 
     var li = '<li class="watchlistRow ui-btn ui-btn-icon-right" id="' + stock.stockID + '">';
     var span = "";
 
-    var a = '<a href="#watchlistDialog" data-rel="popup" data-position-to="window" data-transition="pop" class="watchedStock ui-btn ui-btn-icon-right carat-r" ';
+    var a = '<a href="#watchlistDialog" data-rel="popup" data-position-to="window" data-transition="pop" class="watchedStock ui-btn ui-btn-icon-right ui-icon-carat-r" ';
 
     if(stock.absChange > 0) {
       //a = a + 'ui-icon-arrow-u">';

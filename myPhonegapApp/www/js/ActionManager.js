@@ -75,11 +75,11 @@ function refreshStocks() {
     populatePortfolio();
 
     //Refresh value
-    $(".valueText").html("             Value: $" + (window.user.portfolioValue + window.user.availableFunds)); 
+    $(".valueText").html("             Value: $" + parseFloat(window.user.portfolioValue + window.user.availableFunds).toFixed(2)); 
 
     //Refresh balance - bit of a dirty fix for positioning
 
-    $(".balanceText").html("Balance: $" + window.user.availableFunds + "                       ");
+    $(".balanceText").html("Balance: $" + parseFloat(window.user.availableFunds).toFixed(2) + "                       ");
     
     	// Make sure that the buttons have changed...
     	changeButtons();
@@ -127,13 +127,15 @@ function buyWatchStock(stockID, state,qty){
 	var stockName = window.myStockObj.stockName;
 	var quantity = parseFloat (qty);
 	var price = window.myStockObj.currentPrice;
-  var targetPrice = 0;
+  var upperTargetPrice = 0;
+  var lowerTargetPrice = 0;
 	if(state == WATCH_STOCK) {
-	  targetPrice = $("#targetPrice").val();
+	  upperTargetPrice = $("#upperTargetPrice").val();
+	  lowerTargetPrice = $("#lowerTargetPrice").val();
   }
-	console.log("TARGET PRICE IS: " + targetPrice);
+	console.log("Target prices are: " + upperTargetPrice + "   " + lowerTargetPrice);
 
-	addStockToUser(stockID, stockName, quantity, price, targetPrice, state);
+	addStockToUser(stockID, stockName, quantity, price, upperTargetPrice, lowerTargetPrice, state);
 	
 	
 
@@ -499,8 +501,10 @@ $(document).ready (function(){
 	
   //Same as watchStock but called to modify an already watched stock
   $("#setTargetPrice").click(function() {
-    targetPrice = $("#modifyTargetPrice").val();
-    window.user.watchedStocks[getCurrentStock()].targetPrice = targetPrice;
+    var upperTargetPrice = $("#modifyUpperTargetPrice").val();
+    var lowerTargetPrice = $("#modifyLowerTargetPrice").val();    
+    window.user.watchedStocks[getCurrentStock()].upperTargetPrice = upperTargetPrice;
+    window.user.watchedStocks[getCurrentStock()].lowerTargetPrice = lowerTargetPrice;
     refreshStocks();
 	});
 
@@ -550,9 +554,12 @@ $(document).ready (function(){
     //console.log("Event id is: " + target.id);
   });
 
+
+
+
   //Set a 120 second interval for refreshing current stock prices in user's portfolio
   window.user.upDate(); //Not sure why initial call doesn't refresh watchlist/portfolio
-  setInterval(function() {window.user.upDate()}, 120000);
+  setInterval(function() {window.user.upDate()}, 10000);
 
 	// 4. Load Dynamic Content
 	//refreshStocks();
@@ -598,6 +605,15 @@ $(document).one('pagebeforecreate', function () {
 
 /*************************************************/
 
+
+function watchlistNavButtonClicked() {
+  populateWatchlist();
+  $(".watchlistNavButton").attr("data-icon", "star");
+  $(".watchlistNavButton").attr("data-theme", "a");
+  $(".watchlistNavButton").removeClass("ui-icon-alert");       
+  $(".watchlistNavButton").removeClass("ui-btn-b");
+  $(".watchlistNavButton").addClass("ui-icon-star");    
+}
 
 
 

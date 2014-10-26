@@ -67,8 +67,8 @@
 		
 		<h1>HOME</h1>
 		<a href="#home" data-icon="home" data-iconpos="notext" class="navbutton">Home</a>
-		<!--<a href="#login" class ="logout" data-iconpos="notext" data-rel="dialog" >Logout</a>-->
 		<a href="#menu" data-icon="gear" data-iconpos="notext" data-rel="dialog" class="navbutton">Menu</a>
+		
 		<ul data-role="listview" data-filter="true" id="searchStock" data-filter-placeholder="Search stocks..." data-inset="true" data-filter-reveal="true">
 		</ul>
 	</div><!-- header -->
@@ -93,7 +93,7 @@
 				<li><a href="#" class="ui-btn-active ui-state-persist navbutton" data-icon="home">Home</a></li>
 				<li><a href="#portfolio" data-role="button" data-icon="plus" onclick="populatePortfolio()" class="navbutton">Portfolio</a></li>
 				<li><a href="#stockInfo" data-role="button" data-icon="shop" class="navbutton">StockInfo</a></li>
-				<li><a href="#watchlist" data-role="button" data-icon="search" onclick="populateWatchlist()" class="navbutton">Watchlist</a></li>
+				<li><a href="#watchlist" data-role="button" data-icon="star" onclick="watchlistNavButtonClicked()" class="navbutton watchlistNavButton">Watchlist</a></li>
 				<li><a href="#games" data-role="button" data-icon="user" class="navbutton">Friends</a></li>
 			</ul>
 		</div><!-- navbar -->
@@ -158,7 +158,7 @@
 				<li><a href="#home" data-role="button" data-icon="home" class="navbutton">Home</a></li>
 				<li><a href="#" class="ui-btn-active ui-state-persist navbutton" data-role="button" data-icon="plus" onclick="populatePortfolio()">Portfolio</a></li>
 				<li><a href="#stockInfo" data-role="button" data-icon="shop" class="navbutton">StockInfo</a></li>
-				<li><a href="#watchlist" data-role="button" data-icon="search" onclick="populateWatchlist()" class="navbutton">Watchlist</a></li>
+				<li><a href="#watchlist" data-role="button" data-icon="star" onclick="watchlistNavButtonClicked()" class="navbutton watchlistNavButton">Watchlist</a></li>
 				<li><a href="#games" data-role="button" data-icon="user" class="navbutton">Friends</a></li>
 			</ul>
 		</div><!-- navbar -->
@@ -249,8 +249,8 @@
   			<div class="price"> <p> Price : 100 </p> </div>
   			<div class ="stockID"> <p> StockID : WOW.ax </p> </div>
   			<div class = "stockName"> <p> stockName : Woolworths </p></div>
-  			<input type="number" id="targetPrice" placeholder="Target Price" />    <!-- default value should be changed to currentPrice + someAmount. 
-  			                                                                              Also need to check that value is valid -->
+  			<input type="number" id="upperTargetPrice" placeholder="Upper Target Price" />
+  			<input type="number" id="lowerTargetPrice" placeholder="Lpper Target Price" />
     		<a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" data-rel="back">Cancel</a>
     		<a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" id="watchStock" data-rel="back" data-transition="flow">Watch</a>
     	</div>
@@ -287,7 +287,7 @@
 				<li><a href="#home" data-role="button" data-icon="home" class="navbutton">Home</a></li>
 				<li><a href="#portfolio" data-role="button" data-icon="plus" onclick="populatePortfolio()" class="navbutton">Portfolio</a></li>
 				<li><a href="#" class="ui-btn-active ui-state-persist navbutton" data-role="button" data-icon="shop" >StockInfo</a></li>
-				<li><a href="#watchlist" data-role="button" data-icon="search" onclick="populateWatchlist()" class="navbutton">Watchlist</a></li>
+				<li><a href="#watchlist" data-role="button" data-icon="star" onclick="watchlistNavButtonClicked()" class="navbutton watchlistNavButton">Watchlist</a></li>
 				<li><a href="#games" data-role="button" data-icon="user" class="navbutton">Friends</a></li>
 			</ul>
 		</div><!-- navbar -->
@@ -303,6 +303,7 @@
 	<div data-role="header" data-theme="a" data-position="fixed" data-id="vs_header">
     <p class="valueText"></p>
     <p class="balanceText"></p>
+    
 		<h5>Watchlist</h5>
 
 		<a href="#home" data-icon="home" data-iconpos="notext" class="navbutton">Home</a>
@@ -355,15 +356,6 @@
   		</div>
     </div>
 
-<<<<<<< HEAD
-=======
-
-
-
-		<table id="myTable">
-      	</table>
-
->>>>>>> 44faf0d1e1a7a5767f80fb2c7341b1020445cbfa
 		<!-- TODO -fill me out ... --!> 
 	</div><!-- content -->
 	
@@ -374,7 +366,7 @@
 				<li><a href="#home" data-role="button" data-icon="home" class="navbutton">Home</a></li>
 				<li><a href="#portfolio" data-role="button" data-icon="plus" onclick="populatePortfolio()" class="navbutton">Portfolio</a></li>
 				<li><a href="#stockInfo" data-role="button" data-icon="shop" class="navbutton">StockInfo</a></li>
-				<li><a href="#" class="ui-btn-active ui-state-persist navbutton" data-role="button" data-icon="search" onclick="populateWatchlist()">Watchlist</a></li>
+				<li><a href="#" class="ui-btn-active ui-state-persist navbutton" data-role="button" data-icon="star" onclick="watchlistNavButtonClicked()">Watchlist</a></li>
 				<li><a href="#games" data-role="button" data-icon="user" class="navbutton">Friends</a></li>
 			</ul>
 		</div><!-- navbar -->
@@ -482,7 +474,7 @@
 				<li><a href="#home" data-role="button" data-icon="home" class="navbutton">Home</a></li>
 				<li><a href="#portfolio" data-role="button" data-icon="plus" onclick="populatePortfolio()" class="navbutton">Portfolio</a></li>
 				<li><a href="#stockInfo" data-role="button" data-icon="shop" class="navbutton">StockInfo</a></li>
-				<li><a href="#watchlist" data-role="button" data-icon="search" onclick="populateWatchlist()" class="navbutton">Watchlist</a></li>
+				<li><a href="#watchlist" data-role="button" data-icon="star" onclick="watchlistNavButtonClicked()" class="navbutton watchlistNavButton">Watchlist</a></li>
 				<li><a href="#" class="ui-btn-active ui-state-persist navbutton" data-role="button" data-icon="user">Friends</a></li>
 			</ul>
 		</div><!-- navbar -->
