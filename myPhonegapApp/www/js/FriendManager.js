@@ -32,14 +32,29 @@ $(document).on("click", "#friendLink", function(){
 
 	$('#friendFolioHeader').text(friend + "'s Portfolio");
 
-	
-
 	$.getJSON(DEVSERVER_URL + "/getportfolio/" + friend
 		, function(portfolio) {
 			console.log(portfolio);
 		}
 
 	);
+});
+
+
+
+$(document).on('click', '#requestFriendConfirm', function(){
+
+	friend = localStorage.getItem('pendingRequest');
+	console.log('reqqing ' + friend);
+
+	$.getJSON(DEVSERVER_URL + '/reqfriend/' + window.user.userName + '/' + friend
+		, function() {}
+	);
+
+	$('input[data-type="search"]').val('');
+	$('input[data-type="search"]').trigger('keyup');
+	$('input[data-type="search"]').val(localStorage.getItem('lastFriendSearch'));
+	$('input[data-type="search"]').trigger('keyup');
 });
 
 $(document).on("click", "#deleteFriend", function() {
@@ -54,6 +69,14 @@ $(document).on("click", "#deleteFriend", function() {
 
 $(document).on("click", '#deleteFriendConfirm', function() {
 	var friend = localStorage.getItem('pendingDelete');
+
+
+	$.getJSON(DEVSERVER_URL + '/rmfriendo/' + window.user.userName + '/' + friend
+		, function(data) {
+			console.log(DEVSERVER_URL + '/rmfriendo/' + window.user.userName + '/' + friend);
+		}
+
+	);
 
 	populateFriends();
 
@@ -111,15 +134,12 @@ function setupFriends() {
 
 		friend = $(this).attr("value");
 
-		$.getJSON(DEVSERVER_URL + "/reqfriend/" + window.user.userName + "/" + friend
-			, function(data) {}
+		localStorage.setItem('pendingRequest', friend);
 
-		);
+		$('#confirmRequestMessage').text("Friend " + friend + "?");
 
-		$('input[data-type="search"]').val('');
-		$('input[data-type="search"]').trigger("keyup");
-		$('input[data-type="search"]').val(localStorage.getItem("lastFriendSearch"));
-		$('input[data-type="search"]').trigger("keyup");
+		$('#confirmRequest').popup('open');
+
 	});
 /*
 	$(document).on('click', '#findFriends li a', function (info) {
