@@ -186,6 +186,36 @@ function checkLogin() {
 	});
 }
 
+
+// User name validation ... etc
+//Create user if the data is valid...
+$.validator.setDefaults({
+		submitHandler: function() {
+			alert("User Created Successfully!"); // TODO - change to jquery alert...
+			console.log("Signup submit clicked");
+			// Lets show a loading widget
+			$.mobile.loading( 'show', {
+				text: 'Loading Data',
+				textVisible: true,
+				theme: "a",
+				html: ""
+			});
+			// TODO - check that values input are consistent o correct
+			// highlight if wrong ...
+		
+			// Create the user
+			var out = createUserFromData($('#name').val(),"undefined","undefined",$('#email').val(),$('#password').val());
+			$.mobile.loading( "hide" );
+		
+			// If successful then return to main page...
+			if (out ==1 ) {
+				$.mobile.changePage("#home");
+			}
+			refreshStocks();
+		}
+});
+
+
 // Custom validation method checks that user does not already exist...
 jQuery.validator.addMethod("isUserNew",function(value) {
 	
