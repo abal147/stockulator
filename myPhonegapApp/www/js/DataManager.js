@@ -294,6 +294,7 @@ function pullUserObject (userName,password) {
 	
         	console.log("User Object from server is:");
         	console.log(data);
+        	localStorage.setItem('user', JSON.stringify(data));
         	
         	// Set the user object to be this and continue as normal....
         	
