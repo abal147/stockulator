@@ -85,9 +85,11 @@ def getUserID(name):
 	db = sqlite3.connect('stock_db.db')
 	cursor = db.cursor()
 	cursor.execute('''SELECT userID FROM users WHERE name = (?)''', (name,))
-	userID = cursor.fetchone()[0]
+	userID = cursor.fetchone()
 	db.close()
-	return userID
+	if userID is not None:
+		return userID[0]
+	return -1
 
 def getUser(name):
 	db = sqlite3.connect('stock_db.db')
@@ -115,6 +117,8 @@ def changeBalance(name, newBalance):
 	db = sqlite3.connect('stock_db.db')
 	cursor = db.cursor()
 	userID = getUserID(name)
+	if userID == -1:
+		return ''
 	cursor.execute('''UPDATE users SET balance = (?) WHERE userID = (?)''', (newBalance, userID))
 	db.commit()
 	db.close()
@@ -127,6 +131,8 @@ def insertTrans(inputstr):
 	db = sqlite3.connect('stock_db.db')
 	cursor = db.cursor()
 	userID = getUserID(inputs[0])
+	if userID == -1:
+		return ''
 	cursor.execute(
 		'''INSERT INTO transactions (userID, stockID, price, numStocks, unixDate) values (?,?,?,?,?)''', (userID, inputs[1], inputs[2], inputs[3], int(time.time())))
 	#if its a buy operation, need to remove from the watchlist
@@ -152,6 +158,8 @@ def printTrans():
 def getTrans(name):
 	db = sqlite3.connect('stock_db.db')
 	userID = getUserID(name)
+	if userID == -1:
+		return ''
 	cursor = db.cursor()
 	cursor.execute(
 		'''SELECT * FROM transactions WHERE userID = (?)''', (userID,))
@@ -162,6 +170,8 @@ def getPortfolio(name):
 	db = sqlite3.connect('stock_db.db')
 	cursor = db.cursor()
 	userID = getUserID(name)
+	if userID == -1:
+		return
 	cursor.execute(
 		'''SELECT * FROM transactions WHERE userID = (?)''', (userID,))
 	portfolio = {}
@@ -191,6 +201,8 @@ def getCurrBalance(name):
 	db = sqlite3.connect('stock_db.db')
 	cursor = db.cursor()
 	userID = getUserID(name)
+	if userID == -1:
+		return ''
 	balance = getInitialBalance(name)
 	cursor.execute(
 		'''SELECT price, numStocks FROM transactions WHERE userID = (?)''', (userID,))
@@ -203,6 +215,8 @@ def insertRequest(name, friend):
 	db = sqlite3.connect('stock_db.db')
 	cursor = db.cursor()
 	userID = getUserID(name)
+	if userID == -1:
+		return ''
 	friendID = getUserID(friend)
 	cursor.execute(
 		'''INSERT INTO friends (userID, friendID, accepted) VALUES (?,?,?)''', (userID, friendID, 0))
@@ -214,6 +228,8 @@ def getRequest(name):
 	db = sqlite3.connect('stock_db.db')
 	cursor = db.cursor()
 	userID = getUserID(name)
+	if userID == -1:
+		return ''
 	cursor.execute(
 		'''SELECT name FROM users WHERE userID IN
 			(SELECT userID FROM friends WHERE friendID = (?) AND accepted = (?))''', (userID,0))
@@ -227,6 +243,8 @@ def acceptRequest(name, friend):
 	db = sqlite3.connect('stock_db.db')
 	cursor = db.cursor()
 	userID = getUserID(name)
+	if userID == -1:
+		return ''
 	friendID = getUserID(friend)
 	cursor.execute(
 		'''UPDATE friends SET accepted = (?) WHERE userID = (?) AND friendID = (?)''', (1, userID, friendID))
@@ -240,6 +258,8 @@ def rejectRequest(name, friend):
 	db = sqlite3.connect('stock_db.db')
 	cursor = db.cursor()
 	userID = getUserID(name)
+	if userID == -1:
+		return ''
 	friendID = getUserID(friend)
 	cursor.execute(
 		'''DELETE FROM friends WHERE userID = (?) AND friendID = (?)''', (userID, friendID))
@@ -251,6 +271,8 @@ def deleteFriend(name, friend):
 	db = sqlite3.connect('stock_db.db')
 	cursor = db.cursor()
 	userID = getUserID(name)
+	if userID == -1:
+		return ''
 	friendID = getUserID(friend)
 	cursor.execute(
 		'''DELETE FROM friends WHERE userID = (?) AND friendID = (?)''', (userID, friendID))
@@ -264,6 +286,8 @@ def getFriends(name):
 	db = sqlite3.connect('stock_db.db')
 	cursor = db.cursor()
 	userID = getUserID(name)
+	if userID == -1:
+		return ''
 	cursor.execute(
 		'''SELECT name FROM users WHERE userID IN 
 			(SELECT friendID FROM friends WHERE userID = (?) AND accepted = 1)''', (userID,))
@@ -277,6 +301,8 @@ def getNonFriends(name, searchstr):
 	db = sqlite3.connect('stock_db.db')
 	cursor = db.cursor()
 	userID = getUserID(name)
+	if userID == -1:
+		return ''
 	cursor.execute(
 		'''SELECT name FROM users 
 			WHERE userID NOT IN (SELECT friendID FROM friends WHERE userID = (?) OR friendID = (?)) 
@@ -302,6 +328,8 @@ def insertWatch(name, stockID):
 	db = sqlite3.connect('stock_db.db')
 	cursor = db.cursor()
 	userID = getUserID(name)
+	if userID == -1:
+		return ''
 	cursor.execute(
 		'''SELECT stockID FROM watchlist WHERE userID = (?)''', (userID,))
 	db.commit()
@@ -312,6 +340,8 @@ def removeWatch(name, stockID):
 	db = sqlite3.connect('stock_db.db')
 	cursor = db.cursor()
 	userID = getUserID(name)
+	if userID == -1:
+		return ''
 	cursor.execute(
 		'''DELETE FROM watchlist WHERE userID = (?) AND stockID = (?)''', (userID, stockID))
 	db.commit()
@@ -322,6 +352,8 @@ def getWatchList(name):
 	db = sqlite3.connect('stock_db.db')
 	cursor = db.cursor()
 	userID = getUserID(name)
+	if userID == -1:
+		return ''
 	cursor.execute(
 		'''SELECT stockID FROM watchlist WHERE userID = (?)''', (userID,))
 	watchlist = []
@@ -334,6 +366,8 @@ def storeLastState(name, lastState):
 	db = sqlite3.connect('stock_db.db')
 	cursor = db.cursor()
 	userID = getUserID(name)
+	if userID == -1:
+		return ''
 	cursor.execute(
 		'''DELETE FROM signin WHERE userID = (?)''', (userID,))
 	cursor.execute(
@@ -346,6 +380,8 @@ def getLastState(name):
 	db = sqlite3.connect('stock_db.db')
 	cursor = db.cursor()
 	userID = getUserID(name)
+	if userID == -1:
+		return ''
 	cursor.execute(
 		'''SELECT lastState FROM signin WHERE userID = (?)''', (userID,))
 	state = cursor.fetchone()[0]
