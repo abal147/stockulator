@@ -9,9 +9,9 @@ var BUY_STOCK = 1;
 var MODIFY_STOCK = 2;
 var SELL_STOCK = 3;
 
-var DEVSERVER_URL = "http://ec2-54-79-50-63.ap-southeast-2.compute.amazonaws.com:8080";
+//var DEVSERVER_URL = "http://ec2-54-79-50-63.ap-southeast-2.compute.amazonaws.com:8080";
 //var AARONSERVER_URL = "http://ec2-54-66-137-0.ap-southeast-2.compute.amazonaws.com:8080";
-//var DEVSERVER_URL = "http://0.0.0.0:8080";
+var DEVSERVER_URL = "http://0.0.0.0:8080";
 
 function handle(e, code){
  	if(e.keyCode === 13){
@@ -162,6 +162,7 @@ function checkLogin() {
   			console.log("User is stored!");
   			$.mobile.changePage("#home");
   			userStored=true;
+  			refreshStocks();
   		}
   		else {
 	   		console.log("Entered data does not match local data --> try the server");
@@ -196,6 +197,7 @@ function checkLogin() {
         			console.log("User Object is:");
         			console.log(window.user);
         			$.mobile.changePage("#home");
+        			refreshStocks();
         		}
         		catch (err) {
         			console.log("error in parsing remote server user object - " + err);
