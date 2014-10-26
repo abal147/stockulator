@@ -27,9 +27,10 @@ function objToSeries(obj){
 // converts a JSON Object from raw data to an array of series for plotting
 // Create relevant data series
     var datesRaw = obj[0];
-    var smaRaw = obj[1];
-    var emaRaw = obj[2];
-    var trendRaw = obj[3];
+    var rawData = obj[1];
+    var smaRaw = obj[2];
+    var emaRaw = obj[3];
+    var trendRaw = obj[4];
            
     // Create the sma, ema charts ....
     var outArr= [];
@@ -41,7 +42,7 @@ function objToSeries(obj){
         inArr.push([datesRaw[i]*1000,smaRaw[i]]);
       }
     }
-    outArr.push ({name:"sma",data:inArr , tooltip: {valueDecimals: 2}});
+    outArr.push ({name:"Simple Moving Average",data:inArr , tooltip: {valueDecimals: 2}});
 		
 	// Create ema graph
 	var emArr =[]
@@ -50,7 +51,16 @@ function objToSeries(obj){
         emArr.push([datesRaw[i]*1000,emaRaw[i]]);
       }
     }
-    outArr.push ({name:"ema",data:emArr , tooltip: {valueDecimals: 2}});
+    outArr.push ({name:"Exponential Moving Average",data:emArr , tooltip: {valueDecimals: 2}});
+    
+    // Create raw data graph
+	var rArr =[]
+	for (var i =0;i<rawData.length ; ++i ) {
+      if (rawData[i] != -1) {
+        rArr.push([datesRaw[i]*1000,rawData[i]]);
+      }
+    }
+    outArr.push ({name:"Raw Data",data:rArr , tooltip: {valueDecimals: 2}});
     
     return outArr;
 }
