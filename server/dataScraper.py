@@ -20,7 +20,8 @@ def grabCurrentData(codes):
    selectedColumns = ['*']
    selectedColumns = ['symbol', 'Name', 'PreviousClose', 'PEGRatio'
       , 'EarningsShare', 'PERatio', 'MarketCapitalization'
-      , 'AskRealtime', 'ErrorIndicationreturnedforsymbolchangedinvalid']
+      , 'AskRealtime', 'ErrorIndicationreturnedforsymbolchangedinvalid'
+      , 'PercentChange', 'Change', 'LastTradePriceOnly', 'BidRealtime']
 
    # Build the proper url
    query = "select " + scraperUtility.commaString(selectedColumns, ', ') 

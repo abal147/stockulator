@@ -1,6 +1,9 @@
 from bottle import Bottle, run, response
 from json import dumps
-from server import dataScraper, historical, metric, ASXcodes, user_db
+
+from server import dataScraper, historical, metric, ASXcodes
+from sqldb import user_db
+
 
 app = Bottle()
 
@@ -24,6 +27,44 @@ def get_codes():
 	result = ASXcodes.requestCodes()
 	response.content_type = 'application/json'
 	return dumps(result)
+
+@app.route('/getfriends/<user>')
+def get_friends(user=''):
+	response.content_type = 'application/json'
+	return dumps(user_db.getFriends(user));
+
+@app.route('/findfriends/<user>/<search>')
+def find_friends(user='',search=''):
+	response.content_type = 'application/json'
+	return dumps(user_db.getNonFriends(user, search))
+
+@app.route('/getrequests/<user>')
+def get_friends(user=''):
+	response.content_type = 'application/json'
+	return dumps(user_db.getRequest(user))
+
+@app.route('/reqfriend/<user>/<friend>')
+def request_friend(user='', friend=''):
+	user_db.insertRequest(user, friend)
+	response.content_type = 'application/json'
+	return dumps("")
+
+@app.route('/acceptfriend/<user>/<friend>')
+def accept_friend(user='', friend=''):
+	user_db.acceptRequest(friend, user)
+	response.content_type = 'application/json'
+	return dumps('')
+
+@app.route('/rejectfriend/<user>/<friend>')
+def reject_friend(user='', friend=''):
+	user_db.rejectRequest(friend, user)
+	response.content_type = 'application/json'
+	return dumps('')
+
+@app.route('/getportfolio/<user>')
+def get_portfolio(user=''):
+	response.content_type = 'application/json'
+	return user_db.getPortfolio(user)
 
 @app.route('/isusernew/<user>')
 def checkUser(user=""):

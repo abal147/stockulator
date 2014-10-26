@@ -106,19 +106,24 @@ function setCurrentStock (stockName) {
 }
 
 // This is horirble.... but fuck it
-function setCurrentStockObject (stockID,stockName,pegRatio,marketCap,peRatio,currentPrice,previousClose,earningShare) {
+function setCurrentStockObject(data) {
 	var myStockObj={};
 	
 	// Create a basic stock object and append to window
-	myStockObj.stockID=stockID;
-	myStockObj.stockName=stockName;
-	myStockObj.pegRatio=parseFloat (pegRatio);
-	myStockObj.marketCap=parseFloat(marketCap);
-	myStockObj.peRatio=parseFloat(peRatio);
-	myStockObj.currentPrice=parseFloat(currentPrice);
-	myStockObj.previousClose=parseFloat(previousClose);
-	myStockObj.earningShare=parseFloat(earningShare);
+	myStockObj.stockID=data.symbol;
+	myStockObj.stockName=data.Name;
+	myStockObj.pegRatio=parseFloat(data.PEGRatio);
+	myStockObj.marketCap=parseFloat(data.MarketCapitalization);
+	myStockObj.peRatio=parseFloat(data.PERatio);
+	myStockObj.currentPrice=parseFloat(data.AskRealtime);
+	myStockObj.currentBid=parseFloat(data.BidRealtime);
+	myStockObj.previousClose=parseFloat(data.PreviousClose);
+	myStockObj.earningShare=parseFloat(data.EarningsShare);
+	myStockObj.absChange=parseFloat(data.Change);
+	myStockObj.percentChange=parseFloat(data.PercentChange);
 	
+	console.log(myStockObj)
+	console.log(data)
 	window.myStockObj=myStockObj;
 	
 	// Save to localstorage to retrive later perhaps
@@ -345,7 +350,6 @@ function attachUserMethods(userObject) {
          }   
      	});
     } 
-     	
     refreshStocks();
 	}
 
@@ -608,31 +612,9 @@ $(function() {
 		//}
 	}
 	
-/*
-	$("#searchStock").empty();
-	refreshASXCodes();
-
-	var codes = localStorage.getItem("stockCSV").split("\n");
-
-	$("#searchStock").listview().listview("refresh");
-
-	for (var i = 3; i < 100; ++i) {
-		var info = codes[i].split(",");
-		var li = '<li><a href="#stockInfo">' + info[0] + '</a></li>';
-		//console.log("Appending: " + li);
-		$('#searchStock').append(li).listview('refresh');
-	}
-
-	console.log(codes.length);
-
-	$("#searchStock").listview().listview("refresh");
-*/
-
-    //console.log("AARON IS CRYINGGGGGGG");
     refreshASXCodes();
-    //console.log("I FUCKING HATE THIS FUCKING THING");
     
-    var codes = ["#searchStock", "#searchStock2", "#searchStock3"];
+    var codes = ["#searchStock", "#searchStock2", "#searchStock3", "#searchStock4"];
 
     for (var i = 0; i < codes.length; ++i) {
     	var code = codes[i];
@@ -688,8 +670,7 @@ $(function() {
 	    });
     }
 
-    //console.log("I FUCKING HATE THIS FUCKING THING EVEN");
-
+    setupFriends();
 
 }); // self executing anonymous function ....
 

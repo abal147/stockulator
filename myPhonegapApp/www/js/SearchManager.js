@@ -78,37 +78,6 @@ function parseURL() {
 //     });
 // }        
 
-
-/*
-$(document).ready(function() {
-    console.log("poo");
-    $('#search').on({ 
-        pageinit: function(event) {
-            console.log("defaultsearch");
-            $('#searchStock').listview('option', 'filterCallback', defaultSearch);
-        }
-    });
-});
-
-function defaultSearch( text, searchValue ) {
-    console.log("true");
-    return true;
-    //return text.toLowerCase().indexOf( searchValue.toLowerCase() ) === -1;
-}
-*/
-/*
-$(document).on('click', '#searchStock li a', function (info) {
-    var source = $(this).closest("li").attr("data-chapter");
-
-    makeRequest(source);
-    setCurrentStock(source);
-    plotData(getCurrentStock(),200);
-    $('input[data-type="search"]').val('');
-    $('input[data-type="search"]').trigger("keyup");
-
-    console.log("CLICKITY CLACKITY ");
-});
-*/
 /*
     Event handler for key presses into the search bar on the search page
 */
@@ -224,20 +193,6 @@ function refreshASXCodes() {
     Grabs ASX codes from the asx page and cleans the results a bit
 */
 function grabASXCodes() {
-    /*
-    $.get("http://www.asx.com.au/asx/research/ASXListedCompanies.csv"
-        , function(data) {
-            var lines = data.split("\n");
-            for (var i = 3; i < lines.length; ++i) {
-                var stock = lines[i].split(",");
-                stock[1] = stock[1] + ".AX";
-                lines[i] = stock.join(",");
-            }
-            data = lines.join("\n");
-            localStorage.setItem("stockCSV",data);
-        }
-    );
-    */
 
     $.getJSON(DEVSERVER_URL + "/asxcodes"
         , function(data) {

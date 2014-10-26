@@ -9,51 +9,26 @@ function makeRequest(code){
   	//console.log("Data is:\n" + JSON.stringify(data));        
 
   	var table = document.getElementById("myTable");
-
+   
 	  //Clean out the rows from a previous search if any
     var rowCount = table.rows.length;
     while(rowCount > 0) {
-      table.deleteRow();
+      table.deleteRow(-1);
       rowCount--;
     }
         
     //String formatting
-    var string = JSON.stringify(data);
-
-    //Check for invalid search query
-    if(string.indexOf("No such ticker symbol") > -1) {
-      var currRow = table.insertRow();
-      var data = document.createElement("TD");
-      var text = document.createTextNode("Invalid ASX Code: " + code);
-      data.appendChild(text);
-      currRow.appendChild(data);
-      return;
-    }
+   
         
-    string = string.replace(/{/g, "");
-    string = string.replace(/}/g, "");
-    string = string.replace(/"/g, "");
-    string = string.replace(/:/g, "  :  ");
-
-    //Insert rows into table
-    var rows = string.split(",");
+   
+    setCurrentStockObject (data);
     
-    
-    // Save Rows in the current Stock Data
-    // Lindsay 
-    console.log("Set current stock object for lindsay");
-    setCurrentStockObject (rows[4].split(':')[1],rows[2].split(':')[1],rows[0].split(':')[1],rows[1].split(':')[1],rows[3].split(':')[1],rows[5].split(':')[1],rows[6].split(':')[1],rows[7].split(':')[1]);
-    
-              
-    for(var i = 0; i < rows.length; ++i) {
-      var currRow = table.insertRow();
-
-      //console.log("row is: " + rows[i]);
-      var data = document.createElement("TD");
-      var text = document.createTextNode(rows[i]);
-      data.appendChild(text);
-      currRow.appendChild(data);           
-    }
+    $.each(data, function(index, item) {
+      tr = $('<tr>');
+      tr.append('<td>' + index + '</td>');
+      tr.append('<td>' + item + '</td>');
+      $("#myTable").append(tr);
+    })
   });
 }  
 
