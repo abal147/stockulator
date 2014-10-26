@@ -30,13 +30,13 @@ function makeRequestIndex(code, indexName){
  
     if(index.Change > 0) {
       //a = a + 'ui-icon-arrow-u">';
-      span = '<span style="color:green">';
+      span = '<span style="color:58DF8A">';
     } else if(index.Change == 0) {
       //a = a + 'ui-icon-minus">';
-      span = '<span style="color:black">';
+      span = '<span style="color:FFAA00">';
     } else {
       //a = a + 'ui-icon-arrow-d">';
-      span = '<span style="color:red">';
+      span = '<span style="color:FC2B2B">';
     }
     
     $("#indexes").append(indexName +"  "+ span + text + "   " +changeSpan + changeText +'</span>' +'</span><br/>');
@@ -68,13 +68,13 @@ function populateWatchlist() {
 
     if(stock.absChange > 0) {
       //a = a + 'ui-icon-arrow-u">';
-      span = '<span style="color:green">';
+      span = '<span style="color:58DF8A">';
     } else if(stock.absChange == 0) {
       //a = a + 'ui-icon-minus">';
       span = '<span style="color:FFAA00">';
     } else {
       //a = a + 'ui-icon-arrow-d">';
-      span = '<span style="color:red">';
+      span = '<span style="color:FC2B2B">';
     }
 
     $("#myWatchlist").append(li + a + span + text + '</span></a></li>');
@@ -113,7 +113,7 @@ function populateTotalPortfolio() {
     if(totalDiff > 0) {
       //a = a + 'ui-icon-arrow-u">';
       changeText = "+" + totalDiff.toFixed(2) + " (+" + weightedPercent.toFixed(2) + "%)";
-      span = '<span style="color:green">';
+      span = '<span style="color:58DF8A">';
     } else if(totalDiff == 0) {
       changeText = "=" + totalDiff.toFixed(2);
       //a = a + 'ui-icon-minus">';
@@ -121,7 +121,7 @@ function populateTotalPortfolio() {
     } else {
       changeText = totalDiff.toFixed(2) + " (" + weightedPercent.toFixed(2) + "%)";
       //a = a + 'ui-icon-arrow-d">';
-      span = '<span style="color:red">';
+      span = '<span style="color:FC2B2B">';
     }
     
     $("#myPortfolioTotal").append("$"+ span + text + "   " +changeSpan + changeText +'</span>' +'</span><br/>');
@@ -143,25 +143,26 @@ function populatePortfolio() {
   
     var stock = window.user.ownedStocks[key];
     var difference = stock.absChange*stock.getQuantity();
-    var text = getStockNameByCode(stock.stockID) + " (" + stock.stockID + ") $" + difference.toFixed(2) + "," + stock.percentChange + "%";
-
+    var stockValue = stock.currentPrice*stock.getQuantity();
+    var text = getStockNameByCode(stock.stockID) +" (" + stock.stockID + ") ";
+    var valueText = "$"+ stock.currentPrice.toFixed(3)+"  $"+ stockValue.toFixed(3) +" $" + difference.toFixed(2) + "(" + stock.percentChange.toFixed(2) + "%)";
     var li = '<li class="portfolioRow ui-btn ui-btn-icon-right" id="' + stock.stockID + '">';
     var span = "";
 
-    var a = '<a href="#stockInfo" class="boughtStock ui-btn ui-btn-icon-right ui-icon-carat-r" ';              //Can change href to a popup window for selling stocks
+    var a = '<a href="#stockInfo" class="boughtStock ui-btn ui-btn-icon-right ui-icon-carat-r"> ';              //Can change href to a popup window for selling stocks
  
     if(stock.absChange > 0) {
       //a = a + 'ui-icon-arrow-u">';
-      span = '<span style="color:green">';
+      span = '<span style="color:58DF8A">';
     } else if(stock.absChange == 0) {
       //a = a + 'ui-icon-minus">';
       span = '<span style="color:FFAA00">';
     } else {
       //a = a + 'ui-icon-arrow-d">';
-      span = '<span style="color:red">';
+      span = '<span style="color:FC2B2B">';
     }
 
-    $("#myPortfolio").append(li + a + span + text + '</span></a></li>');
+    $("#myPortfolio").append(li + a + text + span + valueText + '</span></a></li>');
     
   }
 
