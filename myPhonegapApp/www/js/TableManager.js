@@ -6,29 +6,8 @@ function makeRequest(code){
 
   
   $.getJSON(DEVSERVER_URL + "/data/" + code, function(data) {
-  	//console.log("Data is:\n" + JSON.stringify(data));        
-
-  	var table = document.getElementById("myTable");
-   
-	  //Clean out the rows from a previous search if any
-    var rowCount = table.rows.length;
-    while(rowCount > 0) {
-      table.deleteRow(-1);
-      rowCount--;
-    }
-        
-    //String formatting
-   
-        
-   
     setCurrentStockObject (data);
     
-    $.each(data, function(index, item) {
-      tr = $('<tr>');
-      tr.append('<td>' + index + '</td>');
-      tr.append('<td>' + item + '</td>');
-      $("#myTable").append(tr);
-    })
   });
 } 
 
@@ -107,42 +86,6 @@ function populateWatchlist() {
 }
 
 function populateTotalPortfolio() {
- /*if (Object.keys(window.user.ownedStocks).length > 0) {
-    var totalQuantity = 0;
-    var totalDiff = 0;
-    var weightedPercent = 0;
-    for(var key in window.user.ownedStocks) {
-      var stock = window.user.ownedStocks[key];
-      totalQuantity += stock.getQuantity();
-      totalDiff += stock.getQuantity() * stock.absChange;
-      weightedPercent += stock.getQuantity() * stock.percentChange;
-    }
-    weightedPercent = weightedPercent/totalQuantity;
-
-    var li = '<li class="portfolioRow ui-btn ui-btn-icon-right" id="Total">';
-    var span = "";
-    var a = '<a href="#" class="boughtStock ui-btn ui-btn-icon-right ';              //Can change href to a popup window for selling stocks
-    var text = "Total Portfolio Difference: " + totalDiff + " " + weightedPercent.toFixed(2)+ "%";
-    
-    if(totalDiff > 0) {
-      a = a + 'ui-icon-arrow-u">';
-      span = '<span style="color:green">';
-    } else if(totalDiff == 0) {
-      a = a + 'ui-icon-minus">';
-      span = '<span style="color:black">';
-    } else {
-      a = a + 'ui-icon-arrow-d">';
-      span = '<span style="color:red">';
-    }
-
-    $("#myPortfolioTotal").append(li + a + span + text + '</span></a></li>');
-    $("#myPortfolioTotal .portfolioRow:first-child").addClass("ui-first-child");
-    $("#myPortfolioTotal .portfolioRow:last-child").addClass("ui-last-child");
-    
-    $("#myPortfolioTotalHome").append(li + a + span + text + '</span></a></li>');
-    $("#myPortfolioTotalHome .portfolioRow:first-child").addClass("ui-first-child");
-    $("#myPortfolioTotalHome .portfolioRow:last-child").addClass("ui-last-child");
- }*/
  
     $("#myPortfolioTotal").empty()
     $("#myPortfolioTotalHome").empty()
@@ -170,14 +113,14 @@ function populateTotalPortfolio() {
  
     if(totalDiff > 0) {
       //a = a + 'ui-icon-arrow-u">';
-      changeText = "+" + totalDiff.toFixed(2) + " (+" + weightedPercent.toFixed(2) + "%)"
+      changeText = "+" + totalDiff.toFixed(2) + " (+" + weightedPercent.toFixed(2) + "%)";
       span = '<span style="color:green">';
     } else if(totalDiff == 0) {
-      changeText = "=" + totalDiff.toFixed(2) + " (" + weightedPercent.toFixed(2) + "%)"
+      changeText = "=" + totalDiff.toFixed(2);
       //a = a + 'ui-icon-minus">';
       span = '<span style="color:FFAA00">';
     } else {
-      changeText = totalDiff.toFixed(2) + " (" + weightedPercent.toFixed(2) + "%)"
+      changeText = totalDiff.toFixed(2) + " (" + weightedPercent.toFixed(2) + "%)";
       //a = a + 'ui-icon-arrow-d">';
       span = '<span style="color:red">';
     }
