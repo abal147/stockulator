@@ -209,6 +209,7 @@ function sellStock(stockID,quantity,price) {
 			window.user.soldStocks[stockID]=helper; // append to the sold stock list...
 		}
     	window.user.availableFunds += (quantity * price);
+
 		//Send transaction to server
 		window.user.updateServer(stockID, quantity, price, SELL_STOCK);
 	}
@@ -336,9 +337,11 @@ function attachUserMethods(userObject) {
        code = code + this.ownedStocks[stock].stockID + " ";
      }
  		console.log("Code is: " + code);
+    if (code="") {
  		$.getJSON(DEVSERVER_URL + "/price/" + code, function(data) {
    	  console.log("Portfolio data is:\n" + JSON.stringify(data));
- 
+
+       
        if(data[0]) {  //There is more than one stock queried so it has been wrapped in a key-index array
          var i = 0;
          for(stock in this.ownedStocks) {
@@ -360,6 +363,7 @@ function attachUserMethods(userObject) {
          } 
        }
    	});
+   	}
 
     //Update current price of stocks in watchlist
   	code = "";
@@ -587,6 +591,7 @@ function userObj (userName,firstName,lastName,email,password) {
 	this.watchedStocks = {}; // associative array of watching stocks
 	this.soldStocks = {}; // store the sold stocks here for reference....
 	this.loggedIn=true; // boolean to store whether a user is logged in or not
+	this.portfolioValue = 0;
 	attachUserMethods(this); // attach the user methods to this object..
 }
 
