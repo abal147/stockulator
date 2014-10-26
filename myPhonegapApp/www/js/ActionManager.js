@@ -272,7 +272,7 @@ jQuery.validator.addMethod("isUserNew",function(value) {
     })
     .fail(function() {
     	console.log("Can't reach server ...!");
-    	alert("Pfff , server appears to be dead ... try again please");
+    	alert("Server appears to be down ... try again soon");
     	//retval=false;
     	retval=true;
     	// TODO - remove this to enable username validity checking

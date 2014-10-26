@@ -80,18 +80,19 @@ $(document).on("click", '#deleteFriendConfirm', function() {
 	populateRequests();
 	populateFriends();
 
-	console.log(friend + " got rekt");
+	//console.log(friend + " got rekt");
 });
 
 function setupFriends() {
 	console.log("FriendManager.js: Setting up friends");
 
 	if (window.user == undefined) {
-		console.log("ERROR: USER NOT DEFINED");
-		var object = new Object();
-		object.userName = "mark";
-		window.user = object;
+		//console.log("ERROR: USER NOT DEFINED");
+		//var object = new Object();
+		//object.userName = "mark";
+		//window.user = object;
 		//return
+		return
 	}
 
 	populateRequests();
