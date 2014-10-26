@@ -75,11 +75,12 @@ function refreshStocks() {
     populatePortfolio();
 
     //Refresh value
-    $(".valueText").html("             Value: $" + parseFloat(window.user.portfolioValue + window.user.availableFunds).toFixed(2)); 
+
+    $(".valueText").html("             Net Portfolio: $" + (window.user.portfolioValue + window.user.availableFunds)); 
 
     //Refresh balance - bit of a dirty fix for positioning
 
-    $(".balanceText").html("Balance: $" + parseFloat(window.user.availableFunds).toFixed(2) + "                       ");
+    $(".balanceText").html("Account Balance: $" + window.user.availableFunds.toFixed(2) + "                       ");
     
     	// Make sure that the buttons have changed...
     	changeButtons();

@@ -94,7 +94,6 @@ function populateTotalPortfolio() {
     var totalValue = 0;
     for(var key in window.user.ownedStocks) {
       var stock = window.user.ownedStocks[key];
-      
       totalDiff += stock.getQuantity() * stock.absChange;
       totalValue += stock.getQuantity() * stock.currentPrice;
       console.log(stock.getQuantity() * stock.currentPrice);
@@ -125,8 +124,8 @@ function populateTotalPortfolio() {
       span = '<span style="color:red">';
     }
     
-    $("#myPortfolioTotal").append("Total Portfolio   "+ span + text + "   " +changeSpan + changeText +'</span>' +'</span><br/>');
-    $("#myPortfolioTotalHome").append("Total Portfolio   "+ span + text + "   " +changeSpan + changeText +'</span>' +'</span><br/>');
+    $("#myPortfolioTotal").append("Total Portfolio   $"+ span + text + "   " +changeSpan + changeText +'</span>' +'</span><br/>');
+    $("#myPortfolioTotalHome").append("Total Portfolio   $"+ span + text + "   " +changeSpan + changeText +'</span>' +'</span><br/>');
  
 }
 
@@ -143,8 +142,8 @@ function populatePortfolio() {
   for(var key in window.user.ownedStocks) {
   
     var stock = window.user.ownedStocks[key];
-    var difference = stock.absChange;
-    var text = stock.stockID + " Difference: " + difference + " " + stock.percentChange + "%";
+    var difference = stock.absChange*stock.getQuantity();
+    var text = getStockNameByCode(stock.stockID) + " (" + stock.stockID + ") $" + difference.toFixed(2) + "," + stock.percentChange + "%";
 
     var li = '<li class="portfolioRow ui-btn ui-btn-icon-right" id="' + stock.stockID + '">';
     var span = "";
