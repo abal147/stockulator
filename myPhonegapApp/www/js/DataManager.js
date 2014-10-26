@@ -166,14 +166,20 @@ function createUserFromData(userName,firstName,secondName,email,password){
 	
 	// 3. Get the window user...
 	window.user=user;
+	window.user.loggedIn=true;
 	
 	// 4. Let the server know that we have created a new user...
 	var output = user.userName + "," + user.email + "," + user.password;
 	
-	//$.getJSON("http://0.0.0.0:8080/addUser/" + output, function(data) {
 	$.getJSON(DEVSERVER_URL +"/addUser/"  + output, function(data) {
-	
-        	console.log("User added successfully!");
+			if (data == "no") {
+				console.log("User not added successfully");
+				alert("Error - the user already exists..please try again!");
+				$.mobile.changePage("#signup");
+			}
+			else {
+        		console.log("User added successfully!");
+        	}
     })
     .fail(function() {
     	console.log("Can't reach server ...fuck!");
@@ -194,7 +200,7 @@ function sellStock(stockID,quantity,price) {
 		}
 		else {
 			// lets just assume they want to sell everything
-			console.log("Fuck it ,... lets sell it all");
+			console.log("lets sell it all");
 			addStockToUser(stockID,stockID,-quantity,price,0,1);
 			
 			// Move stock from ownedList to sold list
@@ -275,6 +281,23 @@ function deleteStock(stockID) {
   refreshStocks();
   window.user.save();
 }
+
+function pullUserObject (userName,password) {
+	// Get user object from server and store here...
+	$.getJSON(DEVSERVER_URL +"/login/"  + userName + "/" + password, function(data) {
+	
+        	console.log("User Object from server is:");
+        	console.log(data);
+        	
+        	// Set the user object to be this and continue as normal....
+        	
+    })
+    .fail(function() {
+    	console.log("Can't reach server ... when retrieveing user object!");
+    	retval=false;
+    });
+
+}
 // ------------------------------------------------------------ 
 
 
@@ -290,73 +313,96 @@ function deleteStock(stockID) {
 function attachUserMethods(userObject) {
 // This function will attach appropriate methods to the user...
 
-
 	userObject.upDate = function() {
-    // console.log('Update our user');
-    // Function used by user object to update ....
-    // Question : since prototype, should we perhaps define this after pulling object from store.js ...
-    // TODO : need to create some kind of backend call suitable for getting the data for a user...
 
+		// console.log('Update our user');
+// 		// Function used by user object to update ....
+// 		// Question : since prototype, should we perhaps define this after pulling object from store.js ...
+// 		// TODO : need to create some kind of backend call suitable for getting the data for a user...
+// 
+// 
+//     //Update current price of stocks in portfolio
+//     var code = "";
+//     for(var stock in this.ownedStocks) {
+//       code = code + this.ownedStocks[stock].stockID + " ";
+//     }
+// 		//console.log("Code is: " + code);
+// 		$.getJSON(DEVSERVER_URL + "/price/" + code, function(data) {
+//   	  console.log("Portfolio data is:\n" + JSON.stringify(data));
+// 
+//       if(data[0]) {  //There is more than one stock queried so it has been wrapped in a key-index array
+//         var i = 0;
+//         for(stock in this.ownedStocks) {
+//           //console.log(">>>>>>>>" + data[i].AskRealtime);
+//           this.ownedStocks[stock].currentPrice = data[i].AskRealtime;
+//           i++;
+//         }  
+//       } else {  //Only one stock was queried
+//         for(stock in window.user.ownedStocks) { //Use for loop to get the key
+//           this.ownedStocks[stock].currentPrice = data.AskRealtime;
+//         } 
+//       }
+//   	});
+// 
+//     //Update current price of stocks in watchlist
+//   	code = "";
+//     for(var stock in this.watchedStocks) {
+//       code = code + this.watchedStocks[stock].stockID + " ";
+//     }
+// 		//console.log("Code is: " + code);
+// 
+// 		$.getJSON(DEVSERVER_URL + "/price/" + code, function(data) {
+//   	  console.log("Watchlist data is:\n" + JSON.stringify(data));
+// 
+//       if(data[0]) { //There is more than one stock queried so it has been wrapped in a key-index array
+//         var i = 0;
+//         for(stock in this.watchedStocks) {
+//           //console.log(">>>>>>>>" + data[i].AskRealtime);data.PEGRatio
+//           this.watchedStocks[stock].currentPrice = data[i].AskRealtime;
+//           i++;
+//         }  
+//       } else {  //Only one stock was queried
+//         for(stock in this.watchedStocks) { //Use for loop to get the key
+//           this.watchedStocks[stock].currentPrice = data.AskRealtime;
+//         }
+//       }   
+//   	});  	
+     //refreshStocks();
 
-    //Update current price of stocks in portfolio
-    var code = "";
-    for(var stock in this.ownedStocks) {
-     code = code + this.ownedStocks[stock].stockID + " ";
-    }
-
-    if(code != "") {  //Skip if no stocks in portfolio
-      //console.log("Code is: " + code);
-      $.getJSON(DEVSERVER_URL + "/price/" + code, function(data) {
-        console.log("Portfolio data is:\n" + JSON.stringify(data));
-
-         if(data[0]) {  //There is more than one stock queried so it has been wrapped in a key-index array
-           var i = 0;
-           for(stock in this.ownedStocks) {
-             //console.log(">>>>>>>>" + data[i].AskRealtime);
-             this.ownedStocks[stock].currentPrice = data[i].AskRealtime;
-             i++;
-           }  
-         } else {  //Only one stock was queried
-           for(stock in window.user.ownedStocks) { //Use for loop to get the key
-             this.ownedStocks[stock].currentPrice = data.AskRealtime;
-           } 
-         }
-      });
-    }
-     
- 
-    //Update current price of stocks in watchlist
-   	code = "";
-    for(var stock in this.watchedStocks) {
-     code = code + this.watchedStocks[stock].stockID + " ";
-    }
- 		//console.log("Code is: " + code);
-
-    if(code != "") {  //Skip if watchlist is empty
-   		$.getJSON(DEVSERVER_URL + "/price/" + code, function(data) {
-     	  console.log("Watchlist data is:\n" + JSON.stringify(data));
-   
-         if(data[0]) { //There is more than one stock queried so it has been wrapped in a key-index array
-           var i = 0;
-           for(stock in this.watchedStocks) {
-             //console.log(">>>>>>>>" + data[i].AskRealtime);
-             this.watchedStocks[stock].currentPrice = data[i].AskRealtime;
-             i++;
-           }  
-         } else {  //Only one stock was queried
-           for(stock in this.watchedStocks) { //Use for loop to get the key
-             this.watchedStocks[stock].currentPrice = data.AskRealtime;
-           }
-         }   
-     	});
-    } 
-    refreshStocks();
 	}
 
 	
 	userObject.save = function(){ // function used to save this object to memory...
 		console.log('Save our user');
+		
+		// 1. Store Locally...
 		store.set('user',this);
+		var temp= store.get('user');
+
+		// 2. Write the user object to the server
+		$.ajax({
+        	url: DEVSERVER_URL + "/updateUser",
+        	type: "POST",
+        	data: {user:JSON.stringify(temp),userName:temp.userName,password:temp.password},
+        	beforeSend: function(x) {
+          		if (x && x.overrideMimeType) {
+            		x.overrideMimeType("application/j-son;charset=UTF-8");
+          		}
+        	},
+        	success: function(result) {
+          		console.log("Success! User data successfully sent to server" + result);
+        	}
+      	});
+		
+		// $.getJSON(DEVSERVER_URL +"/updateUser/"  + this.userName + "/" + this.password + "/" + JSON.stringify(this), function(data) {
+// 	
+//         	console.log("User added successfully!");
+//     	})
+//     	.fail(function() {
+//     		console.log("Can't reach server ...!");
+//     		retval=false;
+//     	});
+		
 	// TODO perhaps figure out how this can be triggered everytime a change occurs to this object...?
 	}
 	userObject.addStock = function (stockObject,state) {
@@ -400,19 +446,27 @@ function attachUserMethods(userObject) {
 	userObject.updateServer = function(stockID, quantity, price, state){
 	// This function updates the server when transactions are made
 
-	  //console.log("user object to be sent is: " + JSON.stringify(this));
-
-    var transactionData = "";
-
     if(state == BUY_STOCK) {
       //The commented one is plain object format
 	    //var transactionData = '{"username:"' + this.userName + '", "stockID:"' + stockID 
 	    //  + '", "originalPrice:"' + price + '", "amount:"' + quantity + '"}'; 
 
       //This one is just string format delimited by commas
-      transactionData = this.userName + ", " + stockID + ", " + price + ", " + quantity;
-    } else if(state == SELL_STOCK) {
-      transactionData = this.userName + ", " + stockID + ", " + price + ", " + (-quantity);
+      var transactionData = this.userName + ", " + stockID + ", " + price + ", " + quantity;
+      
+	    $.ajax({
+        url: DEVSERVER_URL + "/update",
+        type: "POST",
+        data: {transaction: transactionData,userName:this.userName,password:this.password},
+        beforeSend: function(x) {
+          if (x && x.overrideMimeType) {
+            x.overrideMimeType("application/j-son;charset=UTF-8");
+          }
+        },
+        success: function(result) {
+          console.log("Success!" + result);
+        }
+      });
     }
 
     console.log("Transaction data to send is: " + transactionData);         
@@ -505,6 +559,7 @@ function userObj (userName,firstName,lastName,email,password) {
 	this.ownedStocks = {}; // associative array of owned stock objects
 	this.watchedStocks = {}; // associative array of watching stocks
 	this.soldStocks = {}; // store the sold stocks here for reference....
+	this.loggedIn=true; // boolean to store whether a user is logged in or not
 	attachUserMethods(this); // attach the user methods to this object..
 }
 
@@ -566,53 +621,45 @@ $(function() {
 	// 1. Check to see if the user is defined for this application... if not then
 	try {
 		// 2. Load Stored user data
-		window.user = store.get('user');
+		var help = store.get('user');
 		
-		// 3. plot the pie chart
-		//plotPieChart("Breakdown",window.user.ownedStocks);
-		
-		// a. Attach user methods to user Object
-		attachUserMethods(window.user);
-		
-		// b. Attach Stock Methods to the stock Objects ..
-		for (var index in window.user.ownedStocks) {
-			attachStockMethods(window.user.ownedStocks[index]); // attach the stock methods..
+		// 3. Check that the user is logged in
+		if (!help.loggedIn) {
+			store.remove('currStock');
+			$.mobile.changePage("#login"); // lets switch to the login page....
 		}
-		for (var index in window.user.watchedStocks) {
-			attachStockMethods(window.user.watchedStocks[index]); // attach the stock methods..
-		}
-		console.log("User object is :");
-		console.log(window.user);
+		else {
+			window.user = store.get('user');
+			// a. Attach user methods to user Object
+			attachUserMethods(window.user);
 		
-		if (window.user == null) {
-			throw "undefined user";
-		} 
-		plotPieChart("Breakdown",window.user.ownedStocks);
-/*
-		// 3. Begin Update Process ...
-			// TODO - call the server and update our user object...
-	  var id = window.user.userName;
-	  var pw = window.user.password;    //May need to hash password earlier on
-		$.post(DEVSERVER_URL + "/getUser/", {username:id, password:pw}, function(data) {
-      console.log("Data from server about our user object is: " + data);
-      //TODO - not sure if this works yet
-    });
-*/
+			// b. Attach Stock Methods to the stock Objects ..
+			for (var index in window.user.ownedStocks) {
+				attachStockMethods(window.user.ownedStocks[index]); // attach the stock methods..
+			}
+			for (var index in window.user.watchedStocks) {
+				attachStockMethods(window.user.watchedStocks[index]); // attach the stock methods..
+			}
+			console.log("User object is :");
+			console.log(window.user);
+		
+			if (window.user == null) {
+				throw "undefined user";
+			} 
+			plotPieChart("Breakdown",window.user.ownedStocks);
+		}
+
 	}
 	catch (err) {
 		console.log("Error is: " + err);
 		console.log("Change page!");
 		//if (err.match("undefined user")) {
 			// Error is from undefined user - switch to new user div...
+		store.clear();
 		$.mobile.changePage("#signup"); // lets switch to the signup page...
-		//}
-		//else {
-			// not entirely sure what has gone wrong
-		//	console.log("Well that's fucked ! Error is not known (yet)");
-		//}
 	}
 	
-    refreshASXCodes();
+   refreshASXCodes();
     
     var codes = ["#searchStock", "#searchStock2", "#searchStock3", "#searchStock4"];
 

@@ -61,17 +61,17 @@
 	
 	<!-- Header of the Document -->
 	<div data-role="header" data-theme="a" data-position="fixed" data-id="vs_header">
-
     <p class="balanceText"></p>
 		
 		<h5>Home</h5>
 		<a href="#home" data-icon="home" data-iconpos="notext" class="navbutton">Home</a>
+		<!--<a href="#login" class ="logout" data-iconpos="notext" data-rel="dialog" >Logout</a>-->
 		<a href="#menu" data-icon="gear" data-iconpos="notext" data-rel="dialog" class="navbutton">Menu</a>
 		<ul data-role="listview" data-filter="true" id="searchStock" data-filter-placeholder="Search stocks..." data-inset="true" data-filter-reveal="true">
 		</ul>
 	</div><!-- header -->
 	<!-- Content Part of Document-->	
-	<br></br><br></br>
+	<br></br>
 
 
 	<div data-theme="a" data-role="content" id="postlist">
@@ -104,21 +104,20 @@
 
 <!----------------------------------------
          Start of the portfolio Page 
- ----------------------------------------!>			
+ ---------------------------------------->			
 <div data-role="page" id="portfolio">
-	
+
 	<!-- Header of the Document -->
 	<div data-role="header" data-theme="a" data-position="fixed" data-id="vs_header">
-	  <p class="balanceText"></p>
-		<h5>Portfolio</h5>
-
+		<p class="balanceText"></p>
+   	<h5>Portfolio</h5>
 		<a href="#home" data-icon="home" data-iconpos="notext" class="navbutton">Home</a>
-		<!--a href="#menu2" data-icon="gear" data-iconpos="notext" data-rel="dialog"></a-->
+		<!--<a href="#login" class ="logout" data-iconpos="notext" data-rel="dialog" >Logout</a>-->
 		<a href="#menu" data-icon="gear" data-iconpos="notext" data-rel="dialog">Menu</a>
 		<ul data-role="listview" data-filter="true" id="searchStock2" data-filter-placeholder="Search stocks..." data-inset="true" data-filter-reveal="true">
 		</ul>	
 	</div><!-- header -->
-	<br></br><br></br>
+	<br></br>
 	<!-- Content Part of Document-->
 		
 	<div data-theme="a" data-role="content" id="postlist">	
@@ -174,12 +173,13 @@
 		<h5>Stock Info</h5>
 
 		<a href="#home" data-icon="home" data-iconpos="notext" class="navbutton">Home</a>
+		<!--<a href="#login" class ="logout" data-iconpos="notext" data-rel="dialog" >Logout</a>-->
 		<a href="#menu" data-icon="gear" data-iconpos="notext" data-rel="dialog">Menu</a>
 		<ul data-role="listview" data-filter="true" id="searchStock3" data-filter-placeholder="Search stocks..." data-inset="true" data-filter-reveal="true">
 		</ul>
 	</div><!-- header -->
 
-	<br></br><br></br>
+	<br></br>
 
 	<!-- Content Part of Document-->
 	<div data-theme="a" data-role="content" id="postlist">	
@@ -289,12 +289,13 @@
 		<h5>Watchlist</h5>
 
 		<a href="#home" data-icon="home" data-iconpos="notext" class="navbutton">Home</a>
+		<!--<a href="#login" class ="logout" data-iconpos="notext" data-rel="dialog" >Logout</a>-->
 		<a href="#menu" data-icon="gear" data-iconpos="notext" data-rel="dialog">Menu</a>
 		<ul data-role="listview" data-filter="true" id="searchStock4" data-filter-placeholder="Search stocks..." data-inset="true" data-filter-reveal="true">
 		</ul>
 	</div><!-- header -->
 	
-	<br></br><br></br>
+	<br></br>
 	
 	<!-- Content Part of Document-->
 	<div data-theme="a" data-role="content" id="postlist">	
@@ -365,10 +366,10 @@
 
 	<!-- Header of the Document -->
 	<div data-role="header" data-theme="a" data-position="fixed" data-id="vs_header">
-
     <p class="balanceText"></p>
 		<h5>Friends</h5>
 		<a href="#home" data-icon="home" data-iconpos="notext" class="navbutton">Home</a>
+		<!--<a href="#login" class ="logout" data-iconpos="notext" data-rel="dialog" >Logout</a>-->
 		<a href="#menu" data-icon="gear" data-iconpos="notext" data-rel="dialog">Menu</a>
 	</div><!-- header -->
 	<br></br>
@@ -433,12 +434,12 @@
 	<div data-role="header" data-theme="a" data-position="fixed" data-id="vs_header">
 		<br>
 		<h1>Stockulator</h1>
-
 		<a href="#home" data-icon="home" data-iconpos="notext" class="navbutton">Home</a>
+		<!--<a href="#login" class ="logout" data-iconpos="notext" data-rel="dialog" >Logout</a>-->
 		<a href="#menu" data-icon="gear" data-iconpos="notext" data-rel="dialog">Menu</a>
 
 	</div><!-- header -->
-	
+	<br></br>
 	<!-- Content Part of Document-->
 	<div data-theme="a" data-role="content" id="postlist">	
 		<h4>Signup</h4>
@@ -462,6 +463,41 @@
 		</div>
 		<button type="submit" data-theme="a" id ="signupSubmit">Sign Up</button>
 	  </form>
+	  	<a href="#login" > Already a user ? Login </a>
+	</div><!-- content -->
+</div> <!-- End of LoginPage -->
+
+<!----------------------------------------
+         Start of the login Page 
+ ----------------------------------------!>	
+<div data-role="page" id="login">
+	
+	<!-- Header of the Document -->
+	<div data-role="header" data-theme="a" data-position="fixed" data-id="vs_header">
+		<br>
+		<h1>Stockulator</h1>
+		<a href="#home" data-icon="home" data-iconpos="notext">Home</a>
+		<!--<a href="#login" class ="logout" data-iconpos="notext" data-rel="dialog" >Logout</a>-->
+		<a href="#info" data-icon="info" data-iconpos="notext" data-rel="dialog" >Info</a>
+	</div><!-- header -->
+	<br></br>
+	<!-- Content Part of Document-->
+	<div data-theme="a" data-role="content" id="postlist">	
+		<h4>Login</h4>
+		
+	  <form  id="loginForm" method="get" action="">
+		<div data-role="fieldcontain">
+    		<label for="name">Username:</label>
+   	 		<input type="text" name="name" id="nameLogin" required value=""  data-mini="true" required />
+		</div>	
+		<div data-role="fieldcontain">
+	         <label for="password">Password:</label>
+	         <input type="password" name="password" required id="passwordLogin" value="" data-mini="true" required/>
+		</div>
+		<button type="submit" data-theme="a" id ="loginSubmit">Log In</button>
+	  </form>
+	  	<a href="#signup" > Not a user ? Signup </a>
+	  <div id="loginError"></div> 
 	</div><!-- content -->
 </div> <!-- End of LoginPage -->
 
