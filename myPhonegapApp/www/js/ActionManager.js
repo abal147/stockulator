@@ -496,7 +496,7 @@ $(document).on("click", ".navbutton", function(event) {
 //Only downside is writing html in one line =_=
 
 var panel =     '<div data-role="panel" data-position="right" data-position-fixed="false" data-display="overlay" id="menu" data-theme="a" class="ui-panel ui-panel-position-right ui-panel-display-overlay ui-body-c ui-panel-animate ui-panel-open">';
-panel = panel +   '<div data-role="header" data-position="fixed">';
+panel = panel +   '<div data-role="header">';
 panel = panel +     '<a href="#" data-icon="gear" data-rel="close" data-iconpos="notext" data-role="button" class="ui-btn-right"></a>';
 panel = panel +   '</div>';
 
@@ -510,6 +510,7 @@ panel = panel +     '<li id="panelDivider" data-role="list-divider">Menu</li>';
 panel = panel +     '<li><a href="#">Twitter</a></li>';
 panel = panel +     '<li><a href="#">Facebook</a></li>';
 panel = panel +     '<li><a href="#">Google +</a></li>';
+panel += '<li><a href="#login" class ="logout" data-iconpos="notext" data-rel="dialog" >Logout</a></li>';
 panel = panel +   '</ul>';
 panel = panel +   '</div>';
 
