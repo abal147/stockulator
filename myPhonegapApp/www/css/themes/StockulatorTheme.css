@@ -26,14 +26,15 @@ body {
 }
 
 .portfolioRow {
-  left : 35%;
-  width : 30%;
+  /*left : 35%;*/
+  width : 100%;
 }
 
 .watchlistRow {
   left : 25%;
   width : 50%;
 }
+
 
 .balanceText {
   float : right;
@@ -43,6 +44,10 @@ body {
 #panelDivider {
   font-size : 16;
   font-weight : bold;
+}
+
+.myCharts {
+   width:100%;
 }
 
 /*******************************/
@@ -89,6 +94,7 @@ body {
 /* Font
 -----------------------------------------------------------------------------------------------------------*/
 html {
+   font-family: Arial;
 	font-size: 100%;
 }
 body,

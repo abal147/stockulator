@@ -248,6 +248,9 @@ function addStockToUser (stockID,stockName,quantity,price,targetPrice,state){
 				tempStock.currentPrice=window.myStockObj.currentPrice;
 				tempStock.previousClose=window.myStockObj.previousClose;
 				tempStock.earningShare=window.myStockObj.earningShare;
+				tempStock.currentBid=window.myStockObj.currentBid;
+				tempStock.absChange=window.myStockObj.absChange;
+				tempStock.percentChange=window.myStockObj.percentChange;
 				window.user.addStock(tempStock,state);
 			}
 			else {
@@ -266,6 +269,9 @@ function addStockToUser (stockID,stockName,quantity,price,targetPrice,state){
 			tempStock.currentPrice=window.myStockObj.currentPrice;
 			tempStock.previousClose=window.myStockObj.previousClose;
 			tempStock.earningShare=window.myStockObj.earningShare;
+			tempStock.currentBid=window.myStockObj.currentBid;
+			tempStock.absChange=window.myStockObj.absChange;
+			tempStock.percentChange=window.myStockObj.percentChange;
 			
 			// 2. Append to the correct user dict
 			window.user.addStock(tempStock,state);
@@ -322,53 +328,69 @@ function attachUserMethods(userObject) {
 // 
 // 
 //     //Update current price of stocks in portfolio
-//     var code = "";
-//     for(var stock in this.ownedStocks) {
-//       code = code + this.ownedStocks[stock].stockID + " ";
-//     }
-// 		//console.log("Code is: " + code);
-// 		$.getJSON(DEVSERVER_URL + "/price/" + code, function(data) {
-//   	  console.log("Portfolio data is:\n" + JSON.stringify(data));
-// 
-//       if(data[0]) {  //There is more than one stock queried so it has been wrapped in a key-index array
-//         var i = 0;
-//         for(stock in this.ownedStocks) {
-//           //console.log(">>>>>>>>" + data[i].AskRealtime);
-//           this.ownedStocks[stock].currentPrice = data[i].AskRealtime;
-//           i++;
-//         }  
-//       } else {  //Only one stock was queried
-//         for(stock in window.user.ownedStocks) { //Use for loop to get the key
-//           this.ownedStocks[stock].currentPrice = data.AskRealtime;
-//         } 
-//       }
-//   	});
-// 
-//     //Update current price of stocks in watchlist
-//   	code = "";
-//     for(var stock in this.watchedStocks) {
-//       code = code + this.watchedStocks[stock].stockID + " ";
-//     }
-// 		//console.log("Code is: " + code);
-// 
-// 		$.getJSON(DEVSERVER_URL + "/price/" + code, function(data) {
-//   	  console.log("Watchlist data is:\n" + JSON.stringify(data));
-// 
-//       if(data[0]) { //There is more than one stock queried so it has been wrapped in a key-index array
-//         var i = 0;
-//         for(stock in this.watchedStocks) {
-//           //console.log(">>>>>>>>" + data[i].AskRealtime);data.PEGRatio
-//           this.watchedStocks[stock].currentPrice = data[i].AskRealtime;
-//           i++;
-//         }  
-//       } else {  //Only one stock was queried
-//         for(stock in this.watchedStocks) { //Use for loop to get the key
-//           this.watchedStocks[stock].currentPrice = data.AskRealtime;
-//         }
-//       }   
-//   	});  	
-     //refreshStocks();
+     var code = "";
+     for(var stock in this.ownedStocks) {
+       code = code + this.ownedStocks[stock].stockID + " ";
+     }
+ 		console.log("Code is: " + code);
+ 		$.getJSON(DEVSERVER_URL + "/price/" + code, function(data) {
+   	  console.log("Portfolio data is:\n" + JSON.stringify(data));
+ 
+       if(data[0]) {  //There is more than one stock queried so it has been wrapped in a key-index array
+         var i = 0;
+         for(stock in this.ownedStocks) {
+           //console.log(">>>>>>>>" + data[i].AskRealtime);
+           this.ownedStocks[stock].currentPrice = data[i].AskRealtime;
+           this.ownedStocks[stock].currentBid = data[i].BidRealtime
+           this.ownedStocks[stock].previousClose = data[i].PreviousClose;
+           this.ownedStocks[stock].absChange = data[i].Change;
+           this.ownedStocks[stock].percentChange = data[i].PercentChange;
+           i++;
+         }  
+       } else {  //Only one stock was queried
+         for(stock in window.user.ownedStocks) { //Use for loop to get the key
+           this.ownedStocks[stock].currentPrice = data.AskRealtime;
+           this.ownedStocks[stock].currentBid = data.BidRealtime
+           this.ownedStocks[stock].previousClose = data.PreviousClose;
+           this.ownedStocks[stock].absChange = data.Change;
+           this.ownedStocks[stock].percentChange = data.PercentChange;
+         } 
+       }
+   	});
 
+    //Update current price of stocks in watchlist
+  	code = "";
+    for(var stock in this.watchedStocks) {
+      code = code + this.watchedStocks[stock].stockID + " ";
+    }
+		//console.log("Code is: " + code);
+
+		$.getJSON(DEVSERVER_URL + "/price/" + code, function(data) {
+  	  console.log("Watchlist data is:\n" + JSON.stringify(data));
+
+      if(data[0]) { //There is more than one stock queried so it has been wrapped in a key-index array
+        var i = 0;
+        for(stock in this.watchedStocks) {
+          //console.log(">>>>>>>>" + data[i].AskRealtime);data.PEGRatio
+           this.watchedStocks[stock].currentPrice = data[i].AskRealtime;
+           this.watchedStocks[stock].currentBid = data[i].BidRealtime
+           this.watchedStocks[stock].previousClose = data[i].PreviousClose;
+           this.watchedStocks[stock].absChange = data[i].Change;
+           this.watchedStocks[stock].percentChange = data[i].PercentChange;
+          i++;
+        }  
+      } else {  //Only one stock was queried
+        for(stock in this.watchedStocks) { //Use for loop to get the key
+           this.watchedStocks[stock].currentPrice = data.AskRealtime;
+           this.watchedStocks[stock].currentBid = data.BidRealtime
+           this.watchedStocks[stock].previousClose = data.PreviousClose;
+           this.watchedStocks[stock].absChange = data.Change;
+           this.watchedStocks[stock].percentChange = data.PercentChange;
+
+        }
+      }   
+  	});  	
+    refreshStocks();
 	}
 
 	
@@ -503,6 +525,8 @@ function attachStockMethods(stockObject){
 		// NB - assuming current price is correct....
 		// Check that current price is correct
 	}
+
+
 	
 	stockObject.getProfit=function(){
 		var out=0;
@@ -584,6 +608,9 @@ function Stock (stockID,stockName,quantity,price,targetPrice) {
 	this.marketCapitalisation = 0;
 	this.previousClose=0;
 	this.earningShare=0;
+	this.currentBid=0;
+	this.absChange=0;
+	this.percentChange=0;
 	
 	//var historicalData=null; // private variable...
 	// historical data remains undefined until it is pulled for that stock
