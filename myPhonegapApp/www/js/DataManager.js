@@ -218,7 +218,7 @@ function sellStock(stockID,quantity,price) {
 	refreshStocks();
 }
 
-function addStockToUser (stockID,stockName,quantity,price,targetPrice,state){
+function addStockToUser (stockID,stockName,quantity,price,upperTargetPrice,lowerTargetPrice,state){
 // This function will add a given stock to our user object
 // State determines if the stock is bought = 1 , or watching = 0
 	// 1. Check if stock already exists in user object
@@ -258,9 +258,10 @@ function addStockToUser (stockID,stockName,quantity,price,targetPrice,state){
 				console.log("Stock already watched");
 			}
 		}
-		else {	
+		else {
+		  //Add the stock to the watchlist	
 			console.log("Fuck this shit....!!! - where is my fucking stockobj");
-			var tempStock = new Stock(stockID,stockName,quantity,price,targetPrice);
+			var tempStock = new Stock(stockID,stockName,quantity,price,upperTargetPrice,lowerTargetPrice);
 			// Update Stock Data with Data from current stockObject
 			tempStock.pegRatio=window.myStockObj.pegRatio;
 			tempStock.marketCap=window.myStockObj.marketCap;
@@ -272,7 +273,6 @@ function addStockToUser (stockID,stockName,quantity,price,targetPrice,state){
 			tempStock.currentBid=window.myStockObj.currentBid;
 			tempStock.absChange=window.myStockObj.absChange;
 			tempStock.percentChange=window.myStockObj.percentChange;
-			
 			// 2. Append to the correct user dict
 			window.user.addStock(tempStock,state);
 		}
@@ -333,12 +333,12 @@ function attachUserMethods(userObject) {
        code = code + this.ownedStocks[stock].stockID + " ";
      }
  		console.log("Code is: " + code);
-    if (code="") {
- 		$.getJSON(DEVSERVER_URL + "/price/" + code, function(data) {
-   	  console.log("Portfolio data is:\n" + JSON.stringify(data));
+    if (code != "") {
+   		$.getJSON(DEVSERVER_URL + "/price/" + code, function(data) {
+     	  console.log("Portfolio data is:\n" + JSON.stringify(data));
 
-       
-       if(data[0]) {  //There is more than one stock queried so it has been wrapped in a key-index array
+         
+        if(data[0]) {  //There is more than one stock queried so it has been wrapped in a key-index array
          var i = 0;
          for(stock in this.ownedStocks) {
            //console.log(">>>>>>>>" + data[i].AskRealtime);
@@ -349,16 +349,17 @@ function attachUserMethods(userObject) {
            this.ownedStocks[stock].percentChange = data[i].PercentChange;
            i++;
          }  
-       } else {  //Only one stock was queried
-         for(stock in window.user.ownedStocks) { //Use for loop to get the key
+        } else {  //Only one stock was queried
+         for(stock in this.ownedStocks) { //Use for loop to get the key
            this.ownedStocks[stock].currentPrice = data.AskRealtime;
            this.ownedStocks[stock].currentBid = data.BidRealtime
            this.ownedStocks[stock].previousClose = data.PreviousClose;
            this.ownedStocks[stock].absChange = data.Change;
            this.ownedStocks[stock].percentChange = data.PercentChange;
          } 
-       }
-   	});
+        }
+         
+     	});
    	}
 
     //Update current price of stocks in watchlist
@@ -368,31 +369,63 @@ function attachUserMethods(userObject) {
     }
 		//console.log("Code is: " + code);
 
-		$.getJSON(DEVSERVER_URL + "/price/" + code, function(data) {
-  	  console.log("Watchlist data is:\n" + JSON.stringify(data));
+    if(code != "") {
+		  $.getJSON(DEVSERVER_URL + "/price/" + code, function(data) {
+    	  console.log("Watchlist data is:\n" + JSON.stringify(data));
 
-      if(data[0]) { //There is more than one stock queried so it has been wrapped in a key-index array
-        var i = 0;
-        for(stock in this.watchedStocks) {
-          //console.log(">>>>>>>>" + data[i].AskRealtime);data.PEGRatio
-           this.watchedStocks[stock].currentPrice = data[i].AskRealtime;
-           this.watchedStocks[stock].currentBid = data[i].BidRealtime
-           this.watchedStocks[stock].previousClose = data[i].PreviousClose;
-           this.watchedStocks[stock].absChange = data[i].Change;
-           this.watchedStocks[stock].percentChange = data[i].PercentChange;
-          i++;
-        }  
-      } else {  //Only one stock was queried
-        for(stock in this.watchedStocks) { //Use for loop to get the key
-           this.watchedStocks[stock].currentPrice = data.AskRealtime;
-           this.watchedStocks[stock].currentBid = data.BidRealtime
-           this.watchedStocks[stock].previousClose = data.PreviousClose;
-           this.watchedStocks[stock].absChange = data.Change;
-           this.watchedStocks[stock].percentChange = data.PercentChange;
+        if(data[0]) { //There is more than one stock queried so it has been wrapped in a key-index array
+          var i = 0;
+          for(stock in window.user.watchedStocks) {
+            //console.log(">>>>>>>>" + data[i].AskRealtime);data.PEGRatio
+             window.user.watchedStocks[stock].currentPrice = parseFloat(data[i].AskRealtime);
+             window.user.watchedStocks[stock].currentBid = parseFloat(data[i].BidRealtime);
+             window.user.watchedStocks[stock].previousClose = parseFloat(data[i].PreviousClose);
+             window.user.watchedStocks[stock].absChange = parseFloat(data[i].Change);
+             window.user.watchedStocks[stock].percentChange = parseFloat(data[i].PercentChange);
 
+             //Change watchlist icon to alert if a target price is reached
+             if(window.user.watchedStocks[stock].currentPrice > window.user.watchedStocks[stock].upperTargetPrice) {
+               $(".watchlistNavButton").attr("data-icon", "alert");
+               $(".watchlistNavButton").attr("data-theme", "b");               
+               $(".watchlistNavButton").removeClass("ui-icon-star");
+               $(".watchlistNavButton").addClass("ui-icon-alert");
+               $(".watchlistNavButton").addClass("ui-btn-b");               
+             } else if(window.user.watchedStocks[stock].currentPrice < window.user.watchedStocks[stock].lowerTargetPrice) {
+               $(".watchlistNavButton").attr("data-icon", "alert");
+               $(".watchlistNavButton").attr("data-theme", "b"); 
+               $(".watchlistNavButton").removeClass("ui-icon-star");
+               $(".watchlistNavButton").addClass("ui-icon-alert");
+               $(".watchlistNavButton").addClass("ui-btn-b");                
+             }
+             i++;
+          }  
+        } else {  //Only one stock was queried
+          for(stock in window.user.watchedStocks) { //Use for loop to get the key
+             window.user.watchedStocks[stock].currentPrice = data.AskRealtime;
+             window.user.watchedStocks[stock].currentBid = data.BidRealtime
+             window.user.watchedStocks[stock].previousClose = data.PreviousClose;
+             window.user.watchedStocks[stock].absChange = data.Change;
+             window.user.watchedStocks[stock].percentChange = data.PercentChange;
+
+             if(window.user.watchedStocks[stock].currentPrice > window.user.watchedStocks[stock].upperTargetPrice) {
+               $(".watchlistNavButton").attr("data-icon", "alert");
+               $(".watchlistNavButton").attr("data-theme", "b"); 
+               $(".watchlistNavButton").removeClass("ui-icon-star");
+               $(".watchlistNavButton").addClass("ui-icon-alert");
+               $(".watchlistNavButton").addClass("ui-btn-b");
+             } else if(window.user.watchedStocks[stock].currentPrice < window.user.watchedStocks[stock].lowerTargetPrice) {
+               $(".watchlistNavButton").attr("data-icon", "alert");
+               $(".watchlistNavButton").attr("data-theme", "b"); 
+               $(".watchlistNavButton").removeClass("ui-icon-star");
+               $(".watchlistNavButton").addClass("ui-icon-alert");
+               $(".watchlistNavButton").addClass("ui-btn-b");               
+             }
+             
+          }
         }
-      }   
-  	});  	
+           
+    	});
+    }  	
     refreshStocks();
 	}
 
@@ -593,7 +626,7 @@ function userObj (userName,firstName,lastName,email,password) {
 
 // 2. Stock Object
 // had to do a name change for some reason as shit was fucking up...
-function Stock (stockID,stockName,quantity,price,targetPrice) {
+function Stock (stockID,stockName,quantity,price,upperTargetPrice,lowerTargetPrice) {
 	this.stockID=stockID;
 	this.stockName = stockName;
 	// Implementing quantity, purchaseDate and purchasePrice as corresponding 
@@ -602,8 +635,8 @@ function Stock (stockID,stockName,quantity,price,targetPrice) {
 	this.purchaseDate = [new Date().getTime()]; // epoch time in ms
 	this.purchasePrice=[price];  // list of purchase prices corresponding to dates
 	this.currentPrice=price;
-  	this.targetPrice=targetPrice;   //Used for watchlist.. i.e watch/alert when it reaches/ goes above or below target price
-  	this.targetDirection = true; // true for greater than target price, false for below target price...
+  this.upperTargetPrice=upperTargetPrice;   //Used for watchlist.. i.e watch/alert when it reaches/ goes above or below target price
+  this.lowerTargetPrice=lowerTargetPrice; true; // true for greater than target price, false for below target price...
 	
 	// I have decided to put these metrics into the object
 	// perhaps saves a bit of redundancy...??
