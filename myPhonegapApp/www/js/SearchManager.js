@@ -110,7 +110,7 @@ function handleNameSearch(e){
         for any match, return that row
     */
     
-    for (var i = 3; i < ASXcodes.length; ++i) {
+    for (var i = 1; i < ASXcodes.length; ++i) {
         if (re.test(ASXcodes[i].toUpperCase())) {
             var stock = ASXcodes[i].split(",");
 
@@ -218,3 +218,16 @@ filterStockCodes = function (text, searchVal) {
     return false;
 }
 
+
+getStockNameByCode = function(code) {
+
+    var lines = localStorage.getItem('stockCSV').split('\n');
+
+    for (var i = 1; i < lines.length; ++i) {
+        var info = lines[i].split(',');
+        if (info[1] == code) {
+            return info[0];
+        }
+    }
+    return "Invalid ASX Code";
+}
