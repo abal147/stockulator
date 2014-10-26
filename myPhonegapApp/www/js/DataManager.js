@@ -344,22 +344,22 @@ function attachUserMethods(userObject) {
        
        if(data[0]) {  //There is more than one stock queried so it has been wrapped in a key-index array
          var i = 0;
-         for(stock in this.ownedStocks) {
+         for(stock in window.user.ownedStocks) {
            //console.log(">>>>>>>>" + data[i].AskRealtime);
-           this.ownedStocks[stock].currentPrice = data[i].AskRealtime;
-           this.ownedStocks[stock].currentBid = data[i].BidRealtime
-           this.ownedStocks[stock].previousClose = data[i].PreviousClose;
-           this.ownedStocks[stock].absChange = data[i].Change;
-           this.ownedStocks[stock].percentChange = data[i].PercentChange;
+           window.user.ownedStocks[stock].currentPrice = parseFloat(data[i].AskRealtime);
+           window.user.ownedStocks[stock].currentBid = parseFloat(data[i].BidRealtime);
+           window.user.ownedStocks[stock].previousClose = parseFloat(data[i].PreviousClose);
+           window.user.ownedStocks[stock].absChange = parseFloat(data[i].Change);
+           window.user.ownedStocks[stock].percentChange = parseFloat(data[i].PercentChange);
            i++;
          }  
        } else {  //Only one stock was queried
-         for(stock in this.ownedStocks) { //Use for loop to get the key
-           this.ownedStocks[stock].currentPrice = data.AskRealtime;
-           this.ownedStocks[stock].currentBid = data.BidRealtime
-           this.ownedStocks[stock].previousClose = data.PreviousClose;
-           this.ownedStocks[stock].absChange = data.Change;
-           this.ownedStocks[stock].percentChange = data.PercentChange;
+         for(stock in window.user.ownedStocks) { //Use for loop to get the key
+           window.user.ownedStocks[stock].currentPrice = parseFloat(data.AskRealtime);
+           window.user.ownedStocks[stock].currentBid = parseFloat(data.BidRealtime);
+           window.user.ownedStocks[stock].previousClose = parseFloat(data.PreviousClose);
+           window.user.ownedStocks[stock].absChange = parseFloat(data.Change);
+           window.user.ownedStocks[stock].percentChange = parseFloat(data.PercentChange);
          } 
        }
    	});
@@ -379,20 +379,20 @@ function attachUserMethods(userObject) {
         var i = 0;
         for(stock in this.watchedStocks) {
           //console.log(">>>>>>>>" + data[i].AskRealtime);data.PEGRatio
-           this.watchedStocks[stock].currentPrice = data[i].AskRealtime;
-           this.watchedStocks[stock].currentBid = data[i].BidRealtime
-           this.watchedStocks[stock].previousClose = data[i].PreviousClose;
-           this.watchedStocks[stock].absChange = data[i].Change;
-           this.watchedStocks[stock].percentChange = data[i].PercentChange;
+           this.watchedStocks[stock].currentPrice = parseFloat(data[i].AskRealtime);
+           this.watchedStocks[stock].currentBid = parseFloat(data[i].BidRealtime);
+           this.watchedStocks[stock].previousClose = parseFloat(data[i].PreviousClose);
+           this.watchedStocks[stock].absChange = parseFloat(data[i].Change);
+           this.watchedStocks[stock].percentChange = parseFloat(data[i].PercentChange);
           i++;
         }  
       } else {  //Only one stock was queried
         for(stock in this.watchedStocks) { //Use for loop to get the key
-           this.watchedStocks[stock].currentPrice = data.AskRealtime;
-           this.watchedStocks[stock].currentBid = data.BidRealtime
-           this.watchedStocks[stock].previousClose = data.PreviousClose;
-           this.watchedStocks[stock].absChange = data.Change;
-           this.watchedStocks[stock].percentChange = data.PercentChange;
+           this.watchedStocks[stock].currentPrice = parseFloat(data.AskRealtime);
+           this.watchedStocks[stock].currentBid = parseFloat(data.BidRealtime);
+           this.watchedStocks[stock].previousClose = parseFloat(data.PreviousClose);
+           this.watchedStocks[stock].absChange = parseFloat(data.Change);
+           this.watchedStocks[stock].percentChange = parseFloat(data.PercentChange);
 
         }
       }   

@@ -156,9 +156,10 @@ function populateTotalPortfolio() {
       totalValue += stock.getQuantity() * stock.currentPrice;
       console.log(stock.getQuantity() * stock.currentPrice);
     }
+
     window.user.portfolioValue = totalValue;
-    var weightedPercent = totalDiff/totalValue;
-    console.log(weightedPercent);
+    var weightedPercent = (totalDiff/(totalValue-totalDiff))*100;
+    
  
     
     var text = totalValue.toFixed(3);
