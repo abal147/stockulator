@@ -74,12 +74,15 @@ function refreshStocks() {
     // Refresh portfolio
     populatePortfolio();
 
+    //Refresh value
+    $(".valueText").html("             Value: $" + (window.user.portfolioValue + window.user.availableFunds)); 
+
     //Refresh balance - bit of a dirty fix for positioning
+
     $(".balanceText").html("Balance: $" + window.user.availableFunds + "                       ");
     
     	// Make sure that the buttons have changed...
     	changeButtons();
-
 		window.user.save();
 	}
 }
@@ -111,8 +114,6 @@ function buyWatchStock(stockID, state,qty){
   var targetPrice = 0;
 	if(state == WATCH_STOCK) {
 	  targetPrice = $("#targetPrice").val();
-  } else if(state == MODIFY_STOCK) {
-    targetPrice = $("#modifyTargetPrice").val();
   }
 	console.log("TARGET PRICE IS: " + targetPrice);
 
@@ -360,6 +361,18 @@ $(document).ready (function(){
 		$("#sellSliderVal").attr("max",thisStock.getQuantity());
 		$(".stockCurrQty").replaceWith("<div class = \"stockCurrQty\"> <p> Current Stock Qty: " + thisStock.getQuantity() + " </p></div>" );
 	});
+
+	$("#buyButton").click(function() {
+		// Set the Buy quantity to be correct
+		console.log("Buy button is clicked!");
+		var thisStock = getCurrentStockObject();
+		// NB: assuming that the stock can be bought....
+		var maxQuantity = Math.floor(window.user.availableFunds / thisStock.currentPrice);
+		console.log("Max quantity is: " + maxQuantity);
+		$("#slider").attr("max", maxQuantity);
+		//$(".stockCurrQty").replaceWith("<div class = \"stockCurrQty\"> <p> Current Stock Qty: " + thisStock.getQuantity() + " </p></div>" );
+	});
+
 	
 	$("#watchStock").click(function() {
 		buyWatchStock(getCurrentStock(), WATCH_STOCK);
@@ -470,7 +483,9 @@ $(document).ready (function(){
 	
   //Same as watchStock but called to modify an already watched stock
   $("#setTargetPrice").click(function() {
-		buyWatchStock(getCurrentStock(), MODIFY_STOCK);
+    targetPrice = $("#modifyTargetPrice").val();
+    window.user.watchedStocks[getCurrentStock()].targetPrice = targetPrice;
+    refreshStocks();
 	});
 
   $("#unwatchStock").click(function() {
@@ -493,7 +508,16 @@ $(document).ready (function(){
     }
         
     setCurrentStock(target.id);
-    console.log("Current stock is:" + getCurrentStock());
+
+    // Set the Buy quantity to be correct
+		// NB: assuming that the stock can be bought....
+
+
+		var maxQuantity = Math.floor(window.user.availableFunds / window.user.watchedStocks[getCurrentStock()].currentPrice);
+		//console.log("Max quantity is: " + maxQuantity);
+		$("#slider2").attr("max", maxQuantity);
+		
+    //console.log("Current stock of watchlist is:" + getCurrentStock());
     //console.log("Event id is: " + target.id);
   });
 
@@ -505,6 +529,7 @@ $(document).ready (function(){
         target = target.parentNode;
     }
     setCurrentStock(target.id);
+
     //console.log("Current stock is:" + getCurrentStock());
     //console.log("Event id is: " + target.id);
   });

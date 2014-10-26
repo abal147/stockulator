@@ -333,9 +333,11 @@ function attachUserMethods(userObject) {
        code = code + this.ownedStocks[stock].stockID + " ";
      }
  		console.log("Code is: " + code);
+    if (code="") {
  		$.getJSON(DEVSERVER_URL + "/price/" + code, function(data) {
    	  console.log("Portfolio data is:\n" + JSON.stringify(data));
- 
+
+       
        if(data[0]) {  //There is more than one stock queried so it has been wrapped in a key-index array
          var i = 0;
          for(stock in this.ownedStocks) {
@@ -357,6 +359,7 @@ function attachUserMethods(userObject) {
          } 
        }
    	});
+   	}
 
     //Update current price of stocks in watchlist
   	code = "";
