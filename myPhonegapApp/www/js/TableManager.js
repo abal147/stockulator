@@ -124,8 +124,8 @@ function populateTotalPortfolio() {
       span = '<span style="color:red">';
     }
     
-    $("#myPortfolioTotal").append("Total Portfolio   $"+ span + text + "   " +changeSpan + changeText +'</span>' +'</span><br/>');
-    $("#myPortfolioTotalHome").append("Total Portfolio   $"+ span + text + "   " +changeSpan + changeText +'</span>' +'</span><br/>');
+    $("#myPortfolioTotal").append("$"+ span + text + "   " +changeSpan + changeText +'</span>' +'</span><br/>');
+    $("#myPortfolioTotalHome").append("MY PORTFOLIO $"+ span + text + "   " +changeSpan + changeText +'</span>' +'</span><br/>');
  
 }
 
