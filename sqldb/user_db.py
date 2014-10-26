@@ -93,9 +93,12 @@ def getUser(name):
 	db = sqlite3.connect('stock_db.db')
 	cursor = db.cursor()
 	cursor.execute('''SELECT * FROM users WHERE name = (?)''', (name,))
-	userinfo = cursor.fetchall()
+	userinfo = cursor.fetchone()
 	db.close()
-	return userinfo
+	returninfo = []
+	for item in userinfo:
+		returninfo.append(str(item))
+	return returninfo
 
 def getAllUsers():
 	db = sqlite3.connect('stock_db.db')
@@ -356,7 +359,7 @@ def testDB():
 	insertUser('bob', 'asdf', 'quet')
 	insertUser('jane', 'asdf', 'qiet')
 	insertUser('mark', 'asdf', 'asdf')
-
+	print getUser('mark')
 	insertTrans('bob,wow.ax,40,1')
 	print getCurrBalance('bob')
 

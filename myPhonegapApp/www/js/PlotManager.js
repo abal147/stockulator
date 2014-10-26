@@ -299,7 +299,7 @@ function plotData(code,numDays) {
 			// Function, will plot into #stockChart the data for a code and numDays...
 			
 			vars={};
-			vars['code']=code+".ax";
+			vars['code']=code;
 			vars['numDays']=numDays;
 			console.log("Update the plot with :" + vars);
 			

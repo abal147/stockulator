@@ -208,7 +208,8 @@ function sellStock(stockID,quantity,price) {
 			delete window.user.ownedStocks[stockID];
 			window.user.soldStocks[stockID]=helper; // append to the sold stock list...
 		}
-    window.user.availableFunds += (quantity * price);
+    	window.user.availableFunds += (quantity * price);
+
 		//Send transaction to server
 		window.user.updateServer(stockID, quantity, price, SELL_STOCK);
 	}
@@ -294,6 +295,9 @@ function pullUserObject (userName,password) {
 	
         	console.log("User Object from server is:");
         	console.log(data);
+        	if (localStorage.getItem('user') == null) {
+        		localStorage.setItem('user', JSON.stringify(data));
+        	}
         	
         	// Set the user object to be this and continue as normal....
         	
@@ -340,22 +344,22 @@ function attachUserMethods(userObject) {
          
         if(data[0]) {  //There is more than one stock queried so it has been wrapped in a key-index array
          var i = 0;
-         for(stock in this.ownedStocks) {
+         for(stock in window.user.ownedStocks) {
            //console.log(">>>>>>>>" + data[i].AskRealtime);
-           this.ownedStocks[stock].currentPrice = data[i].AskRealtime;
-           this.ownedStocks[stock].currentBid = data[i].BidRealtime
-           this.ownedStocks[stock].previousClose = data[i].PreviousClose;
-           this.ownedStocks[stock].absChange = data[i].Change;
-           this.ownedStocks[stock].percentChange = data[i].PercentChange;
+           window.user.ownedStocks[stock].currentPrice = parseFloat(data[i].AskRealtime);
+           window.user.ownedStocks[stock].currentBid = parseFloat(data[i].BidRealtime);
+           window.user.ownedStocks[stock].previousClose = parseFloat(data[i].PreviousClose);
+           window.user.ownedStocks[stock].absChange = parseFloat(data[i].Change);
+           window.user.ownedStocks[stock].percentChange = parseFloat(data[i].PercentChange);
            i++;
          }  
-        } else {  //Only one stock was queried
-         for(stock in this.ownedStocks) { //Use for loop to get the key
-           this.ownedStocks[stock].currentPrice = data.AskRealtime;
-           this.ownedStocks[stock].currentBid = data.BidRealtime
-           this.ownedStocks[stock].previousClose = data.PreviousClose;
-           this.ownedStocks[stock].absChange = data.Change;
-           this.ownedStocks[stock].percentChange = data.PercentChange;
+       } else {  //Only one stock was queried
+         for(stock in window.user.ownedStocks) { //Use for loop to get the key
+           window.user.ownedStocks[stock].currentPrice = parseFloat(data.AskRealtime);
+           window.user.ownedStocks[stock].currentBid = parseFloat(data.BidRealtime);
+           window.user.ownedStocks[stock].previousClose = parseFloat(data.PreviousClose);
+           window.user.ownedStocks[stock].absChange = parseFloat(data.Change);
+           window.user.ownedStocks[stock].percentChange = parseFloat(data.PercentChange);
          } 
         }
          
@@ -422,6 +426,7 @@ function attachUserMethods(userObject) {
              }
              
           }
+
         }
            
     	});

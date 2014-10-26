@@ -65,7 +65,7 @@
     <p class="valueText"></p>
     <p class="balanceText"></p>
 		
-		<h5>Home</h5>
+		<h1>HOME</h1>
 		<a href="#home" data-icon="home" data-iconpos="notext" class="navbutton">Home</a>
 		<a href="#menu" data-icon="gear" data-iconpos="notext" data-rel="dialog" class="navbutton">Menu</a>
 		
@@ -77,7 +77,7 @@
 
 
 	<div data-theme="a" data-role="content" id="postlist">
-		<h1>Australian Market Indicies</h1>
+		<h1>Australian Market Indexes</h1>
 		<h2 id="indexes"></h2>
 		<h1>Portfolio</h1>
 		<!--<ul id="myPortfolioTotalHome" clas= "totalPortfolio" data-role="listview" data-inset="true"></ul>-->
@@ -134,8 +134,6 @@
 	         	<label for="pieView">BreakDown</label>
 	         	<input type="radio" name="radio-view" id="historyView" value="grid"  />
 	         	<label for="historyView">History</label>
-	         	<input type="radio" name="radio-view" id="profitView" value="gallery"  />
-	         	<label for="profitView">Profit</label>
 	    	</fieldset>
 		</div>
 
@@ -190,8 +188,9 @@
 
 	<!-- Content Part of Document-->
 	<div data-theme="a" data-role="content" id="postlist">	
-		
-
+	<font size = "16">
+		<div class = "stockInfoTitle"> <p> Welcome to the stock information page. Use the search bar above to examine a stock. Once selected, we have provided key metrics and charts for you to compare different stocks. </p></div>
+	</font> 
 		<!--<input type="search" name="searchBar" id="search-3" class="search" value="Enter ASX Code" data-theme="b" onkeyup="handle(event, value)" />	-->
 		<!-- 
 <div style="width: 300px; height: 200px; margin: 0 auto">
@@ -199,9 +198,15 @@
 			<div id="container-rpm" style="width: 100px; height: 100px; float: left auto"></div>
 		</div>
  -->
-		<table id="myTable">
-    	</table>    <ul id="myPortfolioTotal" clas= "totalPortfolio" data-role="listview" data-inset="true">
 		<div id="stockChart" class="myCharts" style="height: 300px; min-width: 310px"></div>
+
+		
+		<!--<table id="myTable">
+    	</table>-->
+		
+		<div class ="moreStockInfo"> </div>
+		
+		
 		<div class="ui-body ui-body-b">
 			<fieldset class="ui-grid-a">
 				<a href="#buyDialog" id = "buyButton" data-rel="popup" data-position-to="window" data-transition="pop" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b">Buy</a>
@@ -210,14 +215,18 @@
 			</fieldset>
 		</div>
 		
+		
+		
 		<div data-role="popup" id="buyDialog" data-overlay-theme="b" data-theme="b" data-dismissible="false" style="max-width:400px;">
  	 		<div data-role="header" data-theme="a">
   		  <h1>Buy Stock</h1>
   		</div>
   		<div role="main" class="ui-content">
+  			<div class="funds"> <p> Search for a stock to buy </p></div>
   			<div class="price"> <p> Price : 100 </p> </div>
-  			<div class ="stockID"> <p> StockID : WOW.ax </p> </div>
-  			<div class = "stockName"> <p> stockName : Woolworths </p></div>
+  			<!--<div class ="stockID"> <p> StockID : WOW.ax </p> </div>
+  			<div class = "stockName"> <p> stockName : Woolworths </p></div>-->
+
       		<form>
       			<div style="padding:10px 20px;">
         			 <div data-role="fieldcontain" id="pageSlider" class = "pageSlider">
@@ -262,7 +271,7 @@
 					      <label for="slider">Sell Qty:</label>
 	 				      <input type="range" name="sellSliderVal" id="sellSliderVal" class = "slider" value="0" min="0" max="1000" data-highlight="true"  />
 				     </div>
-     		    </div>    var rowCount = table.rows.length;
+     		    </div>
   			  </form>
   			<div class = "sellCost"> <p> Money : $0.00 </p></div>
     		<a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" data-rel="back">Cancel</a>
@@ -347,12 +356,6 @@
   		</div>
     </div>
 
-
-
-
-		<table id="myTable">
-      	</table>
-
 		<!-- TODO -fill me out ... --!> 
 	</div><!-- content -->
 	
@@ -393,9 +396,15 @@
 		<ul data-role="listview" data-filter="true" id="findFriends" data-filter-placeholder="Search users..." data-inset="true" data-filter-reveal="true">
 		</ul>
 
-		<a href="#friendRequests" id = "showFriendRequests" data-rel="popup" data-position-to="window" data-transition="pop" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b">Friend Requests</a>
-		<a href="#friendList" id = "showFriendList" data-rel="popup" data-position-to="window" data-transition="pop" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b">Friends</a>
-
+		<div data-role="collapsible">
+			<h1>Friend Requests</h1>
+			<ul data-role="listview" id="requestList" class="friendlistview">
+			</ul>
+		</div>
+		<!--<a href="#friendRequests" id = "showFriendRequests" data-rel="popup" data-position-to="window" data-transition="pop" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b">Friend Requests</a>-->
+		
+		<!--<a href="#friendList" id = "showFriendList" data-rel="popup" data-position-to="window" data-transition="pop" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b">Friends</a>-->
+		<h1>Your Friends</h1>
 		<ul data-role="listview" id="myFriends" data-inset="true" data-split-icon="minus">
 		</ul>
 
