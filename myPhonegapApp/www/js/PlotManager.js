@@ -52,7 +52,7 @@ function plotPieChart (title,stocks) {
         },
         series: [{
             type: 'pie',
-            name: 'Browser share',
+            name: 'Portfolio share',
             data: seriesData
         }]
     });
