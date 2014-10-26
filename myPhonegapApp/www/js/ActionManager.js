@@ -75,11 +75,12 @@ function refreshStocks() {
     populatePortfolio();
 
     //Refresh value
-    $(".valueText").html("             Value: $" + parseFloat(window.user.portfolioValue + window.user.availableFunds).toFixed(2)); 
+
+    $(".valueText").html("             Net Portfolio: $" + (window.user.portfolioValue + window.user.availableFunds).toFixed(2)); 
 
     //Refresh balance - bit of a dirty fix for positioning
 
-    $(".balanceText").html("Balance: $" + parseFloat(window.user.availableFunds).toFixed(2) + "                       ");
+    $(".balanceText").html("Account Balance: $" + window.user.availableFunds.toFixed(2) + "                       ");
     
     	// Make sure that the buttons have changed...
     	changeButtons();
@@ -97,12 +98,13 @@ function refreshStockInfo() {
 		return; // leave as we cannot use it
 	}
 	
-	$(".stockInfoTitle").replaceWith("<div class=\"stockInfoTitle\"> <p> " 
+	$(".stockInfoTitle").replaceWith("<div class=\"stockInfoTitle\"> <h3> " 
 		+ getStockNameByCode(stockObj.stockID) 
-		+ "(" + stockObj.stockID + ")</p><p>$" 
+		+ " (" + stockObj.stockID + ")</h3><h4>$" 
 		+ stockObj.currentPrice 
 		+ " (" + stockObj.percentChange + "%)" 
-		+ "</p></div>");
+		+ "</h4><br></div>");
+	
 	
 	$(".moreStockInfo").replaceWith("<div class=\"moreStockInfo\"> <p> "
 		+ "Current Ask Price: $" + stockObj.currentPrice + "</p><p>"
@@ -110,13 +112,13 @@ function refreshStockInfo() {
 		+ "Previous Close: " + stockObj.previousClose + "</p><p>"
 		+ "Price/Earnings Ratio: " + stockObj.peRatio + "</p><p>"
 		+ "Price/Earnings to Growth Ratio: " + stockObj.pegRatio + "</p><p>"
-		+ "Market Capitalisation: " + stockObj.marketCap + "</p></div>");
+		+ "Market Capitalisation: " + stockObj.marketCap + "</p><br></div>");
 	
+
 	$(".price").replaceWith("<div class=\"price\"> <p> Unit price: $" + stockObj.currentPrice + "</p></div>");
   	$(".stockID").replaceWith("<div class =\"stockID\"> <p>" + stockObj.stockID + "</p> </div>");
   	$(".stockName").replaceWith("<div class = \"stockName\"> <p>" + stockObj.stockName + "</p></div>");
-	$(".funds").replaceWith("<div class = \"funds\"> <p> You currently have $" 
-		+ window.user.availableFunds + " worth of funds available. How many units would you like to purcahse?</p></div>");
+	$(".funds").replaceWith("<div class = \"funds\"> <p> $"	+ window.user.availableFunds + "</p></div>");
 	// Plot the guage for the stuff...</br> style=\"font-size:12\"
 	//plotRatios();
 }

@@ -94,10 +94,11 @@ def getUser(name):
 	cursor = db.cursor()
 	cursor.execute('''SELECT * FROM users WHERE name = (?)''', (name,))
 	userinfo = cursor.fetchone()
-	db.close()
 	returninfo = []
-	for item in userinfo:
-		returninfo.append(str(item))
+	if userinfo is not None:
+		for item in userinfo:
+			returninfo.append(str(item))
+	db.close()
 	return returninfo
 
 def getAllUsers():

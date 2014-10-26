@@ -30,13 +30,13 @@ function makeRequestIndex(code, indexName){
  
     if(index.Change > 0) {
       //a = a + 'ui-icon-arrow-u">';
-      span = '<span style="color:green">';
+      span = '<span style="color:58DF8A">';
     } else if(index.Change == 0) {
       //a = a + 'ui-icon-minus">';
-      span = '<span style="color:black">';
+      span = '<span style="color:FFAA00">';
     } else {
       //a = a + 'ui-icon-arrow-d">';
-      span = '<span style="color:red">';
+      span = '<span style="color:FC2B2B">';
     }
     
     $("#indexes").append(indexName +"  "+ span + text + "   " +changeSpan + changeText +'</span>' +'</span><br/>');
@@ -68,13 +68,13 @@ function populateWatchlist() {
 
     if(stock.absChange > 0) {
       //a = a + 'ui-icon-arrow-u">';
-      span = '<span style="color:green">';
+      span = '<span style="color:58DF8A">';
     } else if(stock.absChange == 0) {
       //a = a + 'ui-icon-minus">';
       span = '<span style="color:FFAA00">';
     } else {
       //a = a + 'ui-icon-arrow-d">';
-      span = '<span style="color:red">';
+      span = '<span style="color:FC2B2B">';
     }
 
     $("#myWatchlist").append(li + a + span + text + '</span></a></li>');
@@ -94,7 +94,6 @@ function populateTotalPortfolio() {
     var totalValue = 0;
     for(var key in window.user.ownedStocks) {
       var stock = window.user.ownedStocks[key];
-      
       totalDiff += stock.getQuantity() * stock.absChange;
       totalValue += stock.getQuantity() * stock.currentPrice;
       console.log(stock.getQuantity() * stock.currentPrice);
@@ -114,7 +113,7 @@ function populateTotalPortfolio() {
     if(totalDiff > 0) {
       //a = a + 'ui-icon-arrow-u">';
       changeText = "+" + totalDiff.toFixed(2) + " (+" + weightedPercent.toFixed(2) + "%)";
-      span = '<span style="color:green">';
+      span = '<span style="color:58DF8A">';
     } else if(totalDiff == 0) {
       changeText = "=" + totalDiff.toFixed(2);
       //a = a + 'ui-icon-minus">';
@@ -122,11 +121,11 @@ function populateTotalPortfolio() {
     } else {
       changeText = totalDiff.toFixed(2) + " (" + weightedPercent.toFixed(2) + "%)";
       //a = a + 'ui-icon-arrow-d">';
-      span = '<span style="color:red">';
+      span = '<span style="color:FC2B2B">';
     }
     
-    $("#myPortfolioTotal").append("Total Portfolio   "+ span + text + "   " +changeSpan + changeText +'</span>' +'</span><br/>');
-    $("#myPortfolioTotalHome").append("Total Portfolio   "+ span + text + "   " +changeSpan + changeText +'</span>' +'</span><br/>');
+    $("#myPortfolioTotal").append("$"+ span + text + "   " +changeSpan + changeText +'</span>' +'</span><br/>');
+    $("#myPortfolioTotalHome").append("MY PORTFOLIO $"+ span + text + "   " +changeSpan + changeText +'</span>' +'</span><br/>');
  
 }
 
@@ -143,26 +142,27 @@ function populatePortfolio() {
   for(var key in window.user.ownedStocks) {
   
     var stock = window.user.ownedStocks[key];
-    var difference = stock.absChange;
-    var text = stock.stockID + " Difference: " + difference + " " + stock.percentChange + "%";
-
+    var difference = stock.absChange*stock.getQuantity();
+    var stockValue = stock.currentPrice*stock.getQuantity();
+    var text = getStockNameByCode(stock.stockID) +" (" + stock.stockID + ") ";
+    var valueText = "$"+ stock.currentPrice.toFixed(3)+"  $"+ stockValue.toFixed(3) +" $" + difference.toFixed(2) + "(" + stock.percentChange.toFixed(2) + "%)";
     var li = '<li class="portfolioRow ui-btn ui-btn-icon-right" id="' + stock.stockID + '">';
     var span = "";
 
-    var a = '<a href="#stockInfo" class="boughtStock ui-btn ui-btn-icon-right ui-icon-carat-r" ';              //Can change href to a popup window for selling stocks
+    var a = '<a href="#stockInfo" class="boughtStock ui-btn ui-btn-icon-right ui-icon-carat-r"> ';              //Can change href to a popup window for selling stocks
  
     if(stock.absChange > 0) {
       //a = a + 'ui-icon-arrow-u">';
-      span = '<span style="color:green">';
+      span = '<span style="color:58DF8A">';
     } else if(stock.absChange == 0) {
       //a = a + 'ui-icon-minus">';
       span = '<span style="color:FFAA00">';
     } else {
       //a = a + 'ui-icon-arrow-d">';
-      span = '<span style="color:red">';
+      span = '<span style="color:FC2B2B">';
     }
 
-    $("#myPortfolio").append(li + a + span + text + '</span></a></li>');
+    $("#myPortfolio").append(li + a + text + span + valueText + '</span></a></li>');
     
   }
 
