@@ -156,6 +156,7 @@ function buyWatchStock(stockID, state,qty){
 function checkLogin() {
 	console.log("Login submit has been clicked");
   	var userStored=false;
+  	var error=false;
   	try {
   		var temp=store.get('user');
   		if (temp.userName == $('#nameLogin').val() && temp.password == $('#passwordLogin').val() ) {
@@ -163,46 +164,57 @@ function checkLogin() {
   			console.log("User is stored!");
   			$.mobile.changePage("#home");
   			userStored=true;
+  			refreshStocks();
   		}
   		else {
-  			console.log("Entered data is incorrect");
-  		 	$("#loginError").replaceWith("<div id = \"loginError\"> <p> Username or Password is incorrect ! </p></div> " );
-  			$.mobile.changePage("#login");
-  		}
+	   		console.log("Entered data does not match local data --> try the server");
+   		}
   	}
   	catch (error) {
   		console.log("Error is" + error);
   		console.log("User object is not defined");
-  		$.ajaxSetup({
-			async:false
-		}); // user object is not defiend, we want the login to be asynchronous...
   	}
   	
-  	// update the user object...
-	$.getJSON(DEVSERVER_URL + "/login/" + $('#nameLogin').val() + "/" + $('#passwordLogin').val(), function(data) {
-        console.log("Recieved user object is -- TODO - implement converting this to window.user object ....");
-        console.log(data);
-        // Update the user object....
-        //initUser(data);
-        $.ajaxSetup({
-			async:true
-		});
-		// if (!userStored) {
-//         	$.mobile.changePage("#home");
-//         }
-    })
-    .fail(function() {
-    	console.log("Can't reach server ...!");
-    	$("#loginError").replaceWith("<div id = \"loginError\"> <p> Unable to Contact the Server! </p></div> " );
-    	$.ajaxSetup({
-			async:true
-		});
-    });
-    
-    // make sure all ajax calls from here on in are asynchronous
-    $.ajaxSetup({
-		async:true
-	});
+  	// update the user object...only if local version does not exist...
+  	// As THomas said on saturday, if object stored locally then assume local is good
+    // if not stored locally then set user object as remote object if successful
+  	if (!userStored){
+
+		$.getJSON(DEVSERVER_URL + "/login/" + $('#nameLogin').val() + "/" + $('#passwordLogin').val(), function(data) {
+        	console.log("Recieved user object is -- TODO - implement converting this to window.user object ....");
+        	console.log(data);
+	
+        	// Update the user object if it is not currently stored locally...
+        	// could also update from server, but right now trust the local more than the server
+        	// less likely to break when we demo...
+        	if (data=="none") {
+        		console.log("Login is invalid!! - no user data is recieved");
+        		$("#loginError").replaceWith("<div id = \"loginError\"> <p> Username or Password is incorrect ! Try again please</p></div> " );
+	   			$.mobile.changePage("#login");
+        	}
+        	else { // we have a valid user object...
+        		try {
+        			var help=jQuery.parseJSON(data);
+        			initUser(help);
+        			console.log("User Object is:");
+        			console.log(window.user);
+        			$.mobile.changePage("#home");
+        			refreshStocks();
+        		}
+        		catch (err) {
+        			console.log("error in parsing remote server user object - " + err);
+        			$("#loginError").replaceWith("<div id = \"loginError\"> <p> Server Problem. Please try again...</p></div> " );
+    				$.mobile.changePage("#login");
+        		}
+        	}
+    	})
+    	.fail(function() {
+    		console.log("Can't reach server ...!");
+    		$("#loginError").replaceWith("<div id = \"loginError\"> <p> Unable to Contact the Server! Try again please or/and check your internet connection.... </p></div> " );
+    		$.mobile.changePage("#login");
+    	});
+    }
+
 }
 
 
@@ -347,6 +359,7 @@ $(document).ready (function(){
 	$('.logout').click(function() {
 		window.user.loggedIn=false;
 		window.user.save();
+		window.user={};// make the window user object empty
 	});
 	
 	$(".sellStock").click(function() {

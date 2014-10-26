@@ -54,9 +54,8 @@ def metricData(code, numDays, filterlength, alpha) :
 	r('data.trend <- data.ts/max(data.ts)')
 	trend = r['data.trend']
 
-	return json.dumps((list(dates),(list(rawdata), list(sma), list(ema), list(trend)))
+	return json.dumps((list(dates),(list(rawdata), list(sma), list(ema), list(trend))))
 
 if __name__ == "__main__":
-   str = metricData("WOW.AX", 9, 3, 0.3)
-   print str
-
+	str = metricData("WOW.AX", 9, 3, 0.3)
+	print str
