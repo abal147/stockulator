@@ -8,27 +8,11 @@ function makeRequest(code){
   $.getJSON(DEVSERVER_URL + "/data/" + code, function(data) {
   	//console.log("Data is:\n" + JSON.stringify(data));        
 
-  	var table = document.getElementById("myTable");
-   
-	  //Clean out the rows from a previous search if any
-    var rowCount = table.rows.length;
-    while(rowCount > 0) {
-      table.deleteRow(-1);
-      rowCount--;
-    }
         
     //String formatting
    
-        
-   
-    setCurrentStockObject (data);
+    setCurrentStockObject(data);
     
-    $.each(data, function(index, item) {
-      tr = $('<tr>');
-      tr.append('<td>' + index + '</td>');
-      tr.append('<td>' + item + '</td>');
-      $("#myTable").append(tr);
-    })
   });
 } 
 
