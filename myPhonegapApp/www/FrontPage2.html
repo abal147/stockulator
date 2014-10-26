@@ -262,7 +262,7 @@
 					      <label for="slider">Sell Qty:</label>
 	 				      <input type="range" name="sellSliderVal" id="sellSliderVal" class = "slider" value="0" min="0" max="1000" data-highlight="true"  />
 				     </div>
-     		    </div>    var rowCount = table.rows.length;
+     		    </div>
   			  </form>
   			<div class = "sellCost"> <p> Money : $0.00 </p></div>
     		<a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" data-rel="back">Cancel</a>
@@ -392,9 +392,15 @@
 		<ul data-role="listview" data-filter="true" id="findFriends" data-filter-placeholder="Search users..." data-inset="true" data-filter-reveal="true">
 		</ul>
 
-		<a href="#friendRequests" id = "showFriendRequests" data-rel="popup" data-position-to="window" data-transition="pop" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b">Friend Requests</a>
-		<a href="#friendList" id = "showFriendList" data-rel="popup" data-position-to="window" data-transition="pop" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b">Friends</a>
-
+		<div data-role="collapsible">
+			<h1>Friend Requests</h1>
+			<ul data-role="listview" id="requestList" class="friendlistview">
+			</ul>
+		</div>
+		<!--<a href="#friendRequests" id = "showFriendRequests" data-rel="popup" data-position-to="window" data-transition="pop" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b">Friend Requests</a>-->
+		
+		<!--<a href="#friendList" id = "showFriendList" data-rel="popup" data-position-to="window" data-transition="pop" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b">Friends</a>-->
+		<h1>Your Friends</h1>
 		<ul data-role="listview" id="myFriends" data-inset="true" data-split-icon="minus">
 		</ul>
 
