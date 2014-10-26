@@ -110,7 +110,7 @@ function handleNameSearch(e){
         for any match, return that row
     */
     
-    for (var i = 3; i < ASXcodes.length; ++i) {
+    for (var i = 1; i < ASXcodes.length; ++i) {
         if (re.test(ASXcodes[i].toUpperCase())) {
             var stock = ASXcodes[i].split(",");
 
@@ -144,12 +144,10 @@ function handleNameSearch(e){
 }
 
 function refreshASXCodes() {
-    //console.log("Step1");
-
     var grabbed = false;
-    //console.log("Step1");
+
     var lines = localStorage.getItem("stockCSV");
-    //console.log("Step1");
+
     if (lines == null) {
         // If there is no stored list, grab it
         grabASXCodes();
@@ -196,7 +194,7 @@ function grabASXCodes() {
 
     $.getJSON(DEVSERVER_URL + "/asxcodes"
         , function(data) {
-
+/*
             var lines = data["data"].split("\n");
             for (var i = 1; i < lines.length; ++i) {
                 var stock = lines[i].split(",");
@@ -207,8 +205,8 @@ function grabASXCodes() {
             data = lines.join("\n");
 
             //console.log(data);
-
-            localStorage.setItem("stockCSV", data);
+*/
+            localStorage.setItem("stockCSV", data['data']);
         }
     );
 }
@@ -218,3 +216,20 @@ filterStockCodes = function (text, searchVal) {
     return false;
 }
 
+
+getStockNameByCode = function(code) {
+
+    var line = localStorage.getItem('stockCSV');
+    if (line == null) {
+        return "Invalid ASX Code";
+    }
+    var lines = line.split('\n');
+
+    for (var i = 1; i < lines.length; ++i) {
+        var info = lines[i].split(',');
+        if (info[1] == code.toUpperCase()) {
+            return info[0];
+        }
+    }
+    return "Invalid ASX Code";
+}

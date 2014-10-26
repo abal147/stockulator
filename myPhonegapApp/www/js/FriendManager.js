@@ -27,12 +27,60 @@ $(document).on("click", "#friendLink", function(){
 	var friend = $(this).attr("value");
 	console.log(friend);
 
+	$("#friendList").popup("close");
+	$('#friendFolio').popup("open");
+
+	$('#friendFolioHeader').text(friend + "'s Portfolio");
+
 	$.getJSON(DEVSERVER_URL + "/getportfolio/" + friend
 		, function(portfolio) {
 			console.log(portfolio);
 		}
+	);
+});
+
+
+
+$(document).on('click', '#requestFriendConfirm', function(){
+
+	friend = localStorage.getItem('pendingRequest');
+	console.log('reqqing ' + friend);
+
+	$.getJSON(DEVSERVER_URL + '/reqfriend/' + window.user.userName + '/' + friend
+		, function() {}
+	);
+
+	$('input[data-type="search"]').val('');
+	$('input[data-type="search"]').trigger('keyup');
+	$('input[data-type="search"]').val(localStorage.getItem('lastFriendSearch'));
+	$('input[data-type="search"]').trigger('keyup');
+});
+
+$(document).on("click", "#deleteFriend", function() {
+	var friend = $(this).attr("value");
+
+	localStorage.setItem('pendingDelete', friend);
+
+	$('#confirmDelete').popup('open');
+
+	$('#confirmDeleteMessage').text('Unfriend ' + friend + '?');
+});
+
+$(document).on("click", '#deleteFriendConfirm', function() {
+	var friend = localStorage.getItem('pendingDelete');
+
+
+	$.getJSON(DEVSERVER_URL + '/rmfriendo/' + window.user.userName + '/' + friend
+		, function(data) {
+			console.log(DEVSERVER_URL + '/rmfriendo/' + window.user.userName + '/' + friend);
+		}
 
 	);
+
+	populateRequests();
+	populateFriends();
+
+	console.log(friend + " got rekt");
 });
 
 function setupFriends() {
@@ -41,7 +89,7 @@ function setupFriends() {
 	if (window.user == undefined) {
 		console.log("ERROR: USER NOT DEFINED");
 		var object = new Object();
-		object.userName = "bob";
+		object.userName = "mark";
 		window.user = object;
 		//return
 	}
@@ -86,15 +134,12 @@ function setupFriends() {
 
 		friend = $(this).attr("value");
 
-		$.getJSON(DEVSERVER_URL + "/reqfriend/" + window.user.userName + "/" + friend
-			, function(data) {}
+		localStorage.setItem('pendingRequest', friend);
 
-		);
+		$('#confirmRequestMessage').text("Friend " + friend + "?");
 
-		$('input[data-type="search"]').val('');
-		$('input[data-type="search"]').trigger("keyup");
-		$('input[data-type="search"]').val(localStorage.getItem("lastFriendSearch"));
-		$('input[data-type="search"]').trigger("keyup");
+		$('#confirmRequest').popup('open');
+
 	});
 /*
 	$(document).on('click', '#findFriends li a', function (info) {
@@ -109,17 +154,16 @@ function setupFriends() {
 	    	, function(data) {}
 	    );
 	});
+
 */
+	setInterval(function() {populateFriends()}, 30000);
+	setInterval(function() {populateRequests()}, 30000);
 	console.log("FRIENDS ALL INSTANTIATED");
 }
 
 function populateFriends() {
 	var friends = ['aaron', 'eddy', 'jess', 'lindsay', 'thomas'];
 	//friends = [];
-
-	var serverURL = "http://ec2-54-66-137-0.ap-southeast-2.compute.amazonaws.com:8080";//getfriends/bob";
-
-	console.log(serverURL + "/" + window.user.userName);
 
 	$.getJSON(DEVSERVER_URL + "/getfriends/" + window.user.userName
 		, function(friends) {
@@ -138,7 +182,7 @@ function populateFriends() {
 			} else {
 				for (var i = 0; i < friends.length; ++i) {
 					var current = "";
-					current += '<li id="friendLink" value="' + friends[i] + '">' + friends[i] + '</li>';
+					current += '<li><a id="friendLink" value="' + friends[i] + '">' + friends[i] + '</a><a id="deleteFriend" value="' + friends[i] + '"></a></li>';
 
 					friendHTML += current;
 				}

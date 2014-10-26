@@ -166,14 +166,20 @@ function createUserFromData(userName,firstName,secondName,email,password){
 	
 	// 3. Get the window user...
 	window.user=user;
+	window.user.loggedIn=true;
 	
 	// 4. Let the server know that we have created a new user...
 	var output = user.userName + "," + user.email + "," + user.password;
 	
-	//$.getJSON("http://0.0.0.0:8080/addUser/" + output, function(data) {
 	$.getJSON(DEVSERVER_URL +"/addUser/"  + output, function(data) {
-	
-        	console.log("User added successfully!");
+			if (data == "no") {
+				console.log("User not added successfully");
+				alert("Error - the user already exists..please try again!");
+				$.mobile.changePage("#signup");
+			}
+			else {
+        		console.log("User added successfully!");
+        	}
     })
     .fail(function() {
     	console.log("Can't reach server ...fuck!");
@@ -194,7 +200,7 @@ function sellStock(stockID,quantity,price) {
 		}
 		else {
 			// lets just assume they want to sell everything
-			console.log("Fuck it ,... lets sell it all");
+			console.log("lets sell it all");
 			addStockToUser(stockID,stockID,-quantity,price,0,1);
 			
 			// Move stock from ownedList to sold list
@@ -203,6 +209,7 @@ function sellStock(stockID,quantity,price) {
 			window.user.soldStocks[stockID]=helper; // append to the sold stock list...
 		}
     window.user.availableFunds += (quantity * price);
+
 		//Send transaction to server
 		window.user.updateServer(stockID, quantity, price, SELL_STOCK);
 	}
@@ -212,7 +219,7 @@ function sellStock(stockID,quantity,price) {
 	refreshStocks();
 }
 
-function addStockToUser (stockID,stockName,quantity,price,targetPrice,state){
+function addStockToUser (stockID,stockName,quantity,price,upperTargetPrice,lowerTargetPrice,state){
 // This function will add a given stock to our user object
 // State determines if the stock is bought = 1 , or watching = 0
 	// 1. Check if stock already exists in user object
@@ -242,6 +249,9 @@ function addStockToUser (stockID,stockName,quantity,price,targetPrice,state){
 				tempStock.currentPrice=window.myStockObj.currentPrice;
 				tempStock.previousClose=window.myStockObj.previousClose;
 				tempStock.earningShare=window.myStockObj.earningShare;
+				tempStock.currentBid=window.myStockObj.currentBid;
+				tempStock.absChange=window.myStockObj.absChange;
+				tempStock.percentChange=window.myStockObj.percentChange;
 				window.user.addStock(tempStock,state);
 			}
 			else {
@@ -249,9 +259,10 @@ function addStockToUser (stockID,stockName,quantity,price,targetPrice,state){
 				console.log("Stock already watched");
 			}
 		}
-		else {	
+		else {
+		  //Add the stock to the watchlist	
 			console.log("Fuck this shit....!!! - where is my fucking stockobj");
-			var tempStock = new Stock(stockID,stockName,quantity,price,targetPrice);
+			var tempStock = new Stock(stockID,stockName,quantity,price,upperTargetPrice,lowerTargetPrice);
 			// Update Stock Data with Data from current stockObject
 			tempStock.pegRatio=window.myStockObj.pegRatio;
 			tempStock.marketCap=window.myStockObj.marketCap;
@@ -260,7 +271,9 @@ function addStockToUser (stockID,stockName,quantity,price,targetPrice,state){
 			tempStock.currentPrice=window.myStockObj.currentPrice;
 			tempStock.previousClose=window.myStockObj.previousClose;
 			tempStock.earningShare=window.myStockObj.earningShare;
-			
+			tempStock.currentBid=window.myStockObj.currentBid;
+			tempStock.absChange=window.myStockObj.absChange;
+			tempStock.percentChange=window.myStockObj.percentChange;
 			// 2. Append to the correct user dict
 			window.user.addStock(tempStock,state);
 		}
@@ -274,6 +287,26 @@ function deleteStock(stockID) {
   delete window.user.watchedStocks[stockID];
   refreshStocks();
   window.user.save();
+}
+
+function pullUserObject (userName,password) {
+	// Get user object from server and store here...
+	$.getJSON(DEVSERVER_URL +"/login/"  + userName + "/" + password, function(data) {
+	
+        	console.log("User Object from server is:");
+        	console.log(data);
+        	if (localStorage.getItem('user') == null) {
+        		localStorage.setItem('user', JSON.stringify(data));
+        	}
+        	
+        	// Set the user object to be this and continue as normal....
+        	
+    })
+    .fail(function() {
+    	console.log("Can't reach server ... when retrieveing user object!");
+    	retval=false;
+    });
+
 }
 // ------------------------------------------------------------ 
 
@@ -290,73 +323,149 @@ function deleteStock(stockID) {
 function attachUserMethods(userObject) {
 // This function will attach appropriate methods to the user...
 
-
 	userObject.upDate = function() {
-    // console.log('Update our user');
-    // Function used by user object to update ....
-    // Question : since prototype, should we perhaps define this after pulling object from store.js ...
-    // TODO : need to create some kind of backend call suitable for getting the data for a user...
 
-
-    //Update current price of stocks in portfolio
-    var code = "";
-    for(var stock in this.ownedStocks) {
-     code = code + this.ownedStocks[stock].stockID + " ";
-    }
-
-    if(code != "") {  //Skip if no stocks in portfolio
-      //console.log("Code is: " + code);
-      $.getJSON(DEVSERVER_URL + "/price/" + code, function(data) {
-        console.log("Portfolio data is:\n" + JSON.stringify(data));
-
-         if(data[0]) {  //There is more than one stock queried so it has been wrapped in a key-index array
-           var i = 0;
-           for(stock in this.ownedStocks) {
-             //console.log(">>>>>>>>" + data[i].AskRealtime);
-             this.ownedStocks[stock].currentPrice = data[i].AskRealtime;
-             i++;
-           }  
-         } else {  //Only one stock was queried
-           for(stock in window.user.ownedStocks) { //Use for loop to get the key
-             this.ownedStocks[stock].currentPrice = data.AskRealtime;
-           } 
-         }
-      });
-    }
-     
- 
-    //Update current price of stocks in watchlist
-   	code = "";
-    for(var stock in this.watchedStocks) {
-     code = code + this.watchedStocks[stock].stockID + " ";
-    }
- 		//console.log("Code is: " + code);
-
-    if(code != "") {  //Skip if watchlist is empty
+		// console.log('Update our user');
+// 		// Function used by user object to update ....
+// 		// Question : since prototype, should we perhaps define this after pulling object from store.js ...
+// 		// TODO : need to create some kind of backend call suitable for getting the data for a user...
+// 
+// 
+//     //Update current price of stocks in portfolio
+     var code = "";
+     for(var stock in this.ownedStocks) {
+       code = code + this.ownedStocks[stock].stockID + " ";
+     }
+ 		console.log("Code is: " + code);
+    if (code != "") {
    		$.getJSON(DEVSERVER_URL + "/price/" + code, function(data) {
-     	  console.log("Watchlist data is:\n" + JSON.stringify(data));
-   
-         if(data[0]) { //There is more than one stock queried so it has been wrapped in a key-index array
-           var i = 0;
-           for(stock in this.watchedStocks) {
-             //console.log(">>>>>>>>" + data[i].AskRealtime);
-             this.watchedStocks[stock].currentPrice = data[i].AskRealtime;
-             i++;
-           }  
-         } else {  //Only one stock was queried
-           for(stock in this.watchedStocks) { //Use for loop to get the key
-             this.watchedStocks[stock].currentPrice = data.AskRealtime;
-           }
-         }   
+     	  console.log("Portfolio data is:\n" + JSON.stringify(data));
+
+         
+        if(data[0]) {  //There is more than one stock queried so it has been wrapped in a key-index array
+         var i = 0;
+         for(stock in window.user.ownedStocks) {
+           //console.log(">>>>>>>>" + data[i].AskRealtime);
+           window.user.ownedStocks[stock].currentPrice = parseFloat(data[i].AskRealtime);
+           window.user.ownedStocks[stock].currentBid = parseFloat(data[i].BidRealtime);
+           window.user.ownedStocks[stock].previousClose = parseFloat(data[i].PreviousClose);
+           window.user.ownedStocks[stock].absChange = parseFloat(data[i].Change);
+           window.user.ownedStocks[stock].percentChange = parseFloat(data[i].PercentChange);
+           i++;
+         }  
+       } else {  //Only one stock was queried
+         for(stock in window.user.ownedStocks) { //Use for loop to get the key
+           window.user.ownedStocks[stock].currentPrice = parseFloat(data.AskRealtime);
+           window.user.ownedStocks[stock].currentBid = parseFloat(data.BidRealtime);
+           window.user.ownedStocks[stock].previousClose = parseFloat(data.PreviousClose);
+           window.user.ownedStocks[stock].absChange = parseFloat(data.Change);
+           window.user.ownedStocks[stock].percentChange = parseFloat(data.PercentChange);
+         } 
+        }
+         
      	});
-    } 
+   	}
+
+    //Update current price of stocks in watchlist
+  	code = "";
+    for(var stock in this.watchedStocks) {
+      code = code + this.watchedStocks[stock].stockID + " ";
+    }
+		//console.log("Code is: " + code);
+
+    if(code != "") {
+		  $.getJSON(DEVSERVER_URL + "/price/" + code, function(data) {
+    	  console.log("Watchlist data is:\n" + JSON.stringify(data));
+
+        if(data[0]) { //There is more than one stock queried so it has been wrapped in a key-index array
+          var i = 0;
+          for(stock in window.user.watchedStocks) {
+            //console.log(">>>>>>>>" + data[i].AskRealtime);data.PEGRatio
+             window.user.watchedStocks[stock].currentPrice = parseFloat(data[i].AskRealtime);
+             window.user.watchedStocks[stock].currentBid = parseFloat(data[i].BidRealtime);
+             window.user.watchedStocks[stock].previousClose = parseFloat(data[i].PreviousClose);
+             window.user.watchedStocks[stock].absChange = parseFloat(data[i].Change);
+             window.user.watchedStocks[stock].percentChange = parseFloat(data[i].PercentChange);
+
+             //Change watchlist icon to alert if a target price is reached
+             if(window.user.watchedStocks[stock].currentPrice > window.user.watchedStocks[stock].upperTargetPrice) {
+               $(".watchlistNavButton").attr("data-icon", "alert");
+               $(".watchlistNavButton").attr("data-theme", "b");               
+               $(".watchlistNavButton").removeClass("ui-icon-star");
+               $(".watchlistNavButton").addClass("ui-icon-alert");
+               $(".watchlistNavButton").addClass("ui-btn-b");               
+             } else if(window.user.watchedStocks[stock].currentPrice < window.user.watchedStocks[stock].lowerTargetPrice) {
+               $(".watchlistNavButton").attr("data-icon", "alert");
+               $(".watchlistNavButton").attr("data-theme", "b"); 
+               $(".watchlistNavButton").removeClass("ui-icon-star");
+               $(".watchlistNavButton").addClass("ui-icon-alert");
+               $(".watchlistNavButton").addClass("ui-btn-b");                
+             }
+             i++;
+          }  
+        } else {  //Only one stock was queried
+          for(stock in window.user.watchedStocks) { //Use for loop to get the key
+             window.user.watchedStocks[stock].currentPrice = data.AskRealtime;
+             window.user.watchedStocks[stock].currentBid = data.BidRealtime
+             window.user.watchedStocks[stock].previousClose = data.PreviousClose;
+             window.user.watchedStocks[stock].absChange = data.Change;
+             window.user.watchedStocks[stock].percentChange = data.PercentChange;
+
+             if(window.user.watchedStocks[stock].currentPrice > window.user.watchedStocks[stock].upperTargetPrice) {
+               $(".watchlistNavButton").attr("data-icon", "alert");
+               $(".watchlistNavButton").attr("data-theme", "b"); 
+               $(".watchlistNavButton").removeClass("ui-icon-star");
+               $(".watchlistNavButton").addClass("ui-icon-alert");
+               $(".watchlistNavButton").addClass("ui-btn-b");
+             } else if(window.user.watchedStocks[stock].currentPrice < window.user.watchedStocks[stock].lowerTargetPrice) {
+               $(".watchlistNavButton").attr("data-icon", "alert");
+               $(".watchlistNavButton").attr("data-theme", "b"); 
+               $(".watchlistNavButton").removeClass("ui-icon-star");
+               $(".watchlistNavButton").addClass("ui-icon-alert");
+               $(".watchlistNavButton").addClass("ui-btn-b");               
+             }
+             
+          }
+
+        }
+           
+    	});
+    }  	
     refreshStocks();
 	}
 
 	
 	userObject.save = function(){ // function used to save this object to memory...
 		console.log('Save our user');
+		
+		// 1. Store Locally...
 		store.set('user',this);
+		var temp= store.get('user');
+
+		// 2. Write the user object to the server
+		$.ajax({
+        	url: DEVSERVER_URL + "/updateUser",
+        	type: "POST",
+        	data: {user:JSON.stringify(temp),userName:temp.userName,password:temp.password},
+        	beforeSend: function(x) {
+          		if (x && x.overrideMimeType) {
+            		x.overrideMimeType("application/j-son;charset=UTF-8");
+          		}
+        	},
+        	success: function(result) {
+          		console.log("Success! User data successfully sent to server" + result);
+        	}
+      	});
+		
+		// $.getJSON(DEVSERVER_URL +"/updateUser/"  + this.userName + "/" + this.password + "/" + JSON.stringify(this), function(data) {
+// 	
+//         	console.log("User added successfully!");
+//     	})
+//     	.fail(function() {
+//     		console.log("Can't reach server ...!");
+//     		retval=false;
+//     	});
+		
 	// TODO perhaps figure out how this can be triggered everytime a change occurs to this object...?
 	}
 	userObject.addStock = function (stockObject,state) {
@@ -400,19 +509,27 @@ function attachUserMethods(userObject) {
 	userObject.updateServer = function(stockID, quantity, price, state){
 	// This function updates the server when transactions are made
 
-	  //console.log("user object to be sent is: " + JSON.stringify(this));
-
-    var transactionData = "";
-
     if(state == BUY_STOCK) {
       //The commented one is plain object format
 	    //var transactionData = '{"username:"' + this.userName + '", "stockID:"' + stockID 
 	    //  + '", "originalPrice:"' + price + '", "amount:"' + quantity + '"}'; 
 
       //This one is just string format delimited by commas
-      transactionData = this.userName + ", " + stockID + ", " + price + ", " + quantity;
-    } else if(state == SELL_STOCK) {
-      transactionData = this.userName + ", " + stockID + ", " + price + ", " + (-quantity);
+      var transactionData = this.userName + ", " + stockID + ", " + price + ", " + quantity;
+      
+	    $.ajax({
+        url: DEVSERVER_URL + "/update",
+        type: "POST",
+        data: {transaction: transactionData,userName:this.userName,password:this.password},
+        beforeSend: function(x) {
+          if (x && x.overrideMimeType) {
+            x.overrideMimeType("application/j-son;charset=UTF-8");
+          }
+        },
+        success: function(result) {
+          console.log("Success!" + result);
+        }
+      });
     }
 
     console.log("Transaction data to send is: " + transactionData);         
@@ -449,6 +566,8 @@ function attachStockMethods(stockObject){
 		// NB - assuming current price is correct....
 		// Check that current price is correct
 	}
+
+
 	
 	stockObject.getProfit=function(){
 		var out=0;
@@ -505,12 +624,14 @@ function userObj (userName,firstName,lastName,email,password) {
 	this.ownedStocks = {}; // associative array of owned stock objects
 	this.watchedStocks = {}; // associative array of watching stocks
 	this.soldStocks = {}; // store the sold stocks here for reference....
+	this.loggedIn=true; // boolean to store whether a user is logged in or not
+	this.portfolioValue = 0;
 	attachUserMethods(this); // attach the user methods to this object..
 }
 
 // 2. Stock Object
 // had to do a name change for some reason as shit was fucking up...
-function Stock (stockID,stockName,quantity,price,targetPrice) {
+function Stock (stockID,stockName,quantity,price,upperTargetPrice,lowerTargetPrice) {
 	this.stockID=stockID;
 	this.stockName = stockName;
 	// Implementing quantity, purchaseDate and purchasePrice as corresponding 
@@ -519,8 +640,8 @@ function Stock (stockID,stockName,quantity,price,targetPrice) {
 	this.purchaseDate = [new Date().getTime()]; // epoch time in ms
 	this.purchasePrice=[price];  // list of purchase prices corresponding to dates
 	this.currentPrice=price;
-  	this.targetPrice=targetPrice;   //Used for watchlist.. i.e watch/alert when it reaches/ goes above or below target price
-  	this.targetDirection = true; // true for greater than target price, false for below target price...
+  this.upperTargetPrice=upperTargetPrice;   //Used for watchlist.. i.e watch/alert when it reaches/ goes above or below target price
+  this.lowerTargetPrice=lowerTargetPrice; true; // true for greater than target price, false for below target price...
 	
 	// I have decided to put these metrics into the object
 	// perhaps saves a bit of redundancy...??
@@ -529,6 +650,9 @@ function Stock (stockID,stockName,quantity,price,targetPrice) {
 	this.marketCapitalisation = 0;
 	this.previousClose=0;
 	this.earningShare=0;
+	this.currentBid=0;
+	this.absChange=0;
+	this.percentChange=0;
 	
 	//var historicalData=null; // private variable...
 	// historical data remains undefined until it is pulled for that stock
@@ -566,53 +690,45 @@ $(function() {
 	// 1. Check to see if the user is defined for this application... if not then
 	try {
 		// 2. Load Stored user data
-		window.user = store.get('user');
+		var help = store.get('user');
 		
-		// 3. plot the pie chart
-		//plotPieChart("Breakdown",window.user.ownedStocks);
-		
-		// a. Attach user methods to user Object
-		attachUserMethods(window.user);
-		
-		// b. Attach Stock Methods to the stock Objects ..
-		for (var index in window.user.ownedStocks) {
-			attachStockMethods(window.user.ownedStocks[index]); // attach the stock methods..
+		// 3. Check that the user is logged in
+		if (!help.loggedIn) {
+			store.remove('currStock');
+			$.mobile.changePage("#login"); // lets switch to the login page....
 		}
-		for (var index in window.user.watchedStocks) {
-			attachStockMethods(window.user.watchedStocks[index]); // attach the stock methods..
-		}
-		console.log("User object is :");
-		console.log(window.user);
+		else {
+			window.user = store.get('user');
+			// a. Attach user methods to user Object
+			attachUserMethods(window.user);
 		
-		if (window.user == null) {
-			throw "undefined user";
-		} 
-		plotPieChart("Breakdown",window.user.ownedStocks);
-/*
-		// 3. Begin Update Process ...
-			// TODO - call the server and update our user object...
-	  var id = window.user.userName;
-	  var pw = window.user.password;    //May need to hash password earlier on
-		$.post(DEVSERVER_URL + "/getUser/", {username:id, password:pw}, function(data) {
-      console.log("Data from server about our user object is: " + data);
-      //TODO - not sure if this works yet
-    });
-*/
+			// b. Attach Stock Methods to the stock Objects ..
+			for (var index in window.user.ownedStocks) {
+				attachStockMethods(window.user.ownedStocks[index]); // attach the stock methods..
+			}
+			for (var index in window.user.watchedStocks) {
+				attachStockMethods(window.user.watchedStocks[index]); // attach the stock methods..
+			}
+			console.log("User object is :");
+			console.log(window.user);
+		
+			if (window.user == null) {
+				throw "undefined user";
+			} 
+			plotPieChart("Breakdown",window.user.ownedStocks);
+		}
+
 	}
 	catch (err) {
 		console.log("Error is: " + err);
 		console.log("Change page!");
 		//if (err.match("undefined user")) {
 			// Error is from undefined user - switch to new user div...
+		store.clear();
 		$.mobile.changePage("#signup"); // lets switch to the signup page...
-		//}
-		//else {
-			// not entirely sure what has gone wrong
-		//	console.log("Well that's fucked ! Error is not known (yet)");
-		//}
 	}
 	
-    refreshASXCodes();
+   refreshASXCodes();
     
     var codes = ["#searchStock", "#searchStock2", "#searchStock3", "#searchStock4"];
 
@@ -658,7 +774,7 @@ $(function() {
 	        var source = $(this).closest("li").attr("data-chapter");
 			
 			// Simple fix
-			source=source.substring(0,source.length-3); // trim of double .AX
+			//source=source.substring(0,source.length-3); // trim of double .AX
 			
 	        makeRequest(source);
 	        setCurrentStock(source);

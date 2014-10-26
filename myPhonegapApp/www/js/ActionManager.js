@@ -8,19 +8,13 @@ var WATCH_STOCK = 0;
 var BUY_STOCK = 1;
 var MODIFY_STOCK = 2;
 var SELL_STOCK = 3;
+
 var DEVSERVER_URL = "http://ec2-54-79-50-63.ap-southeast-2.compute.amazonaws.com:8080";
-var AARONSERVER_URL = "http://ec2-54-66-137-0.ap-southeast-2.compute.amazonaws.com:8080";
+//var AARONSERVER_URL = "http://ec2-54-66-137-0.ap-southeast-2.compute.amazonaws.com:8080";
 //var DEVSERVER_URL = "http://0.0.0.0:8080";
 
 function handle(e, code){
  	if(e.keyCode === 13){
- 	// TODO - change this to focus etc...
- 	// Also, change to be more of the jquery style etc...
- 		// code = $("#search-3").val();
-// 		console.log("Handler: Code is:" + code );
-// 		setCurrentStock($("#search-3").val());
-// 		plotData(code,300); // lets plot data from the last 300 days for the code...
-// 		makeRequest(code); // call eddies script to make the request..
 		console.log("Code is:" + code);
 		setCurrentStock(code);
 		window.location.href = "#stockInfo";    //redirects to stockInfo page
@@ -31,22 +25,41 @@ function handle(e, code){
 }
 
 function changeButtons (stockName) {
-	if (stockName in window.user.ownedStocks) { // Check that this is correct
+	try {
+		if (stockName in window.user.ownedStocks) { // Check that this is correct
 			// Stock is defined....if it is 
 			console.log("Stock is already owned");
 			$('#sellButton').removeClass('ui-disabled');
 			$('#watchButton').addClass('ui-disabled');
-	}
-	else if (stockName in window.user.watchedStocks) {
+		}
+		else if (stockName in window.user.watchedStocks) {
 			console.log("Stock is watched");
 			$('#watchButton').addClass('ui-disabled');
 			$('#sellButton').addClass('ui-disabled');
-	}
-	else {
+		}
+		else {
 			console.log("Stock is neither watched nor owned");
 			$('#sellButton').addClass('ui-disabled');
 			$('#watchButton').removeClass('ui-disabled');	
+		}
 	}
+	catch (err) {
+		console.log("error - unable to update the buttons");
+	}
+}
+
+function initUser(userObj) {
+// Function will completely initialise a user object for use
+	  	window.user=userObj;
+	  	window.user.loggedIn=true;
+  		attachUserMethods(window.user);
+  		for (var index in window.user.ownedStocks) {
+			attachStockMethods(window.user.ownedStocks[index]); // attach the stock methods..
+		}
+		for (var index in window.user.watchedStocks) {
+			attachStockMethods(window.user.watchedStocks[index]); // attach the stock methods..
+		}
+  		window.user.save();
 }
 
 function refreshStocks() {
@@ -55,15 +68,21 @@ function refreshStocks() {
 		// Refresh the stock pie chart breakdown with bought data...
 		plotPieChart('Stock Breakdown',window.user.getStocks(1));
 
-    // Refresh watchlist
-    populateWatchlist();
+    	// Refresh watchlist
+    	populateWatchlist();
 
     // Refresh portfolio
     populatePortfolio();
 
+    //Refresh value
+    $(".valueText").html("             Value: $" + parseFloat(window.user.portfolioValue + window.user.availableFunds).toFixed(2)); 
+
     //Refresh balance - bit of a dirty fix for positioning
-    $(".balanceText").html("Balance: $" + window.user.availableFunds + "                       ");
-	
+
+    $(".balanceText").html("Balance: $" + parseFloat(window.user.availableFunds).toFixed(2) + "                       ");
+    
+    	// Make sure that the buttons have changed...
+    	changeButtons();
 		window.user.save();
 	}
 }
@@ -78,11 +97,27 @@ function refreshStockInfo() {
 		return; // leave as we cannot use it
 	}
 	
-	$(".price").replaceWith("<div class=\"price\"> <p> Price : " + stockObj.currentPrice + "</p></div>");
-  	$(".stockID").replaceWith("<div class =\"stockID\"> <p> StockID :" + stockObj.stockID + "</p> </div>");
-  	$(".stockName").replaceWith("<div class = \"stockName\"> <p> stockName : " + stockObj.stockName + "</p></div>");
+	$(".stockInfoTitle").replaceWith("<div class=\"stockInfoTitle\"> <p> " 
+		+ getStockNameByCode(stockObj.stockID) 
+		+ "(" + stockObj.stockID + ")</p><p>$" 
+		+ stockObj.currentPrice 
+		+ " (" + stockObj.percentChange + "%)" 
+		+ "</p></div>");
 	
-	// Plot the guage for the stuff...
+	$(".moreStockInfo").replaceWith("<div class=\"moreStockInfo\"> <p> "
+		+ "Current Ask Price: $" + stockObj.currentPrice + "</p><p>"
+		+ "Current Bid Price: $" + stockObj.currentBid + "</p><p>"
+		+ "Previous Close: " + stockObj.previousClose + "</p><p>"
+		+ "Price/Earnings Ratio: " + stockObj.peRatio + "</p><p>"
+		+ "Price/Earnings to Growth Ratio: " + stockObj.pegRatio + "</p><p>"
+		+ "Market Capitalisation: " + stockObj.marketCap + "</p></div>");
+	
+	$(".price").replaceWith("<div class=\"price\"> <p> Unit price: $" + stockObj.currentPrice + "</p></div>");
+  	$(".stockID").replaceWith("<div class =\"stockID\"> <p>" + stockObj.stockID + "</p> </div>");
+  	$(".stockName").replaceWith("<div class = \"stockName\"> <p>" + stockObj.stockName + "</p></div>");
+	$(".funds").replaceWith("<div class = \"funds\"> <p> You currently have $" 
+		+ window.user.availableFunds + " worth of funds available. How many units would you like to purcahse?</p></div>");
+	// Plot the guage for the stuff...</br> style=\"font-size:12\"
 	//plotRatios();
 }
 
@@ -92,15 +127,15 @@ function buyWatchStock(stockID, state,qty){
 	var stockName = window.myStockObj.stockName;
 	var quantity = parseFloat (qty);
 	var price = window.myStockObj.currentPrice;
-  var targetPrice = 0;
+  var upperTargetPrice = 0;
+  var lowerTargetPrice = 0;
 	if(state == WATCH_STOCK) {
-	  targetPrice = $("#targetPrice").val();
-  } else if(state == MODIFY_STOCK) {
-    targetPrice = $("#modifyTargetPrice").val();
+	  upperTargetPrice = $("#upperTargetPrice").val();
+	  lowerTargetPrice = $("#lowerTargetPrice").val();
   }
-	console.log("TARGET PRICE IS: " + targetPrice);
+	console.log("Target prices are: " + upperTargetPrice + "   " + lowerTargetPrice);
 
-	addStockToUser(stockID, stockName, quantity, price, targetPrice, state);
+	addStockToUser(stockID, stockName, quantity, price, upperTargetPrice, lowerTargetPrice, state);
 	
 	
 
@@ -116,6 +151,70 @@ function buyWatchStock(stockID, state,qty){
  // Refresh the buttons
  changeButtons(stockID);
  
+}
+
+function checkLogin() {
+	console.log("Login submit has been clicked");
+  	var userStored=false;
+  	var error=false;
+  	try {
+  		var temp=store.get('user');
+  		if (temp.userName == $('#nameLogin').val() && temp.password == $('#passwordLogin').val() ) {
+  			initUser(temp);
+  			console.log("User is stored!");
+  			$.mobile.changePage("#home");
+  			userStored=true;
+  			refreshStocks();
+  		}
+  		else {
+	   		console.log("Entered data does not match local data --> try the server");
+   		}
+  	}
+  	catch (error) {
+  		console.log("Error is" + error);
+  		console.log("User object is not defined");
+  	}
+  	
+  	// update the user object...only if local version does not exist...
+  	// As THomas said on saturday, if object stored locally then assume local is good
+    // if not stored locally then set user object as remote object if successful
+  	if (!userStored){
+
+		$.getJSON(DEVSERVER_URL + "/login/" + $('#nameLogin').val() + "/" + $('#passwordLogin').val(), function(data) {
+        	console.log("Recieved user object is -- TODO - implement converting this to window.user object ....");
+        	console.log(data);
+	
+        	// Update the user object if it is not currently stored locally...
+        	// could also update from server, but right now trust the local more than the server
+        	// less likely to break when we demo...
+        	if (data=="none") {
+        		console.log("Login is invalid!! - no user data is recieved");
+        		$("#loginError").replaceWith("<div id = \"loginError\"> <p> Username or Password is incorrect ! Try again please</p></div> " );
+	   			$.mobile.changePage("#login");
+        	}
+        	else { // we have a valid user object...
+        		try {
+        			var help=jQuery.parseJSON(data);
+        			initUser(help);
+        			console.log("User Object is:");
+        			console.log(window.user);
+        			$.mobile.changePage("#home");
+        			refreshStocks();
+        		}
+        		catch (err) {
+        			console.log("error in parsing remote server user object - " + err);
+        			$("#loginError").replaceWith("<div id = \"loginError\"> <p> Server Problem. Please try again...</p></div> " );
+    				$.mobile.changePage("#login");
+        		}
+        	}
+    	})
+    	.fail(function() {
+    		console.log("Can't reach server ...!");
+    		$("#loginError").replaceWith("<div id = \"loginError\"> <p> Unable to Contact the Server! Try again please or/and check your internet connection.... </p></div> " );
+    		$.mobile.changePage("#login");
+    	});
+    }
+
 }
 
 
@@ -147,6 +246,7 @@ $.validator.setDefaults({
 		}
 });
 
+
 // Custom validation method checks that user does not already exist...
 jQuery.validator.addMethod("isUserNew",function(value) {
 	
@@ -159,22 +259,20 @@ jQuery.validator.addMethod("isUserNew",function(value) {
 		async:false
 	});
 	
-	// TODO - change to correct server address..
-	//$.getJSON("http://0.0.0.0:8080/isusernew/" + $('#name').val(), function(data) {
 	$.getJSON(DEVSERVER_URL + "/isusernew/" + $('#name').val(), function(data) {
-        if (data ==="yes") {
+        console.log("Data is for check name:" + data);
+        if (parseInt (data) ===1) {
         	console.log("User is new!");
         	retval=true;
         }
         else {
         	console.log("User is not new!");
-        	//retval=false;
-        	retval=true; // TODO - remove this to enable username validity checking
-        	// do this once the server is up to date
+        	retval=false;
         }
     })
     .fail(function() {
-    	console.log("Can't reach server ...fuck!");
+    	console.log("Can't reach server ...!");
+    	alert("Pfff , server appears to be dead ... try again please");
     	//retval=false;
     	retval=true;
     	// TODO - remove this to enable username validity checking
@@ -193,6 +291,10 @@ jQuery.validator.addMethod("isUserNew",function(value) {
 	return retval;
 },"Username already exists!");
 
+$.validator.addMethod("loginRegex", function(value, element) {
+        return this.optional(element) || /^[a-z0-9\s]+$/i.test(value);
+    }, "Must contain only letters or numbers");
+    
 jQuery.validator.classRuleSettings.isUserNew = {isUserNew : true} ; // Not sure why I have to do this...
 // End of user validation ....
 
@@ -200,8 +302,6 @@ jQuery.validator.classRuleSettings.isUserNew = {isUserNew : true} ; // Not sure 
 // Main Document Manipulation Script
 // This script will be run by all documents to perform manipulation of the page..
 $(document).ready (function(){
-
-
 
 	console.log("Document Manipulation Script has been run");
 	
@@ -234,20 +334,19 @@ $(document).ready (function(){
 	$('#ticker').rssfeed('https://au.finance.yahoo.com/news/category-stocks/?format=rss',{}, function(e) {
 		$(e).find('div.rssBody').vTicker({showItems: 5});
 	});
-
-	plotDataIndicie("^AORD", "ALL ORDINARIES",60,"#indicie1");
-	plotDataIndicie("^AXDJ", "S&P/ASX 200 Consumer Discretionary Index" ,60,"#indicie2");
-	plotDataIndicie("^AXNJ", "S&P/ASX 200 Industrials Index " ,60,"#indicie3");
-
+	
+	makeRequestIndex("^AORD", "ALL ORDINARIES");
+	makeRequestIndex("^AXJO", "S&P/ASX 200");
+	
+	
+	
+	//$('#totalPort')
+	
 	$("#buyStock").click(function() {
 		buyWatchStock(getCurrentStock(),1,$("#slider").val());
 		// Create the user
 		$.mobile.loading( "hide" );
 		
-		// If successful then return to main page...
-		if (out ==1 ) {
-			$.mobile.changePage("#home");
-		}
 	});
 	
 	$("#buyStock2").click(function() {
@@ -255,10 +354,12 @@ $(document).ready (function(){
 		// Create the user
 		$.mobile.loading( "hide" );
 		
-		// If successful then return to main page...
-		if (out ==1 ) {
-			$.mobile.changePage("#home");
-		}
+	});
+	
+	$('.logout').click(function() {
+		window.user.loggedIn=false;
+		window.user.save();
+		window.user={};// make the window user object empty
 	});
 	
 	$(".sellStock").click(function() {
@@ -291,25 +392,74 @@ $(document).ready (function(){
 		$("#sellSliderVal").attr("max",thisStock.getQuantity());
 		$(".stockCurrQty").replaceWith("<div class = \"stockCurrQty\"> <p> Current Stock Qty: " + thisStock.getQuantity() + " </p></div>" );
 	});
+
+	$("#buyButton").click(function() {
+		// Set the Buy quantity to be correct
+		console.log("Buy button is clicked!");
+		var thisStock = getCurrentStockObject();
+		// NB: assuming that the stock can be bought....
+		var maxQuantity = Math.floor(window.user.availableFunds / thisStock.currentPrice);
+		console.log("Max quantity is: " + maxQuantity);
+		$("#slider").attr("max", maxQuantity);
+		//$(".stockCurrQty").replaceWith("<div class = \"stockCurrQty\"> <p> Current Stock Qty: " + thisStock.getQuantity() + " </p></div>" );
+	});
+
 	
 	$("#watchStock").click(function() {
 		buyWatchStock(getCurrentStock(), WATCH_STOCK);
 	});
 	
+	$("#loginForm").validate({
+	
+		submitHandler: function() {
+			checkLogin();
+		},
+		success: function(label) {
+            label
+            .text('OK!').addClass('valid')
+            .closest('.form-element').addClass('success');
+        },
+    });
+	
 	$( "#commentForm" ).validate({
+    	submitHandler: function() {
+			alert("User Created Successfully!"); // TODO - change to jquery alert...
+			console.log("Signup submit clicked");
+			// Lets show a loading widget
+			$.mobile.loading( 'show', {
+				text: 'Loading Data',
+				textVisible: true,
+				theme: "a",
+				html: ""
+			});
+			// TODO - check that values input are consistent o correct
+			// highlight if wrong ...
+		
+			// Create the user
+			var out = createUserFromData($('#name').val(),"undefined","undefined",$('#email').val(),$('#password').val());
+			$.mobile.loading( "hide" );
+		
+			// If successful then return to main page...
+			if (out ==1 ) {
+				$.mobile.changePage("#home");
+			}
+		},
     	rules: {
 
 				name: {
 					required: true,
 					minlength: 5 ,
+					loginRegex: true,
 					isUserNew : true
 				},
 				password: {
 					required: true,
+					loginRegex: true,
 					minlength: 5
 				},
 				confirm_password: {
 					required: true,
+					loginRegex:true,
 					minlength: 5,
 					equalTo: "#password"
 				},
@@ -320,7 +470,7 @@ $(document).ready (function(){
 		},
 		highlight: function(label) {
             $(label).closest('.form-element').addClass('error')
-            .closest('.form-element').removeClass('success');;
+            .closest('.form-element').removeClass('success');
         },
         success: function(label) {
             label
@@ -350,9 +500,6 @@ $(document).ready (function(){
     	focusInvalid: false
 	});
 	
-
-	
-
 	$("#historyView").click(function(){
 		plotPortHistory();
 	});
@@ -367,7 +514,11 @@ $(document).ready (function(){
 	
   //Same as watchStock but called to modify an already watched stock
   $("#setTargetPrice").click(function() {
-		buyWatchStock(getCurrentStock(), MODIFY_STOCK);
+    var upperTargetPrice = $("#modifyUpperTargetPrice").val();
+    var lowerTargetPrice = $("#modifyLowerTargetPrice").val();    
+    window.user.watchedStocks[getCurrentStock()].upperTargetPrice = upperTargetPrice;
+    window.user.watchedStocks[getCurrentStock()].lowerTargetPrice = lowerTargetPrice;
+    refreshStocks();
 	});
 
   $("#unwatchStock").click(function() {
@@ -390,7 +541,16 @@ $(document).ready (function(){
     }
         
     setCurrentStock(target.id);
-    console.log("Current stock is:" + getCurrentStock());
+
+    // Set the Buy quantity to be correct
+		// NB: assuming that the stock can be bought....
+
+
+		var maxQuantity = Math.floor(window.user.availableFunds / window.user.watchedStocks[getCurrentStock()].currentPrice);
+		//console.log("Max quantity is: " + maxQuantity);
+		$("#slider2").attr("max", maxQuantity);
+		
+    //console.log("Current stock of watchlist is:" + getCurrentStock());
     //console.log("Event id is: " + target.id);
   });
 
@@ -402,14 +562,17 @@ $(document).ready (function(){
         target = target.parentNode;
     }
     setCurrentStock(target.id);
+
     //console.log("Current stock is:" + getCurrentStock());
     //console.log("Event id is: " + target.id);
   });
 
 
+
+
   //Set a 120 second interval for refreshing current stock prices in user's portfolio
   window.user.upDate(); //Not sure why initial call doesn't refresh watchlist/portfolio
-  setInterval(function() {window.user.upDate()}, 120000);
+  setInterval(function() {window.user.upDate()}, 10000);
 
 	// 4. Load Dynamic Content
 	//refreshStocks();
@@ -427,7 +590,7 @@ $(document).on("click", ".navbutton", function(event) {
 //Only downside is writing html in one line =_=
 
 var panel =     '<div data-role="panel" data-position="right" data-position-fixed="false" data-display="overlay" id="menu" data-theme="a" class="ui-panel ui-panel-position-right ui-panel-display-overlay ui-body-c ui-panel-animate ui-panel-open">';
-panel = panel +   '<div data-role="header" data-position="fixed">';
+panel = panel +   '<div data-role="header">';
 panel = panel +     '<a href="#" data-icon="gear" data-rel="close" data-iconpos="notext" data-role="button" class="ui-btn-right"></a>';
 panel = panel +   '</div>';
 
@@ -441,6 +604,7 @@ panel = panel +     '<li id="panelDivider" data-role="list-divider">Menu</li>';
 panel = panel +     '<li><a href="#">Twitter</a></li>';
 panel = panel +     '<li><a href="#">Facebook</a></li>';
 panel = panel +     '<li><a href="#">Google +</a></li>';
+panel += '<li><a href="#login" class ="logout" data-iconpos="notext" data-rel="dialog" >Logout</a></li>';
 panel = panel +   '</ul>';
 panel = panel +   '</div>';
 
@@ -454,6 +618,15 @@ $(document).one('pagebeforecreate', function () {
 
 /*************************************************/
 
+
+function watchlistNavButtonClicked() {
+  populateWatchlist();
+  $(".watchlistNavButton").attr("data-icon", "star");
+  $(".watchlistNavButton").attr("data-theme", "a");
+  $(".watchlistNavButton").removeClass("ui-icon-alert");       
+  $(".watchlistNavButton").removeClass("ui-btn-b");
+  $(".watchlistNavButton").addClass("ui-icon-star");    
+}
 
 
 

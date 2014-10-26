@@ -29,9 +29,9 @@ body {
 .rssHeader { padding: 0.2em 0; }
 
 .rssBody { border: 1px solid #999; }
-.rssBody ul { list-style: none; }
+.rssBody ul { list-style: none; width: 100%;}
 .rssBody ul, .rssRow, .rssRow h4, .rssRow p {
-	margin: 0;
+	margin: auto;
 	padding: 0;
 }
 
