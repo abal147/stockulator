@@ -83,7 +83,7 @@ function refreshStocks() {
     $(".balanceText").html("Account Balance: $" + window.user.availableFunds.toFixed(2) + "                       ");
     
     	// Make sure that the buttons have changed...
-    	changeButtons();
+    	changeButtons(getCurrentStock());
 		window.user.save();
 	}
 }
@@ -591,7 +591,7 @@ $(document).on("click", ".navbutton", function(event) {
 /********************** Awesomeness - one menu panel for all pages :D - could probably do this for search bar *****************/
 //Only downside is writing html in one line =_=
 
-var panel =     '<div data-role="panel" data-position="right" data-position-fixed="false" data-display="overlay" id="menu" data-theme="a" class="ui-panel ui-panel-position-right ui-panel-display-overlay ui-body-c ui-panel-animate ui-panel-open">';
+var panel =     '<div data-role="panel" data-position="right" data-position-fixed="false" data-display="overlay" id="menu" data-theme="a" class="ui-panel ui-panel-position-right ui-panel-display-overlay ui-body ui-panel-animate ui-panel-open">';
 panel = panel +   '<div data-role="header">';
 panel = panel +     '<a href="#" data-icon="gear" data-rel="close" data-iconpos="notext" data-role="button" class="ui-btn-right"></a>';
 panel = panel +   '</div>';
