@@ -23,7 +23,12 @@ def metricData(code, numDays, filterlength, alpha) :
 	
 	r('dates <- as.integer(as.POSIXct(as.Date(data.df$Date)))')
 	dates = r['dates']
-	
+	r('rawdata <- data.df$Close')
+	rawdata = r['rawdata']
+	r('volatility <- sqrt(var(data.df$Close))')
+	volatility = r['volatility']
+
+
 	#create time series object
 	r('data.ts <- ts(data.df$Close)')
 	
@@ -49,7 +54,7 @@ def metricData(code, numDays, filterlength, alpha) :
 	r('data.trend <- data.ts/max(data.ts)')
 	trend = r['data.trend']
 
-	return json.dumps((list(dates), list(sma), list(ema), list(trend)))
+	return json.dumps(list(rawdata),(list(dates), list(sma), list(ema), list(trend)))
 
 if __name__ == "__main__":
    str = metricData("WOW.AX", 9, 3, 0.3)
