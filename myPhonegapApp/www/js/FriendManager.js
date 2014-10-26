@@ -36,7 +36,6 @@ $(document).on("click", "#friendLink", function(){
 		, function(portfolio) {
 			console.log(portfolio);
 		}
-
 	);
 });
 
@@ -78,6 +77,7 @@ $(document).on("click", '#deleteFriendConfirm', function() {
 
 	);
 
+	populateRequests();
 	populateFriends();
 
 	console.log(friend + " got rekt");
@@ -154,7 +154,10 @@ function setupFriends() {
 	    	, function(data) {}
 	    );
 	});
+
 */
+	setInterval(function() {populateFriends()}, 30000);
+	setInterval(function() {populateRequests()}, 30000);
 	console.log("FRIENDS ALL INSTANTIATED");
 }
 
