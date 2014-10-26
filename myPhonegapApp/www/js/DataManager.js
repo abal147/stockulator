@@ -587,6 +587,7 @@ function userObj (userName,firstName,lastName,email,password) {
 	this.watchedStocks = {}; // associative array of watching stocks
 	this.soldStocks = {}; // store the sold stocks here for reference....
 	this.loggedIn=true; // boolean to store whether a user is logged in or not
+	this.portfolioValue = 0;
 	attachUserMethods(this); // attach the user methods to this object..
 }
 
