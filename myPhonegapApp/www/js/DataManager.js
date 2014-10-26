@@ -705,7 +705,7 @@ $(function() {
 	        var source = $(this).closest("li").attr("data-chapter");
 			
 			// Simple fix
-			source=source.substring(0,source.length-3); // trim of double .AX
+			//source=source.substring(0,source.length-3); // trim of double .AX
 			
 	        makeRequest(source);
 	        setCurrentStock(source);

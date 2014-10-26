@@ -146,6 +146,8 @@ function handleNameSearch(e){
 function refreshASXCodes() {
     //console.log("Step1");
 
+    console.log(getStockNameByCode('wow.ax'));
+
     var grabbed = false;
     //console.log("Step1");
     var lines = localStorage.getItem("stockCSV");
@@ -196,7 +198,7 @@ function grabASXCodes() {
 
     $.getJSON(DEVSERVER_URL + "/asxcodes"
         , function(data) {
-
+/*
             var lines = data["data"].split("\n");
             for (var i = 1; i < lines.length; ++i) {
                 var stock = lines[i].split(",");
@@ -207,8 +209,8 @@ function grabASXCodes() {
             data = lines.join("\n");
 
             //console.log(data);
-
-            localStorage.setItem("stockCSV", data);
+*/
+            localStorage.setItem("stockCSV", data['data']);
         }
     );
 }
@@ -221,11 +223,15 @@ filterStockCodes = function (text, searchVal) {
 
 getStockNameByCode = function(code) {
 
-    var lines = localStorage.getItem('stockCSV').split('\n');
+    var line = localStorage.getItem('stockCSV');
+    if (line == null) {
+        return "Invalid ASX Code";
+    }
+    var lines = line.split('\n');
 
     for (var i = 1; i < lines.length; ++i) {
         var info = lines[i].split(',');
-        if (info[1] == code) {
+        if (info[1] == code.toUpperCase()) {
             return info[0];
         }
     }
