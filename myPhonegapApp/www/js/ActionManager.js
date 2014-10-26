@@ -574,7 +574,7 @@ $(document).ready (function(){
 
   //Set a 120 second interval for refreshing current stock prices in user's portfolio
   window.user.upDate(); //Not sure why initial call doesn't refresh watchlist/portfolio
-  setInterval(function() {window.user.upDate()}, 10000);
+  setInterval(function() {window.user.upDate()}, 120000);
 
 	// 4. Load Dynamic Content
 	//refreshStocks();
