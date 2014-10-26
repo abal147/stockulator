@@ -385,6 +385,9 @@
 		<a href="#friendRequests" id = "showFriendRequests" data-rel="popup" data-position-to="window" data-transition="pop" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b">Friend Requests</a>
 		<a href="#friendList" id = "showFriendList" data-rel="popup" data-position-to="window" data-transition="pop" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b">Friends</a>
 
+		<ul data-role="listview" id="myFriends" data-inset="true" data-split-icon="minus">
+		</ul>
+
 		<div data-role="popup" id="friendRequests">
 	 	 	<div data-role="header">
 	  			<h1>Friend Requests</h1>
@@ -403,11 +406,42 @@
 	  			<h1>Friends</h1>
 	  		</div>
 	  		<div class="content" data-role="content">
-		  		<ul data-role="listview" id="myFriends" data-inset="true">
-				</ul>
+		  		
 			</div>
 			<div data-role="footer">
 				<a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" data-rel="back">Close</a>
+			</div>
+		</div>
+
+		<div data-role="popup" id="friendFolio">
+			<div data-role="header" id="friendFolioHeader">
+				poo
+			</div>
+			<div class="content" data-role="content">
+
+			</div>
+			<div data-role="footer">
+				<a class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" data-rel="back">Close</a>
+			</div>
+		</div>
+
+		<div data-role="popup" id="confirmRequest">
+			<div data-role="header" id="confirmRequestMessage">
+				request friendo?
+			</div>
+			<div data-role="footer">
+				<a class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" data-rel="back" id="requestFriendConfirm">Confirm request</a>
+				<a class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" data-rel="back">Cancel</a>
+			</div>
+		</div>		
+
+		<div data-role="popup" id="confirmDelete">
+			<div data-role="header" id="confirmDeleteMessage">
+				Delete some friendo?
+			</div>
+			<div data-role="footer">
+				<a class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" data-rel="back" id="deleteFriendConfirm">Remove Friend</a>
+				<a class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" data-rel="back">Cancel</a>
 			</div>
 		</div>
     
