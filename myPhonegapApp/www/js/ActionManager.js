@@ -83,7 +83,7 @@ function refreshStocks() {
     $(".balanceText").html("Account Balance: $" + window.user.availableFunds.toFixed(2) + "                       ");
     
     	// Make sure that the buttons have changed...
-    	changeButtons();
+    	changeButtons(getCurrentStock());
 		window.user.save();
 	}
 }
