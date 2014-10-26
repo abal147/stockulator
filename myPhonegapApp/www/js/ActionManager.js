@@ -143,6 +143,7 @@ $.validator.setDefaults({
 			if (out ==1 ) {
 				$.mobile.changePage("#home");
 			}
+			refreshStocks();
 		}
 });
 
