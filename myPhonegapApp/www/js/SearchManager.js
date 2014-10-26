@@ -144,14 +144,10 @@ function handleNameSearch(e){
 }
 
 function refreshASXCodes() {
-    //console.log("Step1");
-
-    console.log(getStockNameByCode('wow.ax'));
-
     var grabbed = false;
-    //console.log("Step1");
+
     var lines = localStorage.getItem("stockCSV");
-    //console.log("Step1");
+
     if (lines == null) {
         // If there is no stored list, grab it
         grabASXCodes();
