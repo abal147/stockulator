@@ -105,7 +105,7 @@ function refreshStockInfo() {
 		+ " (" + stockObj.percentChange + "%)" 
 		+ "</h4><br></div>");
 	
-	/*
+	
 	$(".moreStockInfo").replaceWith("<div class=\"moreStockInfo\"> <p> "
 		+ "Current Ask Price: $" + stockObj.currentPrice + "</p><p>"
 		+ "Current Bid Price: $" + stockObj.currentBid + "</p><p>"
@@ -113,16 +113,7 @@ function refreshStockInfo() {
 		+ "Price/Earnings Ratio: " + stockObj.peRatio + "</p><p>"
 		+ "Price/Earnings to Growth Ratio: " + stockObj.pegRatio + "</p><p>"
 		+ "Market Capitalisation: " + stockObj.marketCap + "</p><br></div>");
-	*/
-
-	$(".moreStockInfo").replaceWith("<div class=\"moreStockInfo\"> 
-		<table border = "1" width = "100%"><tr> "
-		+ "Current Ask Price: $" + stockObj.currentPrice + "</tr><tr>"
-		+ "Current Bid Price: $" + stockObj.currentBid + "</tr><tr>"
-		+ "Previous Close: " + stockObj.previousClose + "</tr><tr>"
-		+ "Price/Earnings Ratio: " + stockObj.peRatio + "</tr><tr>"
-		+ "Price/Earnings to Growth Ratio: " + stockObj.pegRatio + "</tr><tr>"
-		+ "Market Capitalisation: " + stockObj.marketCap + "</tr><br></div>");
+	
 
 	$(".price").replaceWith("<div class=\"price\"> <p> Unit price: $" + stockObj.currentPrice + "</p></div>");
   	$(".stockID").replaceWith("<div class =\"stockID\"> <p>" + stockObj.stockID + "</p> </div>");
