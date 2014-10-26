@@ -66,6 +66,7 @@
     <p class="balanceText"></p>
 		
 		<h5>Home</h5>
+
 		<a href="#home" data-icon="home" data-iconpos="notext" class="navbutton">Home</a>
 		<a href="#menu" data-icon="gear" data-iconpos="notext" data-rel="dialog" class="navbutton">Menu</a>
 		
@@ -73,16 +74,17 @@
 		</ul>
 	</div><!-- header -->
 	<!-- Content Part of Document-->	
-	<br></br>
-
-
 	<div data-theme="a" data-role="content" id="postlist">
+		<br></br>
 		<h1>Australian Market Indexes</h1>
 		<h2 id="indexes"></h2>
 		<h1>Portfolio</h1>
 		<!--<ul id="myPortfolioTotalHome" clas= "totalPortfolio" data-role="listview" data-inset="true"></ul>-->
 		<h2 id="myPortfolioTotalHome"></h2>
-		<h1>RSS Feed</h1>
+		<!--<h1>Australian Market >></h1>-->
+		<h2 id="indexes"></h2>
+		
+		<h1>Today's Top Stories >></h1>
 		<div id="ticker"></div>
 	</div>
 
@@ -91,9 +93,9 @@
 		<div data-role="navbar">
 			<ul>
 				<li><a href="#" class="ui-btn-active ui-state-persist navbutton" data-icon="home">Home</a></li>
-				<li><a href="#portfolio" data-role="button" data-icon="plus" onclick="populatePortfolio()" class="navbutton">Portfolio</a></li>
-				<li><a href="#stockInfo" data-role="button" data-icon="shop" class="navbutton">StockInfo</a></li>
-				<li><a href="#watchlist" data-role="button" data-icon="star" onclick="watchlistNavButtonClicked()" class="navbutton watchlistNavButton">Watchlist</a></li>
+				<li><a href="#portfolio" data-role="button" data-icon="shop" onclick="populatePortfolio()" class="navbutton">Portfolio</a></li>
+				<li><a href="#stockInfo" data-role="button" data-icon="search" class="navbutton">Stocks</a></li>
+				<li><a href="#watchlist" data-role="button" data-icon="star" onclick="populateWatchlist()" class="navbutton">Watchlist</a></li>
 				<li><a href="#games" data-role="button" data-icon="user" class="navbutton">Friends</a></li>
 			</ul>
 		</div><!-- navbar -->
@@ -118,14 +120,25 @@
 		<ul data-role="listview" data-filter="true" id="searchStock2" data-filter-placeholder="Search stocks..." data-inset="true" data-filter-reveal="true">
 		</ul>	
 	</div><!-- header -->
-	<br></br>
+	
 	<!-- Content Part of Document-->
+
+	<div data-theme="a" data-role="content" id="postlist" align = "left">	
 		
-	<div data-theme="a" data-role="content" id="postlist">	
-		
+		<br></br>
 		<!-- Place in here the shit that you need to put in your page .. --!>
 		<!--<input type="search" name="searchBar" id="search-3" class="search" placeholder="Enter ASX Code" data-theme="a" onkeyup="handle(event, value)" /> -->
 		<!-- example .. stuff -->
+		
+		<h3>Total Net Portfolio >></h3>
+	    <!--<ul id="myPortfolioTotal" clas= "totalPortfolio" data-role="listview" data-inset="true">-->
+	    <h4 id="myPortfolioTotal"></h4>
+	    </ul>
+	    <h3>Your Individual Stocks >></h3>
+	    <ul id="myPortfolio" data-role="listview" data-inset="true">
+
+	    </ul>
+
 		<div id="pieChart" class="myCharts" style="min-width: 310px; height: 250px; margin: 0 auto"></div>
 		<div data-role="fieldcontain">
 	    	<fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
@@ -138,14 +151,7 @@
 		</div>
 
 	
-	 <h3>Total Portfolio</h3>
-    <!--<ul id="myPortfolioTotal" clas= "totalPortfolio" data-role="listview" data-inset="true">-->
-    <h4 id="myPortfolioTotal"></h4>
-    </ul>
-    <h3>Individual Stocks</h3>
-    <ul id="myPortfolio" data-role="listview" data-inset="true">
-
-    </ul>
+	 
 
 		
 		<!-- TODO -fill me out ... --!> 
@@ -156,9 +162,9 @@
 		<div data-role="navbar">
 			<ul>
 				<li><a href="#home" data-role="button" data-icon="home" class="navbutton">Home</a></li>
-				<li><a href="#" class="ui-btn-active ui-state-persist navbutton" data-role="button" data-icon="plus" onclick="populatePortfolio()">Portfolio</a></li>
-				<li><a href="#stockInfo" data-role="button" data-icon="shop" class="navbutton">StockInfo</a></li>
-				<li><a href="#watchlist" data-role="button" data-icon="star" onclick="watchlistNavButtonClicked()" class="navbutton watchlistNavButton">Watchlist</a></li>
+				<li><a href="#" class="ui-btn-active ui-state-persist navbutton" data-role="button" data-icon="shop" onclick="populatePortfolio()">Portfolio</a></li>
+				<li><a href="#stockInfo" data-role="button" data-icon="search" class="navbutton">Stocks</a></li>
+				<li><a href="#watchlist" data-role="button" data-icon="star" onclick="populateWatchlist()" class="navbutton">Watchlist</a></li>
 				<li><a href="#games" data-role="button" data-icon="user" class="navbutton">Friends</a></li>
 			</ul>
 		</div><!-- navbar -->
@@ -175,7 +181,7 @@
 	<div data-role="header" data-theme="a" data-position="fixed" data-id="vs_header">
     <p class="valueText"></p>
     <p class="balanceText"></p>
-		<h5>Stock Info</h5>
+		<h5>Stocks</h5>
 
 		<a href="#home" data-icon="home" data-iconpos="notext" class="navbutton">Home</a>
 		<!--<a href="#login" class ="logout" data-iconpos="notext" data-rel="dialog" >Logout</a>-->
@@ -184,12 +190,13 @@
 		</ul>
 	</div><!-- header -->
 
-	<br></br>
+	
 
 	<!-- Content Part of Document-->
 	<div data-theme="a" data-role="content" id="postlist">	
+		<br></br>
 	<font size = "16">
-		<div class = "stockInfoTitle"> <p> Welcome to the stock information page. Use the search bar above to examine a stock. Once selected, we have provided key metrics and charts for you to compare different stocks. </p></div>
+		<div class = "stockInfoTitle"> <h3> Welcome to the stock information page. Use the search bar above to examine a stock. </h3></div>
 	</font> 
 		<!--<input type="search" name="searchBar" id="search-3" class="search" value="Enter ASX Code" data-theme="a" onkeyup="handle(event, value)" />	-->
 		<!-- 
@@ -222,19 +229,19 @@
   		  <h1>Buy Stock</h1>
   		</div>
   		<div role="main" class="ui-content">
-  			<div class="funds"> <p> Search for a stock to buy </p></div>
-  			<div class="price"> <p> Price : 100 </p> </div>
+  			<div class="price"> <p> Use the search bar to look for a stock </p> </div>
   			<!--<div class ="stockID"> <p> StockID : WOW.ax </p> </div>
   			<div class = "stockName"> <p> stockName : Woolworths </p></div>-->
 
       		<form>
       			<div style="padding:10px 20px;">
         			 <div data-role="fieldcontain" id="pageSlider" class = "pageSlider">
-					      <label for="slider">Qty:</label>
+					      <label for="slider">Set quantity below:</label>
 	 				      <input type="range" name="slider" class = "slider" id="slider" value="0" min="0" max="1000" data-highlight="true"  />
 				     </div>
      		    </div>
   			  </form>
+  			<div class = "availableFunds"> <p> </p></div>
   			<div class = "cost"> <p> Cost : $0.00 </p></div>
     		<a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn" data-rel="back">Cancel</a>
     		<a href="#" id ="buyStock" class="buyStock ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn" data-rel="back" data-transition="flow">Buy</a>
@@ -285,9 +292,9 @@
 		<div data-role="navbar">
 			<ul>
 				<li><a href="#home" data-role="button" data-icon="home" class="navbutton">Home</a></li>
-				<li><a href="#portfolio" data-role="button" data-icon="plus" onclick="populatePortfolio()" class="navbutton">Portfolio</a></li>
-				<li><a href="#" class="ui-btn-active ui-state-persist navbutton" data-role="button" data-icon="shop" >StockInfo</a></li>
-				<li><a href="#watchlist" data-role="button" data-icon="star" onclick="watchlistNavButtonClicked()" class="navbutton watchlistNavButton">Watchlist</a></li>
+				<li><a href="#portfolio" data-role="button" data-icon="shop" onclick="populatePortfolio()" class="navbutton">Portfolio</a></li>
+				<li><a href="#" class="ui-btn-active ui-state-persist navbutton" data-role="button" data-icon="search" >Stocks</a></li>
+				<li><a href="#watchlist" data-role="button" data-icon="star" onclick="populateWatchlist()" class="navbutton">Watchlist</a></li>
 				<li><a href="#games" data-role="button" data-icon="user" class="navbutton">Friends</a></li>
 			</ul>
 		</div><!-- navbar -->
@@ -313,19 +320,16 @@
 		</ul>
 	</div><!-- header -->
 	
-	<br></br>
-	
 	<!-- Content Part of Document-->
 	<div data-theme="a" data-role="content" id="postlist">	
-		
+		<br></br>		
 		<!-- Place in here the shit that you need to put in your page .. -->
 		
-
     <ul id="myWatchlist" data-role="listview" data-inset="true">
     </ul>
 
-
     <div data-role="popup" id="watchlistDialog" data-overlay-theme="b" data-theme="a" data-dismissible="false" style="max-width:400px; min-height:550px">
+
  	 		<div data-role="header" data-theme="a">
   		  <h1>Watched Stock</h1>
   		</div>
@@ -365,9 +369,9 @@
 		<div data-role="navbar">
 			<ul>
 				<li><a href="#home" data-role="button" data-icon="home" class="navbutton">Home</a></li>
-				<li><a href="#portfolio" data-role="button" data-icon="plus" onclick="populatePortfolio()" class="navbutton">Portfolio</a></li>
-				<li><a href="#stockInfo" data-role="button" data-icon="shop" class="navbutton">StockInfo</a></li>
-				<li><a href="#" class="ui-btn-active ui-state-persist navbutton" data-role="button" data-icon="star" onclick="watchlistNavButtonClicked()">Watchlist</a></li>
+				<li><a href="#portfolio" data-role="button" data-icon="shop" onclick="populatePortfolio()" class="navbutton">Portfolio</a></li>
+				<li><a href="#stockInfo" data-role="button" data-icon="search" class="navbutton">Stocks</a></li>
+				<li><a href="#" class="ui-btn-active ui-state-persist navbutton" data-role="button" data-icon="star" onclick="populateWatchlist()">Watchlist</a></li>
 				<li><a href="#games" data-role="button" data-icon="user" class="navbutton">Friends</a></li>
 			</ul>
 		</div><!-- navbar -->
@@ -389,9 +393,10 @@
 		<!--<a href="#login" class ="logout" data-iconpos="notext" data-rel="dialog" >Logout</a>-->
 		<a href="#menu" data-icon="gear" data-iconpos="notext" data-rel="dialog">Menu</a>
 	</div><!-- header -->
-	<br></br>
+	
 	<!-- Content Part of Document-->
 	<div data-theme="a" data-role="content" id="postlist">	
+		<br></br>
 	<!-- Place in here the shit that you need to put in your page .. -->
 	<!-- TODO -fill me out ... -->
 		<ul data-role="listview" data-filter="true" id="findFriends" data-filter-placeholder="Search users..." data-inset="true" data-filter-reveal="true">
@@ -473,9 +478,9 @@
 		<div data-role="navbar">
 			<ul>
 				<li><a href="#home" data-role="button" data-icon="home" class="navbutton">Home</a></li>
-				<li><a href="#portfolio" data-role="button" data-icon="plus" onclick="populatePortfolio()" class="navbutton">Portfolio</a></li>
-				<li><a href="#stockInfo" data-role="button" data-icon="shop" class="navbutton">StockInfo</a></li>
-				<li><a href="#watchlist" data-role="button" data-icon="star" onclick="watchlistNavButtonClicked()" class="navbutton watchlistNavButton">Watchlist</a></li>
+				<li><a href="#portfolio" data-role="button" data-icon="shop" onclick="populatePortfolio()" class="navbutton">Portfolio</a></li>
+				<li><a href="#stockInfo" data-role="button" data-icon="search" class="navbutton">Stocks</a></li>
+				<li><a href="#watchlist" data-role="button" data-icon="star" onclick="populateWatchlist()" class="navbutton">Watchlist</a></li>
 				<li><a href="#" class="ui-btn-active ui-state-persist navbutton" data-role="button" data-icon="user">Friends</a></li>
 			</ul>
 		</div><!-- navbar -->
