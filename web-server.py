@@ -22,6 +22,12 @@ def enable_cors():
 def hello():
     return "Hello World!"
 
+@app.route('/rmfriendo/<user>/<friend>')
+def rmfriend(user='',friend=''):
+	user_db.deleteFriend(user, friend)
+	response.content_type = 'application/json'
+	return dumps('')
+
 @app.route('/asxcodes')
 def get_codes():
 	result = ASXcodes.requestCodes()
@@ -65,6 +71,12 @@ def reject_friend(user='', friend=''):
 def get_portfolio(user=''):
 	response.content_type = 'application/json'
 	return user_db.getPortfolio(user)
+
+@app.route('/deletefriend/<user>/<friend>')
+def delete_friend(user='', friend=''):
+	response.content_type = 'application/json'
+	user_db.deleteFriend(user, friend)
+	return dumps('')
 
 @app.route('/isusernew/<user>')
 def checkUser(user=""):

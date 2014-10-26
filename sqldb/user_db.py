@@ -75,21 +75,19 @@ def newUser(name):
 	cursor = db.cursor()
 	cursor.execute(
 	'''SELECT * FROM users WHERE name = (?)''', (name,))
-	exists = cursor.fetchall()
-	db.close()
-	if exists is None:
+	if len(cursor.fetchall()) > 0:
+		db.close()
 		return 0
+	db.close()
 	return 1
 
 def getUserID(name):
 	db = sqlite3.connect('stock_db.db')
 	cursor = db.cursor()
 	cursor.execute('''SELECT userID FROM users WHERE name = (?)''', (name,))
-	userID = cursor.fetchone()
+	userID = cursor.fetchone()[0]
 	db.close()
-	if userID is None:
-		return 'not found'
-	return userID[0]
+	return userID
 
 def getUser(name):
 	db = sqlite3.connect('stock_db.db')
@@ -203,15 +201,10 @@ def insertRequest(name, friend):
 	userID = getUserID(name)
 	friendID = getUserID(friend)
 	cursor.execute(
-		'''SELECT * FROM friends WHERE userID = (?) AND friendID = (?)''', (friendID, userID))
-	temp = cursor.fetchall()
-	if temp is not None:
-		return 0
-	cursor.execute(
 		'''INSERT INTO friends (userID, friendID, accepted) VALUES (?,?,?)''', (userID, friendID, 0))
 	db.commit()
 	db.close()
-	return 1
+	return
 
 def getRequest(name):
 	db = sqlite3.connect('stock_db.db')
@@ -360,7 +353,6 @@ def getLastState(name):
 def testDB():
 	os.remove('stock_db.db')
 	createDB()
-	print getUser('asdf')
 	insertUser('bob', 'asdf', 'quet')
 	insertUser('jane', 'asdf', 'qiet')
 	insertUser('mark', 'asdf', 'asdf')
